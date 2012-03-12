@@ -1,0 +1,29 @@
+#' Remove jobs from registry.
+#' THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING RESULTS!
+#' @param reg [\code{\link{Registry}}]\cr
+#'   Registry.
+#' @param ids [\code{integer}]\cr
+#'   Ids of jobs you want to remove.
+#'   Default is none.
+#' @return Nothing.
+#' @export
+removeExperiments = function(reg, ids) {
+  checkArg(reg, "Registry")
+  if (missing(ids))
+    return(invisible(NULL))
+  ids = convertIntegers(ids)
+  checkArg(ids, cl="integer", na.ok=FALSE)
+  BatchJobs:::checkIds(reg, ids)
+
+  messagef("Removing %i experiments ...", length(ids))
+  df = BatchJobs:::dbGetJobStatusTable(reg, ids)
+  lapply(df$id, function(id) {
+    fs = list.files(BatchJobs:::getJobDir(reg, id), pattern=id, full.names=TRUE)
+    ok = file.remove(fs)
+    if (!all(ok))
+      stop("Could not remove files for experiment: ", id)
+  })
+
+  BatchJobs:::dbRemoveJobs(reg, ids)
+  invisible(NULL)
+}

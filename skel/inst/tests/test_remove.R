@@ -1,0 +1,26 @@
+context("remove")
+
+test_that("remove", {
+  reg = makeTestRegistry()
+  p1 = addProblem(reg, "p1", static=1) 
+  p2 = addProblem(reg, "p2", static=2) 
+  a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic) static+1)
+  a2 = addAlgorithm(reg, id="a2", fun=function(static, dynamic) static+2)
+  addExperiments(reg, list(makeDesign(p1), makeDesign(p2)), list(makeDesign(a1), makeDesign(a2)))
+  submitJobs(reg)  
+  expect_equal(getProblemIds(reg), c("p1", "p2"))
+  expect_equal(getAlgorithmIds(reg), c("a1", "a2"))
+  removeAlgorithm(reg, "a1")
+  expect_equal(getJobNr(reg), 2)
+  expect_error(addExperiments(reg, makeDesign(p1), makeDesign(a1)), "not been added")
+  expect_equal(getProblemIds(reg),  c("p1", "p2"))
+  expect_equal(getAlgorithmIds(reg), "a2")
+  removeProblem(reg, "p1")
+  expect_equal(getJobNr(reg), 1)
+  expect_error(addExperiments(reg, makeDesign(p1), makeDesign(a2)), "not been added")
+  expect_equal(getProblemIds(reg), "p2")
+  expect_equal(getAlgorithmIds(reg), "a2")
+  expect_error(removeAlgorithm(reg, "aa"), "not present")
+})
+
+
