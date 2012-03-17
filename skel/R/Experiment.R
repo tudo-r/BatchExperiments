@@ -5,9 +5,9 @@
 #   Job id, determined by DB autoincrement.
 #   Default is \code{as.integer(NA)}.
 # @aliases Experiment
-makeExperimentJob = function(id=as.integer(NA), prob.id, prob.pars, algo.id, algo.pars, repl, seed) {
+makeExperimentJob = function(id=as.integer(NA), prob.id, prob.pars, algo.id, algo.pars, repl, seed, prob.seed) {
   structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, 
-    algo.id=algo.id, algo.pars=algo.pars, repl=repl, seed=seed), 
+    algo.id=algo.id, algo.pars=algo.pars, repl=repl, seed=seed, prob.seed=prob.seed), 
     class=c("ExperimentJob", "Job"))
 }
 
@@ -28,6 +28,7 @@ print.ExperimentJob = function(x, ...) {
   cat("  Algorithm parameters:", listToShortString(x$algo.pars), "\n")
   cat("  Replication:", x$repl, "\n")
   cat("  Seed:", x$seed, "\n")
+  cat("  Problem seed:", x$prob.seed, "\n")
 }
 
 

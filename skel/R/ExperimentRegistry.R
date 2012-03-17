@@ -42,9 +42,10 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
                                   packages=character(0L)) {
   reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding, work.dir, multiple.result.files, seed, packages)
   class(reg) = c("ExperimentRegistry", "Registry")
-  BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER", constraints=", UNIQUE(job_def_id, repl)")
+  BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER, prob_seed INTEGER", constraints=", UNIQUE(job_def_id, repl)")
   BatchJobs:::dbCreateJobDefTable(reg)
   dbCreateExtraTables(reg)
+  dbCreateExpandedJobsViewBE(reg)
   BatchJobs:::checkOrCreateDir(file.path(reg$file.dir, "problems"))
   BatchJobs:::checkOrCreateDir(file.path(reg$file.dir, "algorithms"))
   reg$packages = union(reg$packages, "BatchExperiments")

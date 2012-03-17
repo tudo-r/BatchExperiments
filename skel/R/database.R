@@ -6,23 +6,30 @@ dbCreateJobDefTable.ExperimentRegistry = function(reg) {
                         "prob_id TEXT, prob_pars TEXT, algo_id TEXT, algo_pars TEXT,",
                         "UNIQUE(prob_id, prob_pars, algo_id, algo_pars))"), reg$id)
   BatchJobs:::dbDoQuery(reg, query, flags="rwc")
-  BatchJobs:::dbCreateExpandedJobsView(reg)
 }
-
 
 dbCreateExtraTables = function(reg) {
   message("Initializing prob and algo tables...")
-  query = sprintf("CREATE TABLE %s_prob_def (id TEXT PRIMARY KEY)", reg$id) 
+  query = sprintf("CREATE TABLE %s_prob_def (prob_id TEXT PRIMARY KEY, pseed INTEGER)", reg$id) 
   BatchJobs:::dbDoQuery(reg, query, flags="rwc")
-  query = sprintf("CREATE TABLE %s_algo_def (id TEXT PRIMARY KEY)", reg$id) 
+  query = sprintf("CREATE TABLE %s_algo_def (algo_id TEXT PRIMARY KEY)", reg$id) 
   BatchJobs:::dbDoQuery(reg, query, flags="rwc")
 }
 
+dbCreateExpandedJobsViewBE = function(reg) {
+  query = sprintf(paste("CREATE VIEW %1$s_expanded_jobs AS",
+                        "SELECT * FROM %1$s_job_status AS job_status",
+                        "LEFT JOIN %1$s_job_def AS job_def USING(job_def_id)",
+                        "LEFT JOIN %1$s_prob_def AS prob_def USING (prob_id)"), reg$id)
+  BatchJobs:::dbDoQuery(reg, query, flags="rw")
+}
 
 #' @method dbGetJobs ExperimentRegistry
 #' @S3method dbGetJobs ExperimentRegistry
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
-  query = sprintf("SELECT job_id,prob_id,prob_pars,algo_id,algo_pars,seed,repl FROM %s_expanded_jobs", reg$id)
+  cols = c("job_id", "prob_id", "prob_pars", "algo_id", 
+           "algo_pars", "seed", "prob_seed", "repl")
+  query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
   if (missing(ids)) {
     tab = BatchJobs:::dbDoQuery(reg, query)
   } else {
@@ -38,7 +45,7 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
     prob.pars = unserialize(charToRaw(x$prob_pars))
     algo.pars = unserialize(charToRaw(x$algo_pars))
     makeExperimentJob(id=x$job_id, prob.id=x$prob_id, prob.pars=prob.pars, 
-      algo.id=x$algo_id, algo.pars=algo.pars, seed=x$seed, repl=x$repl)
+      algo.id=x$algo_id, algo.pars=algo.pars, seed=x$seed, repl=x$repl, prob.seed = x$prob_seed)
   })
 }
 
@@ -66,34 +73,35 @@ dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) 
   as.integer(BatchJobs:::dbDoQuery(reg, query)$job_id)
 }
 
-dbAddProblem = function(reg, id) {
-  query = sprintf("INSERT INTO %s_prob_def (id) VALUES ('%s')", reg$id, id)
+dbAddProblem = function(reg, id, seed) {
+  query = sprintf("INSERT INTO %s_prob_def (prob_id, pseed) VALUES ('%s', %s)", 
+                  reg$id, id, ifelse(is.null(seed), "NULL", seed))
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
 dbAddAlgorithm = function(reg, id) {
-  query = sprintf("INSERT INTO %s_algo_def (id) VALUES ('%s')", reg$id, id)
+  query = sprintf("INSERT INTO %s_algo_def (algo_id) VALUES ('%s')", reg$id, id)
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
 dbRemoveProblem = function(reg, id) {
-  query = sprintf("DELETE FROM %s_prob_def WHERE id='%s'", reg$id, id)
+  query = sprintf("DELETE FROM %s_prob_def WHERE prob_id='%s'", reg$id, id)
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
 dbRemoveAlgorithm = function(reg, id) {
-  query = sprintf("DELETE FROM %s_algo_def WHERE id='%s'", reg$id, id)
+  query = sprintf("DELETE FROM %s_algo_def WHERE algo_id='%s'", reg$id, id)
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
 dbGetProblemIds = function(reg) {
-  query = sprintf("SELECT id FROM %s_prob_def", reg$id)
-  BatchJobs:::dbDoQuery(reg, query)$id
+  query = sprintf("SELECT prob_id FROM %s_prob_def", reg$id)
+  BatchJobs:::dbDoQuery(reg, query)$prob_id
 }
 
 dbGetAlgorithmIds = function(reg) {
-  query = sprintf("SELECT id FROM %s_algo_def", reg$id)
-  BatchJobs:::dbDoQuery(reg, query)$id
+  query = sprintf("SELECT algo_id FROM %s_algo_def", reg$id)
+  BatchJobs:::dbDoQuery(reg, query)$algo_id
 }
 
 

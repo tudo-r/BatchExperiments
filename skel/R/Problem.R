@@ -1,5 +1,6 @@
-makeProblem = function(id, static, dynamic, seed) {
-  structure(list(id=id, static=static, dynamic=dynamic, seed=seed), class="Problem")
+makeProblem = function(id, static, dynamic) {
+  structure(list(id=id, static=static, dynamic=dynamic),
+            class="Problem")
 }
 
 #' Add a algorithm to problem and stores it on disk.
@@ -57,11 +58,11 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
   if (!overwrite && id %in% getProblemIds(reg))
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
-  problem = makeProblem(id, static, dynamic, seed)
+  problem = makeProblem(id, static, dynamic)
   fn = getProblemFilePath(reg$file.dir, id)
   message("Writing problem file: ", fn)
   save(file=fn, problem)
-  dbAddProblem(reg, id)
+  dbAddProblem(reg, id, seed)
   invisible(id)
 }
 

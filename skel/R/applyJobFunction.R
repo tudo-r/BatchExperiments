@@ -3,21 +3,17 @@
 applyJobFunction.ExperimentRegistry = function(reg, job) {
   message("Loading problem: ", job$prob.id)
   prob = loadProblem(reg$file.dir, job$prob.id)
+  prob$seed = BatchJobs:::dbDoQuery(reg, sprintf("SELECT prob_seed from %s_job_status WHERE job_id = %i", reg$id, job$id))$prob_seed
   message("Generating problem ", job$prob.id, "...")
   message("Static problem part:")
   message(capture.output(str(prob$static, max.level=1L, list.len=5L)))
   if (!is.null(prob$dynamic)) {
-    if (!is.null(prob$seed)) {
-      cur.seed = get(".Random.seed", envir = .GlobalEnv)
-      seed = prob$seed + job$repl - 1L
-      message("Setting problem seed: ", seed)
-      set.seed(seed)
-    }
+    cur.seed = get(".Random.seed", envir = .GlobalEnv)
+    message("Setting problem seed: ", prob$seed)
+    seed = BatchJobs:::seeder(prob$seed)
     prob.dynamic = try(do.call(prob$dynamic, c(list(static = prob$static), job$prob.pars)))
-    if (!is.null(prob$seed)) {
-      message("Switching back to previous seed.")
-      assign(".Random.seed", cur.seed, envir = .GlobalEnv)
-    }
+    message("Switching back to previous seed.")
+    seed$reset()
   } else {
     prob.dynamic = NULL
   }

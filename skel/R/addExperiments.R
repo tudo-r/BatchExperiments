@@ -172,7 +172,6 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
          "SELECT prob_id, prob_pars, algo_id, algo_pars FROM tmp",
          "WHERE job_def_id IS NULL"), reg$id, con = con)
 
-    message("Writing job definitions ...")
     # update temporary table with new job defs
     mq(c("UPDATE tmp SET job_def_id = (SELECT job_def_id FROM %s_job_def AS jd WHERE",
          "jd.prob_id = tmp.prob_id AND jd.algo_id = tmp.algo_id AND", 
@@ -187,10 +186,29 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
          "cp.job_def_id = js.job_def_id AND cp.repl = js.repl)"),
        reg$id, con = con)
 
+
+    # We could do this w/o bulk insert, but we are not allowed to
+    # use external RNGs
+    # mq("UPDATE %s_job_status SET seed = job_id + %i WHERE job_id > %i", 
+    #    reg$id, reg$seed - 1L, max.job.id, con = con)
+    # # mq(c("UPDATE %1$s_job_status SET prob_seed = (",
+    #      "SELECT COALESCE(expanded.pseed + expanded.repl - 1, ABS(RANDOM() %% 1000000)) AS prob_seed",
+    #      "FROM %1$s_expanded_jobs AS expanded WHERE %1$s_job_status.job_id = expanded.job_id",
+    #      ") WHERE job_id > %2$i"), 
+    #    reg$id, max.job.id, con = con)
+
     message("Setting seeds ...")
-    # set seed for new jobs to job_id + reg$seed - 1
-    mq("UPDATE %s_job_status SET seed = job_id + %i WHERE job_id > %i", 
-       reg$id, reg$seed - 1L, max.job.id, con = con)
+    df = mq("SELECT job_id, pseed, repl FROM %s_expanded_jobs WHERE job_id > %i",
+            reg$id, max.job.id, con = con)
+
+    if(nrow(df) > 0L) {
+      df$seed = BatchJobs:::addIntModulo(df$job_id, reg$seed - 1L)
+      na = is.na(df$pseed)
+      df$prob_seed[na] = BatchJobs:::getRandomSeed(sum(na))
+      df$prob_seed[!na] = BatchJobs:::addIntModulo(df$pseed[!na], df$repl[!na] - 1L)
+      mq("UPDATE %s_job_status SET seed = ?, prob_seed = ? WHERE job_id = ?",
+         reg$id, con = con, bind.data = data.frame(df[c("seed", "prob_seed", "job_id")]))
+    }
   })
 
   if(is.error(ok)) {
@@ -200,10 +218,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
     dbCommit(con)
   }
 
-
   message("Creating directories ...")
   BatchJobs:::createShardedDirs(reg, getJobIds(reg))
-  job.ids = mq("SELECT job_id FROM %s_job_status WHERE job_id > %i", 
-               reg$id, max.job.id, con = con)$job_id
-  invisible(job.ids)
+  invisible(df$job_id)
 }
