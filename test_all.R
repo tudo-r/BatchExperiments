@@ -4,26 +4,18 @@ library(devtools)
 library(testthat)
 library(BatchJobs)
 
+conf = BatchJobs:::getBatchJobsConf()
+conf$cluster.functions = BatchJobs:::makeClusterFunctionsUnitTests()
+conf$mail.start = "none"
+conf$mail.done = "none"
+conf$mail.error = "none"
 
 if (interactive()) {
   load_all("skel")
+  conf$interactive = TRUE
 } else {
-  library(BatchExperiments)  
+  library("BatchExperiments")  
 }
-cf = BatchJobs:::makeClusterFunctionsUnitTests()
-
-setBatchJobsConf(cluster.functions=cf,
-                 mail.start="none", 
-                 mail.done="none", 
-                 mail.error="none", 
-                 mail.from="bernd_bischl@gmx.net",
-                 mail.to="bernd_bischl@gmx.net",
-                 mail.control=list(smtpServer="mail"))
-  
-source("skel/inst/tests/helpers.R")
-
-if (interactive())
-  assign("interactive", TRUE, envir=getBatchJobsConf())
 
 test_dir("skel/inst/tests")
 print(ls(all=TRUE))
