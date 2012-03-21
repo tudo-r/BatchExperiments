@@ -22,4 +22,8 @@ setBatchJobsConf(cluster.functions=cf,
   
 source("skel/inst/tests/helpers.R")
 
+if (interactive())
+  assign("interactive", TRUE, envir=getBatchJobsConf())
+
 test_dir("skel/inst/tests")
+print(ls(all=TRUE))
