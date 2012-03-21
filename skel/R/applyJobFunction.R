@@ -8,7 +8,6 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   message("Static problem part:")
   message(capture.output(str(prob$static, max.level=1L, list.len=5L)))
   if (!is.null(prob$dynamic)) {
-    cur.seed = get(".Random.seed", envir = .GlobalEnv)
     message("Setting problem seed: ", prob$seed)
     seed = BatchJobs:::seeder(prob$seed)
     prob.dynamic = try(do.call(prob$dynamic, c(list(static = prob$static), job$prob.pars)))
