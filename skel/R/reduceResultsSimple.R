@@ -56,7 +56,7 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   }
   
   aggr = data.frame()
-  ids = BatchJobs:::chunk(ids, chunk.size=block.size)
+  ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsSimple")
   bar(0)
 
