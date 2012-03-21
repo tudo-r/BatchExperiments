@@ -35,10 +35,6 @@
 #'   Default is \code{character(0)}.
 #' @return [\code{\link{ExperimentRegistry}}]
 #' @export
-#' @examples \dontrun{
-#'  reg = makeExperimentRegistry("BatchExample", seed=123)
-#'  # for a full example look at ...
-#'  }  
 #' @aliases ExperimentRegistry
 makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, sharding=TRUE,
                                   work.dir, multiple.result.files = FALSE, seed,

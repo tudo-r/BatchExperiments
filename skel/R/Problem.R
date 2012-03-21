@@ -34,16 +34,6 @@ makeProblem = function(id, static, dynamic) {
 #'   Default is \code{FALSE}.
 #' @return [\code{character(1)}]. Invisibly returns the id.
 #' @aliases Problem
-#' @examples \dontrun{
-#' # two simple test functions:
-#' testfun1 = function(x) sum(x^2)
-#' testfun2 = function(x) -exp(-sum(abs(x)))
-#' 
-#' reg = makeExperimentRegistry("BatchExample", seed=123)
-#' # the functions are not parameterized and are not stochastic, so they are declared static:
-#' addProblem(reg, "testfun1", static=testfun1)
-#' addProblem(reg, "testfun2", static=testfun2)
-#' }
 #' @export
 addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=FALSE)  {
   checkArg(reg, "ExperimentRegistry")
