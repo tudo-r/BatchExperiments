@@ -23,8 +23,9 @@
 #'   returned list of the algorithm function?
 #'   Note that your algorithm functions in \code{\link{addAlgorithm}} must 
 #'   return named lists if this is set to \code{TRUE}.
-#'   Default is \code{FALSE} and the result file ends with
-#'   \dQuote{_result.RData}.
+#'   The result file will be named \dQuote{<id>-result-<element name>.RData}
+#'   instead of \dQuote{<id>-result.RData}.
+#'   Default is \code{FALSE}.
 #' @param seed [\code{integer(1)}]\cr
 #'   Start seed for experiments. The first experiment in the registry will use this
 #'   seed, for the subsequent ones the seed is incremented by 1.
