@@ -18,7 +18,7 @@
 #' @param ... [any]\cr
 #'   Additional arguments to \code{fun}.
 #' @param strings.as.factors [\code{logical(1)}]
-#'   Should all character columns in result be conevrted to factors?
+#'   Should all character columns in result be converted to factors?
 #'   Default is \code{default.stringsAsFactors()}.
 #' @param block.size [\code{integer(1)}]
 #'   Results will be fetched in blocks of size \code{block.size}.
