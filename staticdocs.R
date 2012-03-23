@@ -4,4 +4,4 @@ ddir = "html"
 
 if(file.exists(ddir)) 
   unlink(ddir, recursive = TRUE)
-build_package("BatchJobs", base_path = ddir)
+build_package("BatchExperiments", base_path = ddir)
