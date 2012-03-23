@@ -103,5 +103,3 @@ dbGetAlgorithmIds = function(reg) {
   query = sprintf("SELECT algo_id FROM %s_algo_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$algo_id
 }
-
-

@@ -1,3 +1,5 @@
+#' Subset experiment ids from the registry
+#'
 #' Finds ids of experiments that match a query.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.

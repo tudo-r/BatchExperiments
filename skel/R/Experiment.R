@@ -17,8 +17,6 @@ makeReplicatedExperiment = function(id=as.integer(NA), prob.id, prob.pars, algo.
 }
 
 
-
-
 #' @S3method print ExperimentJob
 print.ExperimentJob = function(x, ...) {
   cat("Experiment:", "\n")

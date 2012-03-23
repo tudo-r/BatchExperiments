@@ -1,3 +1,5 @@
+#' Add experiemts to the registry.
+#'
 #' Add experiments for running algorithms on problems
 #' to the registry, so they can be executed later.
 #'
@@ -189,14 +191,6 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
     # We could do this w/o bulk insert, but we are not allowed to
     # use external RNGs
-    # mq("UPDATE %s_job_status SET seed = job_id + %i WHERE job_id > %i", 
-    #    reg$id, reg$seed - 1L, max.job.id, con = con)
-    # # mq(c("UPDATE %1$s_job_status SET prob_seed = (",
-    #      "SELECT COALESCE(expanded.pseed + expanded.repl - 1, ABS(RANDOM() %% 1000000)) AS prob_seed",
-    #      "FROM %1$s_expanded_jobs AS expanded WHERE %1$s_job_status.job_id = expanded.job_id",
-    #      ") WHERE job_id > %2$i"), 
-    #    reg$id, max.job.id, con = con)
-
     message("Setting seeds ...")
     df = mq("SELECT job_id, pseed, repl FROM %s_expanded_jobs WHERE job_id > %i",
             reg$id, max.job.id, con = con)

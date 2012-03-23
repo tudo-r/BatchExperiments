@@ -3,8 +3,9 @@ makeProblem = function(id, static, dynamic) {
             class="Problem")
 }
 
+#' Add a problem to registry.
+#' 
 #' Add a algorithm to problem and stores it on disk.
-#' @title Add a problem to registry.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr

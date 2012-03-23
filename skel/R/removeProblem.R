@@ -1,4 +1,5 @@
 #' Remove problem from registry.
+#'
 #' THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING ALL JOBS AND RESULTS!
 #' @param reg [\code{\link{Registry}}]\cr
 #'   Registry.

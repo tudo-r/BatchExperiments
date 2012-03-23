@@ -2,8 +2,9 @@ makeAlgorithm = function(id, fun) {
   structure(list(id=id, fun=fun), class="Algorithm")
 }
 
+#' Add an algorithm to registry.
+#' 
 #' Add an algorithm to registry and stores it on disk.
-#' @title Add an algorithm to registry.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr

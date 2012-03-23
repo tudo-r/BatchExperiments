@@ -1,9 +1,10 @@
+#' Reduce results into a data.frame.
+#'
 #' Generates a data.frame with one row per job id. The columns are: ids of problem and algorithm 
 #' (prob.id and algo.id), one column per parameter of problem or algorithm (named by the parameter name),
 #' the replication number (named repl) and all columns defined in the function to collect the values.
 #' Note that you cannot rely on the order of the columns.
 #' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.  
-#' @title Reduce results into a data.frame.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr

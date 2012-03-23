@@ -60,6 +60,8 @@ designIterator = function(ex, .design = data.frame()) {
        n.states = counter.max)
 }
 
+#' Create parameter designs for problems and algorithms.
+#'
 #' Create a parameter design for either a problem or an algorithm that you
 #' can use in \code{\link{addExperiments}}.
 #' All parameters in \code{design} and \code{exhaustive} be \dQuote{primitive}
