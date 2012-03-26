@@ -21,7 +21,7 @@
 #' @param multiple.result.files [\code{logical(1)}]\cr
 #'   Should a result file be generated for every list element of the
 #'   returned list of the algorithm function?
-#'   Note that your algorithm functions in \code{\link{addAlgorithm}} must 
+#'   Note that your algorithm functions in \code{\link{addAlgorithm}} must
 #'   return named lists if this is set to \code{TRUE}.
 #'   The result file will be named \dQuote{<id>-result-<element name>.RData}
 #'   instead of \dQuote{<id>-result.RData}.
@@ -39,15 +39,15 @@
 makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, sharding=TRUE,
                                   work.dir, multiple.result.files = FALSE, seed,
                                   packages=character(0L)) {
-  reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding, 
+  reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding,
                                          work.dir, multiple.result.files, seed, union(packages, c("BatchJobs", "BatchExperiments")))
   class(reg) = c("ExperimentRegistry", "Registry")
   BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER, prob_seed INTEGER", constraints=", UNIQUE(job_def_id, repl)")
   BatchJobs:::dbCreateJobDefTable(reg)
   dbCreateExtraTables(reg)
   dbCreateExpandedJobsViewBE(reg)
-  BatchJobs:::checkOrCreateDir(file.path(reg$file.dir, "problems"))
-  BatchJobs:::checkOrCreateDir(file.path(reg$file.dir, "algorithms"))
+  BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create=TRUE)
+  BatchJobs:::checkDir(file.path(reg$file.dir, "algorithms"), create=TRUE)
   BatchJobs:::saveRegistry(reg)
   return(reg)
 }
