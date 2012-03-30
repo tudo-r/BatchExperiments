@@ -27,7 +27,7 @@
 addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
   checkArg(reg, cl = "ExperimentRegistry")
   repls = convertIntegers(repls)
-  checkArg(repls, "integer", len=1, lower=1L, na.ok=FALSE)
+  checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
   skip.defined = as.logical(skip.defined)
   checkArg(skip.defined, "logical", na.ok=FALSE)
   
@@ -44,7 +44,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
       stop("'prob.designs' is empty!")
     checkListElementClass(prob.designs, "Design")
   } else {
-    stop("Format of prob.designs not supported. Must be a character, a design or list of designs")
+    stop("Format of prob.designs not supported. Must be a string, a design or list of designs")
   }
   ids = unique(extractSubList(prob.designs, "id"))
   found = ids %in% getProblemIds(reg)
@@ -65,7 +65,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
       stop("'algo.designs' is empty!")
     checkListElementClass(algo.designs, "Design")
   } else {
-    stop("Format of algo.designs not supported. Must be a character, a design or list of designs")
+    stop("Format of algo.designs not supported. Must be a string, a design or list of designs")
   }
   ids = unique(extractSubList(algo.designs, "id"))
   found = ids %in% getAlgorithmIds(reg)

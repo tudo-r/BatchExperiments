@@ -25,7 +25,7 @@ test_that("addExperiments", {
   removeExperiments(reg, id)
   expect_equal(findExperiments(reg), integer(0))
   expect_equal(findMissingResults(reg), integer(0))
-  expect_error(loadResult(reg, id), "Id is not present")
+  expect_error(loadResult(reg, id), "Ids not present")
   expect_output({
     d = showStatus(reg)
   }, "")

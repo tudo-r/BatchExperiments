@@ -83,7 +83,7 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
   checkArg(design, "data.frame")
   checkArg(exhaustive, "list")
   if (!isProperlyNamed(exhaustive))
-    stop("exhaustive must be a properly named list!")
+    stop("Argument exhaustive must be a properly named list!")
   if (!all(sapply(exhaustive, is.atomic)))
     stop("All elements of exhaustive must be an atomic vector type!")
   if (! all(sapply(exhaustive, length) > 0L))

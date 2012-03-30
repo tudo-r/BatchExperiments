@@ -28,23 +28,26 @@
 #' @export
 reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ..., 
   strings.as.factors=default.stringsAsFactors(), block.size=100L) {
-  
   checkArg(reg, cl = "ExperimentRegistry")
   checkArg(fun, formals=c("job", "res"))
+  
+  done = BatchJobs:::dbGetDone(reg)
+  if (length(done) == 0L)
+    stop("No jobs finished (yet)!")
+
   if (missing(ids)) {
-    ids = findDone(reg)
+    ids = done
   } else {
     ids = convertIntegers(ids)
-    checkArg(ids, "integer", na.ok=FALSE)
-    ids = intersect(ids, findDone(reg))
+    checkArg(ids, "integer", na.ok=FALSE, min.len=1L)
     BatchJobs:::checkIds(reg, ids)
+    if (! all(ids %in% done))
+      stopf("No results available for experiments with ids: %s", collapse(ids[! (ids %in% done)]))
   }
   block.size = convertInteger(block.size)
   checkArg(block.size, "integer", na.ok=FALSE, len=1L)
 
   n = length(ids)
-  if (n == 0L)
-    stop("No jobs with corresponding ids finished (yet).")
   messagef("Reducing %i results...", n)
   
  getRow = function(j, reg, part, ...) {
@@ -59,7 +62,7 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   aggr = data.frame()
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsSimple")
-  bar(0)
+  bar(0L)
 
   for(i in seq_along(ids)) {
     jobs = getJobs(reg, ids[[i]], check.ids=FALSE)
@@ -67,8 +70,6 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
     aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
     bar(i)
   }
-  # FIXME is this bugged or why do we need this here?
-  # remove FIXME with comment!
   if (strings.as.factors) {
     inds = which(sapply(aggr, is.character))
     for (j in inds)
