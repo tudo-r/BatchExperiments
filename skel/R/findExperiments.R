@@ -37,5 +37,5 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
   if (!missing(algo.pars)) {
     jobs = Filter(function(j) eval(algo.pars, j$algo.pars), jobs)
   }
-  return(extractSubList(jobs, "id"))
+  return(extractSubList(jobs, "id", element.value=integer(1)))
 }

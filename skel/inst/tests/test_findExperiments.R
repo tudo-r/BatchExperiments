@@ -34,5 +34,7 @@ test_that("findExperiments", {
   expect_equal(i, getJobIds(r)[c(4,6,8)])
   i = findExperiments(r, prob.pars=quote(foo>2), algo.pattern="B", algo.pars=quote(bar=="x"))
   expect_equal(i, getJobIds(r)[8])
+  i = findExperiments(r, prob.pars=quote(foo>100))
+  expect_equal(i, integer(0))
 })
   
