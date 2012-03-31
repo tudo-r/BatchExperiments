@@ -18,6 +18,12 @@ test_that("findExperiments", {
   expect_equal(i, integer(0))
   i = findExperiments(r, repls=1)
   expect_equal(i, getJobIds(r)[seq(1,8,2)])
+  i = findExperiments(r, prob.pattern="o", match.substring=FALSE)
+  expect_equal(i, integer(0))
+  i = findExperiments(r, prob.pattern="o", match.substring=TRUE)
+  expect_equal(i, getJobIds(r)[1:8])
+  i = findExperiments(r, prob.pattern="wo", match.substring=TRUE)
+  expect_equal(i, getJobIds(r)[5:8])
   
   r = makeTestRegistry()
   p1 = addProblem(r, "one", 1)
