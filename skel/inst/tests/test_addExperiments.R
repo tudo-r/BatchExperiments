@@ -21,7 +21,6 @@ test_that("addExperiments", {
   expect_output({
     d = showStatus(reg)
   }, "Status for jobs: 1")
-  expect_equal(nrow(d), 1)
   removeExperiments(reg, id)
   expect_equal(findExperiments(reg), integer(0))
   expect_equal(findMissingResults(reg), integer(0))
@@ -29,7 +28,7 @@ test_that("addExperiments", {
   expect_output({
     d = showStatus(reg)
   }, "")
-  expect_equal(nrow(d), 0)
+  expect_equal(d$n, 0)
   
   # 2 prob 1 algo
   reg = makeTestRegistry()
