@@ -22,15 +22,44 @@
 #'   If set to \code{TRUE}, already defined experiments get skipped. Otherwise an error is thrown.\cr
 #'   Default is FALSE.
 #' @return Invisibly returns vector of ids of added experiments.
-#' @export
+#' @examples
+#' # define two simple test functions
+#' testfun1 = function(x) sum(x^2)
+#' testfun2 = function(x) -exp(-sum(abs(x)))
+#'
+#' # Define ExperimentRegistry:
+#' reg = makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile(""))
+#'
+#' # Add the testfunctions to the registry:
+#' addProblem(reg, "testfun1", static=testfun1)
+#' addProblem(reg, "testfun2", static=testfun2)
+#'
+#' # Use SimulatedAnnealing on the test functions:
+#' addAlgorithm(reg, "sann", fun=function(static, dynamic) {
+#'   upp = rep(10, 2)
+#'   low = -upp
+#'   start = sample(c(-10, 10), 2)
+#'   res = optim(start, fn=static, lower=low, upper=upp, method="SANN")
+#'   res = res[c("par", "value", "counts", "convergence")]
+#'   res$start = start
+#'   return(res)
+#' })
+#'
+#' # add experiments and submit
+#' addExperiments(reg, repls=10)
+#' submitJobs(reg)
+#'
+#' # Gather informations from the experiments, in this case function value and if the algorithm convergenced:
+#' reduceResultsSimple(reg, fun=function(job, res) res[c("value", "convergence")])
 #' @aliases Experiment
+#' @export
 addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
   checkArg(reg, cl = "ExperimentRegistry")
   repls = convertIntegers(repls)
   checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
   skip.defined = as.logical(skip.defined)
   checkArg(skip.defined, "logical", na.ok=FALSE)
-  
+
   if (missing(prob.designs))
     prob.designs = getProblemIds(reg)
 
@@ -83,11 +112,11 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
       return(dbGetQuery(con, q))
     return(dbGetPreparedQuery(con, q, bind.data = bind.data))
   }
-  
+
   seripars = function(x) {
     rawToChar(serialize(x, connection=NULL, ascii=TRUE))
   }
- 
+
   writeJobDefs = function(job.defs, n) {
     messagef("Creating %i job definitions", n)
     data = as.data.frame(do.call(rbind, lapply(head(job.defs, n), unlist)))
@@ -108,14 +137,14 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
   # write auxiliary temporary table with replication numbers
   mq("CREATE TEMP TABLE repls(repl INTEGER)", con = con)
-  mq("INSERT INTO repls(repl) VALUES(?)", 
+  mq("INSERT INTO repls(repl) VALUES(?)",
      con = con, bind.data = data.frame(repl=seq_len(repls)))
 
-  # create temporary view on cross product of repls and job_def_id 
+  # create temporary view on cross product of repls and job_def_id
   mq(c("CREATE TEMP VIEW cp AS SELECT repls.repl, tmp.job_def_id FROM tmp",
      "CROSS JOIN repls"), con = con)
 
-  
+
   # iterate to generate job definitions
   # write to temporary table every x definitions
   at.once = 5000L
@@ -131,7 +160,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
           algo.pars = seripars(ad$designIter$nextElem())
 
           n = n + 1L
-          job.defs[[n]] = list(prob_id = pd$id, prob_pars = prob.pars, 
+          job.defs[[n]] = list(prob_id = pd$id, prob_pars = prob.pars,
                                algo_id = ad$id, algo_pars = algo.pars)
           if(n == at.once) {
             writeJobDefs(job.defs, n)
@@ -149,11 +178,11 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
   # query job_id to keep track of new ids
   max.job.id = mq("SELECT COALESCE(MAX(job_id), 0) AS x FROM %s_job_status", reg$id, con = con)$x
-  
+
   # match for known job_def_id
   mq(c("UPDATE tmp SET job_def_id = (SELECT job_def_id FROM %s_job_def AS jd",
-       "WHERE jd.prob_id = tmp.prob_id AND jd.algo_id = tmp.algo_id AND", 
-       "jd.prob_pars = tmp.prob_pars AND jd.algo_pars = tmp.algo_pars)"), 
+       "WHERE jd.prob_id = tmp.prob_id AND jd.algo_id = tmp.algo_id AND",
+       "jd.prob_pars = tmp.prob_pars AND jd.algo_pars = tmp.algo_pars)"),
      reg$id, con = con)
 
   if(!skip.defined) {
@@ -176,7 +205,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
     # update temporary table with new job defs
     mq(c("UPDATE tmp SET job_def_id = (SELECT job_def_id FROM %s_job_def AS jd WHERE",
-         "jd.prob_id = tmp.prob_id AND jd.algo_id = tmp.algo_id AND", 
+         "jd.prob_id = tmp.prob_id AND jd.algo_id = tmp.algo_id AND",
          "jd.prob_pars = tmp.prob_pars AND jd.algo_pars = tmp.algo_pars)",
          "WHERE tmp.job_def_id IS NULL"), reg$id, con = con)
 
