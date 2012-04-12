@@ -4,7 +4,7 @@ makeProblem = function(id, static, dynamic) {
 }
 
 #' Add a problem to registry.
-#' 
+#'
 #' Add a algorithm to problem and stores it on disk.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
@@ -38,15 +38,21 @@ makeProblem = function(id, static, dynamic) {
 #' @export
 addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=FALSE)  {
   checkArg(reg, "ExperimentRegistry")
-  checkArg(id, cl = "character", len = 1L, na.ok = FALSE)
+  checkArg(id, cl = "character", len=1L, na.ok = FALSE)
   BatchJobs:::checkIdValid(id)
+  if (!is.null(seed)) {
+    seed = convertInteger(seed)
+    checkArg(seed, "integer", len=1L, na.ok=FALSE)
+  }
+  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
+
   if (is.null(static) && is.null(dynamic))
     stop("One of args 'static' or 'dynamic' must not be NULL!")
   if (!is.null(dynamic))
     checkArg(dynamic, formals = "static")
-  if (id %in% getAlgorithmIds(reg))
+  if (id %in% dbGetAlgorithmIds(reg))
     stopf("Algorithm with same id as your problem already exists: %s", id)
-  if (!overwrite && id %in% getProblemIds(reg))
+  if (!overwrite && id %in% dbGetProblemIds(reg))
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
   problem = makeProblem(id, static, dynamic)
@@ -67,5 +73,5 @@ loadProblem = function(file.dir, id) {
   fn = getProblemFilePath(file.dir, id)
   message("Loading problem file: ", fn)
   load(file=fn, envir=ee)
-  return(ee$problem)
+  ee$problem
 }

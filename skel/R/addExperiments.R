@@ -60,54 +60,53 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   skip.defined = as.logical(skip.defined)
   checkArg(skip.defined, "logical", na.ok=FALSE)
 
-  if (missing(prob.designs))
-    prob.designs = getProblemIds(reg)
-
   # check prob.designs
-  if (is.character(prob.designs)) {
-    prob.designs = lapply(prob.designs, function(id) makeDesign(id))
-  } else if (is(prob.designs, "Design")) {
-    prob.designs = list(prob.designs)
-  } else if (is.list(prob.designs)) {
-    if (length(prob.designs) == 0L)
-      stop("'prob.designs' is empty!")
-    checkListElementClass(prob.designs, "Design")
+  if (missing(prob.designs)) {
+    prob.designs = lapply(dbGetProblemIds(reg), makeDesign)
   } else {
-    stop("Format of prob.designs not supported. Must be a string, a design or list of designs")
+    if (is.character(prob.designs)) {
+      prob.designs = lapply(prob.designs, makeDesign)
+    } else if (is(prob.designs, "Design")) {
+      prob.designs = list(prob.designs)
+    } else if (is.list(prob.designs)) {
+      if (length(prob.designs) == 0L)
+        stop("'prob.designs' is empty!")
+      checkListElementClass(prob.designs, "Design")
+    } else {
+      stop("Format of prob.designs not supported. Must be a string, a design or list of designs")
+    }
+    ids = unique(extractSubList(prob.designs, "id"))
+    found = ids %in% dbGetProblemIds(reg)
+    if (! all(found))
+      stopf("%i problems have not been added to registry for designs: %s",
+            sum(!found), collapse(ids[!found]))
   }
-  ids = unique(extractSubList(prob.designs, "id"))
-  found = ids %in% getProblemIds(reg)
-  if (! all(found))
-    stopf("%i problems have not been added to registry for designs: %s",
-          sum(!found), collapse(ids[!found]))
-
 
   # check algo.designs
-  if (missing(algo.designs))
-    algo.designs = getAlgorithmIds(reg)
-  if (is.character(algo.designs)) {
-    algo.designs = lapply(algo.designs, function(id) makeDesign(id))
-  } else if (is(algo.designs, "Design")) {
-    algo.designs = list(algo.designs)
-  } else if (is.list(algo.designs)) {
-    if (length(algo.designs) == 0L)
-      stop("'algo.designs' is empty!")
-    checkListElementClass(algo.designs, "Design")
+  if (missing(algo.designs)) {
+    algo.designs = lapply(dbGetAlgorithmIds(reg), makeDesign)
   } else {
-    stop("Format of algo.designs not supported. Must be a string, a design or list of designs")
+    if (is.character(algo.designs)) {
+      algo.designs = lapply(algo.designs, makeDesign)
+    } else if (is(algo.designs, "Design")) {
+      algo.designs = list(algo.designs)
+    } else if (is.list(algo.designs)) {
+      if (length(algo.designs) == 0L)
+        stop("'algo.designs' is empty!")
+      checkListElementClass(algo.designs, "Design")
+    } else {
+      stop("Format of algo.designs not supported. Must be a string, a design or list of designs")
+    }
+    ids = unique(extractSubList(algo.designs, "id"))
+    found = ids %in% dbGetAlgorithmIds(reg)
+    if (! all(found))
+      stopf("%i algorithms have not been added to registry for designs: %s",
+            sum(!found), collapse(ids[!found]))
   }
-  ids = unique(extractSubList(algo.designs, "id"))
-  found = ids %in% getAlgorithmIds(reg)
-  if (! all(found))
-    stopf("%i algorithms have not been added to registry for designs: %s",
-          sum(!found), collapse(ids[!found]))
-
 
   # internal helper functions
-  mq = function(lines, ..., con=NULL, bind.data=NULL) {
+  mq = function(lines, ..., con, bind.data=NULL) {
     q = sprintf(collapse(lines, sep=" "), ...)
-    if(is.null(con))
-      return(q)
     if(is.null(bind.data))
       return(dbGetQuery(con, q))
     return(dbGetPreparedQuery(con, q, bind.data = bind.data))
@@ -123,7 +122,6 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
     mq("INSERT INTO tmp(prob_id, prob_pars, algo_id, algo_pars) VALUES(?, ?, ?, ?)",
        con = con, bind.data = data)
   }
-
 
   # establish persistent connection and create temporary table to fill
   # with job definitions
@@ -142,7 +140,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
   # create temporary view on cross product of repls and job_def_id
   mq(c("CREATE TEMP VIEW cp AS SELECT repls.repl, tmp.job_def_id FROM tmp",
-     "CROSS JOIN repls"), con = con)
+       "CROSS JOIN repls"), con = con)
 
 
   # iterate to generate job definitions
@@ -185,6 +183,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
        "jd.prob_pars = tmp.prob_pars AND jd.algo_pars = tmp.algo_pars)"),
      reg$id, con = con)
 
+  # test whether we would overwrite existing experiments
   if(!skip.defined) {
     n.dup = mq("SELECT COUNT(job_def_id) AS n FROM tmp", con = con)$n
     if(n.dup > 0L) {
@@ -195,10 +194,11 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
     }
   }
 
+  # we start the transaction here, everything above is temporary
   dbBeginTransaction(con)
   ok = try({
-    message("Writing job definitions ...")
     # insert new job defs
+    message("Writing job definitions ...")
     mq(c("INSERT INTO %s_job_def(prob_id, prob_pars, algo_id, algo_pars)",
          "SELECT prob_id, prob_pars, algo_id, algo_pars FROM tmp",
          "WHERE job_def_id IS NULL"), reg$id, con = con)
@@ -209,8 +209,8 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
          "jd.prob_pars = tmp.prob_pars AND jd.algo_pars = tmp.algo_pars)",
          "WHERE tmp.job_def_id IS NULL"), reg$id, con = con)
 
-    message("Writing job status information ...")
     # insert into job status table
+    message("Writing job status information ...")
     mq(c("INSERT INTO %1$s_job_status(job_def_id, repl)",
          "SELECT cp.job_def_id, cp.repl FROM cp WHERE NOT EXISTS",
          "(SELECT * FROM %1$s_job_status AS js WHERE",
@@ -237,9 +237,9 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   if(is.error(ok)) {
     dbRollback(con)
     stopf("Error inserting new experiemts: %s", as.character(ok))
-  } else {
-    dbCommit(con)
   }
+
+  dbCommit(con)
 
   message("Creating directories ...")
   BatchJobs:::createShardedDirs(reg, getJobIds(reg))

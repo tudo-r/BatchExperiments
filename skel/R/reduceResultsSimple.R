@@ -1,10 +1,10 @@
 #' Reduce results into a data.frame.
 #'
-#' Generates a data.frame with one row per job id. The columns are: ids of problem and algorithm 
+#' Generates a data.frame with one row per job id. The columns are: ids of problem and algorithm
 #' (prob.id and algo.id), one column per parameter of problem or algorithm (named by the parameter name),
 #' the replication number (named repl) and all columns defined in the function to collect the values.
 #' Note that you cannot rely on the order of the columns.
-#' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.  
+#' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr
@@ -26,11 +26,11 @@
 #'   Default is 100.
 #' @return [\code{data.frame}] Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @export
-reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ..., 
+reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   strings.as.factors=default.stringsAsFactors(), block.size=100L) {
   checkArg(reg, cl = "ExperimentRegistry")
   checkArg(fun, formals=c("job", "res"))
-  
+
   done = BatchJobs:::dbGetDone(reg)
   if (length(done) == 0L)
     stop("No jobs finished (yet)!")
@@ -49,7 +49,7 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
 
   n = length(ids)
   messagef("Reducing %i results...", n)
-  
+
  getRow = function(j, reg, part, ...) {
     c(list(prob = j$prob.id),
       j$prob.pars,
@@ -58,7 +58,7 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
       list(repl = j$repl),
       fun(j, loadResult(reg, j$id, part, check.id=FALSE), ...))
   }
-  
+
   aggr = data.frame()
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsSimple")
@@ -70,8 +70,9 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
     aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
     bar(i)
   }
+
   if (strings.as.factors) {
-    inds = which(sapply(aggr, is.character))
+    inds = which(vapply(aggr, is.character, logical(1L)))
     for (j in inds)
       aggr[,j] = as.factor(aggr[,j])
   }

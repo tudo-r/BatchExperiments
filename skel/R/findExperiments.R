@@ -6,12 +6,12 @@
 #' @param prob.pattern [\code{character(1)}]\cr
 #'   If not missing, all problem ids that match this string are selected.
 #' @param prob.pars [quoted R expression]\cr
-#'   If not missing, all problems whose selected parameters match 
+#'   If not missing, all problems whose selected parameters match
 #'   the given expression are selected.
 #' @param algo.pattern [\code{character(1)}]\cr
 #'   If not missing, all algorithm ids that match this string are selected.
 #' @param algo.pars [quoted R expression]\cr
-#'   If not missing, all algorithms whose selected parameters match 
+#'   If not missing, all algorithms whose selected parameters match
 #'   the given expression are selected.
 #' @param repls [\code{integer}]\cr
 #'   If not missing, restrict to jobs with given replication numbers.
@@ -22,25 +22,30 @@
 #' @return [\code{integer}]. Ids for experiments which match the query.
 #' @export
 findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars, repls,
-  match.substring=TRUE) {
-  
+                           match.substring=TRUE) {
   checkArg(reg, cl="ExperimentRegistry")
+  if (!missing(prob.pattern))
+    checkArg(prob.pattern, "character", len=1L, na.ok=FALSE)
+  if (!missing(algo.pattern))
+    checkArg(algo.pattern, "character", len=1L, na.ok=FALSE)
   if (!missing(repls)) {
     repls = convertIntegers(repls)
     checkArg(repls, "integer", lower=1L, na.ok=TRUE)
   }
-  if (getJobNr(reg) == 0L)
-    return(integer(0L))
 
   ids = dbFindExperiments(reg, prob.pattern, algo.pattern, repls, like=match.substring)
-  if (missing(prob.pars) && missing(algo.pars))
+
+  # skip possible expensive furhter calculations if possible
+  if (length(ids) == 0L || (missing(prob.pars) && missing(algo.pars)))
     return(ids)
 
   jobs = getJobs(reg, ids, check.ids=FALSE)
   if (!missing(prob.pars)) {
+    #FIXME checkArg?
     jobs = Filter(function(j) eval(prob.pars, j$prob.pars), jobs)
   }
   if (!missing(algo.pars)) {
+    #FIXME checkArg?
     jobs = Filter(function(j) eval(algo.pars, j$algo.pars), jobs)
   }
   return(extractSubList(jobs, "id", element.value=integer(1L)))

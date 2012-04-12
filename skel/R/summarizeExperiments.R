@@ -11,14 +11,14 @@
 #' @export
 summarizeExperiments = function(reg, ids, details=FALSE) {
   checkArg(reg, "ExperimentRegistry")
-  if (missing(ids))
-    ids = getJobIds(reg)
-  else
+  if (! missing(ids)) {
+    ids = convertIntegers(ids)
     BatchJobs:::checkIds(reg, ids)
-  if(length(ids) == 0L)
-    stopf("No experiments in registry or none matching id found")
-  
+  }
+
   tab = BatchJobs:::dbGetExpandedJobsTable(reg, ids, c("job_id", "prob_id", "algo_id"))
+  if(nrow(tab) == 0L)
+    stopf("No experiments in registry or none matching id found")
   print(table(Problem = tab$prob_id, Algorithm = tab$algo_id))
 
   if (details) {
@@ -37,6 +37,5 @@ summarizeExperiments = function(reg, ids, details=FALSE) {
 
     })
   }
-
   invisible(NULL)
 }

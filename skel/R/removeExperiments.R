@@ -1,5 +1,5 @@
 #' Remove jobs from registry.
-#' 
+#'
 #' THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING RESULTS!
 #' @param reg [\code{\link{Registry}}]\cr
 #'   Registry.

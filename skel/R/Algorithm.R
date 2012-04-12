@@ -3,7 +3,7 @@ makeAlgorithm = function(id, fun) {
 }
 
 #' Add an algorithm to registry.
-#' 
+#'
 #' Add an algorithm to registry and stores it on disk.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
@@ -22,12 +22,14 @@ makeAlgorithm = function(id, fun) {
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
   checkArg(reg, "ExperimentRegistry")
-  checkArg(id, cl = "character", len = 1L, na.ok = FALSE)
+  checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
   checkArg(fun, formals=c("static", "dynamic"))
-  if (id %in% getProblemIds(reg))
+  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
+
+  if (id %in% dbGetProblemIds(reg))
     stopf("Problem with same id as your algorithm already exists: %s", id)
-  if (!overwrite && id %in% getAlgorithmIds(reg))
+  if (!overwrite && id %in% dbGetAlgorithmIds(reg))
     stopf("Algorithm with same id already exists and overwrite=FALSE: %s", id)
 
   algorithm = makeAlgorithm(id, fun)

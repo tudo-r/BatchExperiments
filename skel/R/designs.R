@@ -7,7 +7,7 @@
 #   All elements of the list must be primitive vectors like numeric, integer, factor, etc.
 # @param .design [\code{data.frame}]\cr
 #   The design. Rows define one 'point'.
-# @return List of funs. nextElem returns a named list. 
+# @return List of funs. nextElem returns a named list.
 designIterator = function(ex, .design = data.frame()) {
   nextState = function(state, pos = 1L) {
     if (state[pos] < state.last[pos])
@@ -70,10 +70,10 @@ designIterator = function(ex, .design = data.frame()) {
 #'   Id of algorithm or problem.
 #' @param design [\code{data.frame}]\cr
 #'   The design. Must have named columns corresponding to parameters.
-#'   Default is empty data.frame.
+#'   Default is an empty \code{data.frame()}.
 #' @param exhaustive [\code{list}]\cr
 #'   Named list of parameters settings which should be exhaustively tried.
-#'   Names must correspond to parameters. 
+#'   Names must correspond to parameters.
 #'   Default is empty list.
 #' @return [\code{\link{Design}}].
 #' @export
@@ -84,16 +84,16 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
   checkArg(exhaustive, "list")
   if (!isProperlyNamed(exhaustive))
     stop("Argument exhaustive must be a properly named list!")
-  if (!all(sapply(exhaustive, is.atomic)))
+  if (!all(vapply(exhaustive, is.atomic, logical(1L))))
     stop("All elements of exhaustive must be an atomic vector type!")
-  if (! all(sapply(exhaustive, length) > 0L))
+  if (! all(vapply(exhaustive, length, integer(1L)) >= 1L))
     stop("All elements of exhaustive must have at least have length 1!")
-  if (any(names(design) %in% names(exhaustive))) {
+  if (anyDuplicated(c(names(design), names(exhaustive))) > 0L)
     stop("Duplicated design parameters found!")
-  }
+
   if (ncol(design) > 0L) {
-    if (!all(sapply(design, function(x) is.atomic(x) | is.factor(x))))
-      stop("All columns of design must be an atomic vector type!")
+    if (!all(vapply(design, function(x) is.atomic(x) | is.factor(x), logical(1L))))
+      stop("All columns of design must be either of atomic type or a factor!")
   }
   structure(list(id = id, designIter=designIterator(exhaustive, .design = design)),
     class = "Design")

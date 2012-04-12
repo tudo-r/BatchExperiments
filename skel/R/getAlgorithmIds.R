@@ -4,5 +4,6 @@
 #' @return [\code{character}].
 #' @export
 getAlgorithmIds = function(reg) {
+  checkArg(reg, "ExperimentRegistry")
   dbGetAlgorithmIds(reg)
 }

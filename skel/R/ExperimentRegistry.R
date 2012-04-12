@@ -56,8 +56,8 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
 #' @S3method print ExperimentRegistry
 print.ExperimentRegistry = function(x, ...) {
   cat("Experiment registry:",  x$id, "\n")
-  cat("  Number of problems:", length(getProblemIds(x)), "\n")
-  cat("  Number of algorithms:", length(getAlgorithmIds(x)), "\n")
+  cat("  Number of problems:", length(dbGetProblemIds(x)), "\n")
+  cat("  Number of algorithms:", length(dbGetAlgorithmIds(x)), "\n")
   cat("  Number of jobs:", getJobNr(x), "\n")
   cat("  Files dir:", x$file.dir, "\n")
   cat("  Work dir:", x$work.dir, "\n")
@@ -65,4 +65,3 @@ print.ExperimentRegistry = function(x, ...) {
   cat("  Seed:", x$seed, "\n")
   cat("  Required packages:", paste(names(x$packages), collapse=", "), "\n")
 }
-
