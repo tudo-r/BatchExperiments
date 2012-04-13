@@ -14,16 +14,16 @@ removeProblem = function(reg, id) {
   if (!(id %in% dbGetProblemIds(reg)))
     stop("Problem not present in registry: ", id)
 
+  message("Removing Experiments from database")
+  ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
+  removeExperiments(reg, ids=ids)
+  message("Removing Problem from database")
+  dbRemoveProblem(reg, id)
 
   fn = getProblemFilePath(reg$file.dir, id)
   message("Deleting problem file: ", fn)
   ok = file.remove(fn)
   if (!ok)
-    stop("Could not remove problem file: ", fn)
-  ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids)
-  #FIXME it might be better to first clean the db and then the files
-  #FIMXE orphaned files do no harm, but jobs with no result files do!
-  dbRemoveProblem(reg, id)
+    warningf("Could not remove problem file: %s", fn)
   invisible(NULL)
 }

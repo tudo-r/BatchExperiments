@@ -32,13 +32,12 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
   if (missing(ids)) {
     tab = BatchJobs:::dbDoQuery(reg, query)
   } else {
-    query = sprintf("%s WHERE job_id IN ('%s')", query, collapse(ids, sep="','"))
+    query = sprintf("%s WHERE job_id IN (%s)", query, collapse(ids))
     tab = BatchJobs:::dbDoQuery(reg, query)
-    #FIXME is this safe to do just here? what about an empty db?
-    if(nrow(tab) == 0L)
-      stopf("No jobs found for ids: %s", collapse(ids))
     tab = tab[match(ids, tab$job_id),, drop=FALSE]
   }
+  if(nrow(tab) == 0L)
+    stopf("No jobs found for ids: %s", collapse(ids))
 
   lapply(seq_len(nrow(tab)), function(i) {
     x = tab[i,]

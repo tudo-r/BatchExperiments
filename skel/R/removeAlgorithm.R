@@ -14,15 +14,16 @@ removeAlgorithm = function(reg, id) {
   if (!(id %in% dbGetAlgorithmIds(reg)))
     stop("Algorithm not present in registry: ", id)
 
+  message("Removing Experiments from database")
+  ids = dbFindExperiments(reg, algo.pattern=id, like=FALSE)
+  removeExperiments(reg, ids=ids)
+  message("Removing Algorithm from database")
+  dbRemoveAlgorithm(reg, id)
+  
   fn = getAlgorithmFilePath(reg$file.dir, id)
   message("Deleting algorithm file: ", fn)
   ok = file.remove(fn)
   if (!ok)
-    stop("Could not remove algorithm file: ", fn)
-  ids = dbFindExperiments(reg, algo.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids)
-  #FIXME it might be better to first clean the db and then the files
-  #FIMXE orphaned files do no harm, but jobs with no result files do!
-  dbRemoveAlgorithm(reg, id)
+    warningf("Could not remove algorithm file: %s", fn)
   invisible(NULL)
 }
