@@ -242,6 +242,6 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   dbCommit(con)
 
   message("Creating directories ...")
-  BatchJobs:::createShardedDirs(reg, getJobIds(reg))
+  BatchJobs:::createShardedDirs(reg, df$job_id)
   invisible(df$job_id)
 }
