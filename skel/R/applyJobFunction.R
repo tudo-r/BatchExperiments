@@ -11,7 +11,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
 
   if (!is.null(prob$dynamic)) {
     message("Setting problem seed: ", prob$seed)
-    seed = BatchJobs:::seeder(prob$seed)
+    seed = BatchJobs:::seeder(reg, prob$seed)
     prob.dynamic = try(do.call(prob$dynamic, c(list(static = prob$static), job$prob.pars)))
     message("Switching back to previous seed.")
     seed$reset()
