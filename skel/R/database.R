@@ -29,13 +29,7 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
   cols = c("job_id", "prob_id", "prob_pars", "algo_id",
            "algo_pars", "seed", "prob_seed", "repl")
   query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
-  if (missing(ids)) {
-    tab = BatchJobs:::dbDoQuery(reg, query)
-  } else {
-    query = sprintf("%s WHERE job_id IN (%s)", query, collapse(ids))
-    tab = BatchJobs:::dbDoQuery(reg, query)
-    tab = tab[match(ids, tab$job_id),, drop=FALSE]
-  }
+  BatchJobs:::dbSelect(reg, query, ids)
   if(nrow(tab) == 0L)
     stopf("No jobs found for ids: %s", collapse(ids))
 
