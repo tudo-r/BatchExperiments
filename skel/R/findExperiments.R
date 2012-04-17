@@ -41,11 +41,13 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
 
   jobs = getJobs(reg, ids, check.ids=FALSE)
   if (!missing(prob.pars)) {
-    #FIXME checkArg?
+    if (!is.call(prob.pars) && !is.expression(prob.pars))
+      stop("prop.pars must be a ?call or ?expression")
     jobs = Filter(function(j) eval(prob.pars, j$prob.pars), jobs)
   }
   if (!missing(algo.pars)) {
-    #FIXME checkArg?
+    if (!is.call(algo.pars) && !is.expression(algo.pars))
+      stop("algo.pars must be a ?call or ?expression")
     jobs = Filter(function(j) eval(algo.pars, j$algo.pars), jobs)
   }
   return(extractSubList(jobs, "id", element.value=integer(1L)))
