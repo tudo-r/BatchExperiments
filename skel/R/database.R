@@ -1,6 +1,6 @@
 #' @S3method dbCreateJobDefTable ExperimentRegistry
 dbCreateJobDefTable.ExperimentRegistry = function(reg) {
-  message("Initializing experiment definition table...")
+  #message("Initializing experiment definition table...")
   query = sprintf(paste("CREATE TABLE %s_job_def (job_def_id INTEGER PRIMARY KEY,",
                         "prob_id TEXT, prob_pars TEXT, algo_id TEXT, algo_pars TEXT,",
                         "UNIQUE(prob_id, prob_pars, algo_id, algo_pars))"), reg$id)
@@ -8,7 +8,7 @@ dbCreateJobDefTable.ExperimentRegistry = function(reg) {
 }
 
 dbCreateExtraTables = function(reg) {
-  message("Initializing prob and algo tables...")
+  #message("Initializing prob and algo tables...")
   query = sprintf("CREATE TABLE %s_prob_def (prob_id TEXT PRIMARY KEY, pseed INTEGER)", reg$id)
   BatchJobs:::dbDoQuery(reg, query, flags="rwc")
   query = sprintf("CREATE TABLE %s_algo_def (algo_id TEXT PRIMARY KEY)", reg$id)
