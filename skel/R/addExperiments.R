@@ -73,7 +73,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
         stop("'prob.designs' is empty!")
       checkListElementClass(prob.designs, "Design")
     } else {
-      stop("Format of prob.designs not supported. Must be a string, a design or list of designs")
+      stop("Format of prob.designs not supported. Must be a character vector, a design or list of designs")
     }
     ids = unique(extractSubList(prob.designs, "id"))
     found = ids %in% dbGetProblemIds(reg)
@@ -95,7 +95,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
         stop("'algo.designs' is empty!")
       checkListElementClass(algo.designs, "Design")
     } else {
-      stop("Format of algo.designs not supported. Must be a string, a design or list of designs")
+      stop("Format of algo.designs not supported. Must be a character vector, a design or list of designs")
     }
     ids = unique(extractSubList(algo.designs, "id"))
     found = ids %in% dbGetAlgorithmIds(reg)
@@ -117,7 +117,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   }
 
   writeJobDefs = function(job.defs, n) {
-    messagef("Creating %i job definitions", n)
+    #messagef("Creating %i job definitions", n)
     data = as.data.frame(do.call(rbind, lapply(head(job.defs, n), unlist)))
     mq("INSERT INTO tmp(prob_id, prob_pars, algo_id, algo_pars) VALUES(?, ?, ?, ?)",
        con = con, bind.data = data)
@@ -142,6 +142,9 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   mq(c("CREATE TEMP VIEW cp AS SELECT repls.repl, tmp.job_def_id FROM tmp",
        "CROSS JOIN repls"), con = con)
 
+  f = function(xs) sapply(xs, function(x) x$designIter$n.states)
+  n.exps = sum(outer(f(prob.designs), f(algo.designs)))
+  messagef("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
   # iterate to generate job definitions
   # write to temporary table every x definitions
@@ -198,7 +201,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   dbBeginTransaction(con)
   ok = try({
     # insert new job defs
-    message("Writing job definitions ...")
+    #message("Writing job definitions ...")
     mq(c("INSERT INTO %s_job_def(prob_id, prob_pars, algo_id, algo_pars)",
          "SELECT prob_id, prob_pars, algo_id, algo_pars FROM tmp",
          "WHERE job_def_id IS NULL"), reg$id, con = con)
@@ -210,7 +213,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
          "WHERE tmp.job_def_id IS NULL"), reg$id, con = con)
 
     # insert into job status table
-    message("Writing job status information ...")
+    #message("Writing job status information ...")
     mq(c("INSERT INTO %1$s_job_status(job_def_id, repl)",
          "SELECT cp.job_def_id, cp.repl FROM cp WHERE NOT EXISTS",
          "(SELECT * FROM %1$s_job_status AS js WHERE",
@@ -220,7 +223,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
     # We could do this w/o bulk insert, but we are not allowed to
     # use external RNGs
-    message("Setting seeds ...")
+    #message("Setting seeds ...")
     df = mq("SELECT job_id, pseed, repl FROM %s_expanded_jobs WHERE job_id > %i",
             reg$id, max.job.id, con = con)
 
@@ -241,7 +244,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 
   dbCommit(con)
 
-  message("Creating directories ...")
+  #message("Creating directories ...")
   BatchJobs:::createShardedDirs(reg, df$job_id)
   invisible(df$job_id)
 }
