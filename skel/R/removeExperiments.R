@@ -17,15 +17,15 @@ removeExperiments = function(reg, ids) {
   BatchJobs:::checkIds(reg, ids)
 
   messagef("Removing %i experiments ...", length(ids))
-  df = BatchJobs:::dbGetJobStatusTable(reg, ids)
-  # FIXME pattern is broken! id = 1 -> remove everything with a 1 in it?
-  lapply(df$id, function(id) {
-    fs = list.files(BatchJobs:::getJobDirs(reg, id), pattern=id, full.names=TRUE)
+  BatchJobs:::dbRemoveJobs(reg, ids)
+
+  fmt = "^%i(\\.(R|out)|-result(-.+)*\\.RData)$"
+  lapply(ids, function(id) {
+    fs = list.files(BatchJobs:::getJobDirs(reg, id), pattern=sprintf(fmt, id), full.names=TRUE)
     ok = file.remove(fs)
     if (!all(ok))
-      stop("Could not remove files for experiment: ", id)
+      warningf("Could not remove files for experiment with id=%i", id)
   })
 
-  BatchJobs:::dbRemoveJobs(reg, ids)
   invisible(NULL)
 }
