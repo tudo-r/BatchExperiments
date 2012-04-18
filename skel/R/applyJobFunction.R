@@ -2,7 +2,7 @@
 #' @S3method applyJobFunction ExperimentRegistry
 applyJobFunction.ExperimentRegistry = function(reg, job) {
   message("Loading problem: ", job$prob.id)
-  prob = loadProblem(reg$file.dir, job$prob.id)
+  prob = loadProblem(reg, job$prob.id, seed=FALSE)
 
   message("Generating problem ", job$prob.id, "...")
   message("Static problem part:")

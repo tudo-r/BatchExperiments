@@ -46,9 +46,7 @@ print.Algorithm = function(x, ...) {
 }
 
 loadAlgorithm = function(file.dir, id) {
-  ee = new.env()
   fn = getAlgorithmFilePath(file.dir, id)
   message("Loading algorithm file: ", fn)
-  load(file=fn, envir=ee)
-  return(ee$algorithm)
+  BatchJobs:::loadSingleObject(fn, "algorithm")
 }

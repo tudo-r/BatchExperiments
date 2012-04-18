@@ -12,9 +12,5 @@ getProblem = function(reg, id) {
   pids = dbGetProblemIds(reg)
   if (!(id %in% pids))
     stop("Unknown problem id, possible candidates are: ", collapse(pids))
-  prob = loadProblem(reg$file.dir, id)
-  #FIXME this should be an option of loadProblem
-  query = sprintf("SELECT pseed FROM %s_prob_def WHERE prob_id = '%s'", reg$id, id)
-  prob$seed = BatchJobs:::dbDoQuery(reg, query)$pseed
-  prob
+  loadProblem(reg, id, seed=TRUE)
 }

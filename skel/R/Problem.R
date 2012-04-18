@@ -68,10 +68,13 @@ print.Problem = function(x, ...) {
   cat("Problem:", x$id, "\n")
 }
 
-loadProblem = function(file.dir, id) {
-  ee = new.env()
-  fn = getProblemFilePath(file.dir, id)
+loadProblem = function(reg, id, seed=TRUE) {
+  fn = getProblemFilePath(reg$file.dir, id)
   message("Loading problem file: ", fn)
-  load(file=fn, envir=ee)
-  ee$problem
+  prob = BatchJobs:::loadSingleObject(fn, "problem")
+  if (seed) {
+    query = sprintf("SELECT pseed FROM %s_prob_def WHERE prob_id = '%s'", reg$id, id)
+    prob$seed = BatchJobs:::dbDoQuery(reg, query)$pseed
+  }
+  prob
 }
