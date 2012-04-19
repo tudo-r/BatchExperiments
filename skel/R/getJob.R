@@ -17,7 +17,7 @@ getJobs.ExperimentRegistry = function(reg, ids, load.fun=FALSE, check.ids=TRUE) 
   if (check.ids) {
     if (length(ids) == 0L)
       return(list())
-    convertIntegers(ids)
+    ids = convertIntegers(ids)
     checkArg(ids, "integer", na.ok=FALSE)
     BatchJobs:::checkIds(reg, ids)
   }
