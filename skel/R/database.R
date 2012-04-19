@@ -45,7 +45,7 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
 dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) {
   clause = character(0L)
   if (!missing(repls))
-    clause = c(clause, sprintf("repl IN ('%s')", collapse(repls)))
+    clause = c(clause, sprintf("repl IN (%s)", collapse(repls)))
   if (!missing(prob.pattern)) {
     if (like)
       clause = c(clause, sprintf("prob_id LIKE '%%%s%%'", prob.pattern))
