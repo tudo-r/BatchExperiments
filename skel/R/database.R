@@ -66,13 +66,15 @@ dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) 
 }
 
 dbAddProblem = function(reg, id, seed) {
-  query = sprintf("INSERT INTO %s_prob_def (prob_id, pseed) VALUES ('%s', %s)",
+  #TODO: replace OR REPLACE with an option, this is not supported by all DBMS
+  query = sprintf("INSERT OR REPLACE INTO %s_prob_def (prob_id, pseed) VALUES ('%s', %s)",
                   reg$id, id, ifelse(is.null(seed), "NULL", seed))
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
 dbAddAlgorithm = function(reg, id) {
-  query = sprintf("INSERT INTO %s_algo_def (algo_id) VALUES ('%s')", reg$id, id)
+  #TODO: replace OR REPLACE with an option, this is not supported by all DBMS
+  query = sprintf("INSERT OR REPLACE INTO %s_algo_def (algo_id) VALUES ('%s')", reg$id, id)
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
