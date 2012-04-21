@@ -1,9 +1,49 @@
-# We could provide a by-option in reduceResults[.*] or let the user
-# himself use these indicies (see examples below). Still unsure
-# about this.
-# Another possibility would be to provide "by.ExperimentRegistry"
-#
-# this is not exported right now.
+#' Group experiments.
+#'
+#' Creates a list of \code{factor} to use in functions like \code{tapply}, \code{by}
+#' or \code{aggregate}.
+#'
+#' @param reg [\code{\link{ExperimentRegistry}}]\cr
+#'   Registry.
+#' @param ids [\code{integer}]\cr
+#'   If not missing, restict grouping to this subset of experiment ids.
+#' @param by.prob [\code{logical}]\cr
+#'   Group experiments by problem. Default is \code{FALSE}.
+#' @param by.algo [\code{logical}]\cr
+#'   Group experiments by algorithm. Default is \code{FALSE}.
+#' @param by.repl [\code{logical}]\cr
+#'   Group experiments by replication. Default is \code{FALSE}.
+#' @param by.prob.pars [quoted R expression]\cr
+#'   If not missing, group experiments by this evaluated R expression.
+#'   The expression is evaluated in the environment of problem parameters and
+#'   converted to a factor using \code{as.factor}.
+#' @param by.algo.pars [quoted R expression]\cr
+#'   If not missing, group experiments by this evaluated R expression.
+#'   The expression is evaluated in the environment of algorithm parameters and
+#'   converted to a factor using \code{as.factor}.
+#' @return [\code{list}]. List of factors.
+#' @examples
+#' # create a registry and add problems and algorithms
+#' reg = makeExperimentRegistry("getIndex", file.dir=tempfile(""))
+#' addProblem(reg, "prob", static = 1)
+#' addAlgorithm(reg, "f0", function(static, dynamic) static)
+#' addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
+#' ad = list(makeDesign("f0"), makeDesign("f1", exhaustive=list(i=1:10, k=1:3)))
+#' addExperiments(reg, algo.designs=ad)
+#' submitJobs(reg)
+#'
+#' # get grouped job ids
+#' ids = getJobIds(reg)
+#' by(ids, getIndex(reg, by.prob=TRUE, by.algo=TRUE), identity)
+#' ids.f1 = findExperiments(reg, algo.pattern="f1")
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(k == 1)), identity)
+#'
+#' # groupwise reduction
+#' ids.f1 = findExperiments(reg, algo.pattern="f1")
+#' f = function(aggr, job, res) aggr + res
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(k)), reduceResults, reg=reg, fun=f)
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(i)), reduceResults, reg=reg, fun=f)
+#' @export
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
                          by.prob.pars, by.algo.pars) {
   checkArg(reg, "ExperimentRegistry")
@@ -29,12 +69,15 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
   jobs = getJobs(reg, ids, check.ids=FALSE)
   index = list()
 
-  # small helper function which evaluates expr in a data.frame
   exprToIndex = function(jobs, expr, name) {
-    # FIXME is the evaluation in the data.frame problematic?
-    pars = rbind.fill(lapply(jobs, function(x) as.data.frame(x[[name]])))
-    evaluated = with(pars, eval(expr))
-    namedList(sprintf("algo.pars: %s", capture.output(print(expr))), evaluated)
+    str.expr = capture.output(print(expr))
+    evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]])), silent=TRUE)
+    if (is.error(evaluated))
+      stopf("Your %s expression resulted in an error:\n%s", name, as.character(evaluated))
+    evaluated = try(as.factor(unlist(evaluated)))
+    if (is.error(evaluated) || length(evaluated) != length(jobs))
+      stopf("The return value of expression %s ('%s') is not convertible to a factor", name, str.expr)
+    namedList(sprintf("algo.pars: %s", str.expr), evaluated)
   }
 
   if (by.prob)
@@ -45,33 +88,15 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
 
   if (!missing(by.prob.pars)) {
-    if (! (is.call(by.prob.pars) || is.expression(by.prob.pars)))
-      stop("Argument by.prob.pars must be a call or expression")
+    if (!BatchJobs:::is.evaluable(by.prob.pars))
+      stop("Argument by.prob.pars must be a call, expression or symbol")
     index = c(index, exprToIndex(jobs, by.prob.pars, "prob.pars"))
   }
   if (!missing(by.algo.pars)) {
-    if (! (is.call(by.algo.pars) || is.expression(by.algo.pars)))
-      stop("Argument by.algo.pars must be a call or expression")
+    if (!BatchJobs:::is.evaluable(by.algo.pars))
+      stop("Argument by.algo.pars must be a call, expression or symbol")
     index = c(index, exprToIndex(jobs, by.algo.pars, "algo.pars"))
   }
 
   lapply(index, as.factor)
 }
-
-# EXAMPLES:
-# library(BatchExperiments)
-# reg = makeExperimentRegistry("foo", file.dir=tempfile())
-# addProblem(reg, "iris", static = iris)
-# addAlgorithm(reg, "1", function(static, dynamic, i) i)
-# addAlgorithm(reg, "2", function(static, dynamic) 2)
-# addAlgorithm(reg, "3", function(static, dynamic) 3)
-# ad = list(makeDesign("1", exhaustive=list(i=1:10)), makeDesign("2"), makeDesign("3"))
-# addExperiments(reg, algo.designs=ad, repls=2)
-# submitJobs(reg)
-# # get grouped job ids (this might get a helper fun)
-# by(getJobIds(reg), getIndex(reg, by.prob=TRUE, by.algo=TRUE), identity)
-# # groupwise reduction
-# f = function(aggr, job, res) aggr + res
-# by(getJobIds(reg), getIndex(reg, by.algo=TRUE), reduceResults, reg=reg, fun=f)
-# ids = findExperiments(reg, algo.pattern = "1")
-# by(ids, getIndex(reg, ids, by.algo.pars=quote(i > 5)), reduceResults, reg=reg, fun=f)
