@@ -1,7 +1,7 @@
 #' Group experiments.
 #'
-#' Creates a list of \code{factor} to use in functions like \code{tapply}, \code{by}
-#' or \code{aggregate}.
+#' Creates a list of \code{\link{factor}} to use in functions like \code{\link{tapply}}, \code{\link{by}}
+#' or \code{\link{aggregate}}.
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
@@ -20,7 +20,7 @@
 #' @param by.algo.pars [quoted R expression]\cr
 #'   If not missing, group experiments by this evaluated R expression.
 #'   The expression is evaluated in the environment of algorithm parameters and
-#'   converted to a factor using \code{as.factor}.
+#'   converted to a factor using \code{\link{as.factor}}.
 #' @return [\code{list}]. List of factors.
 #' @examples
 #' # create a registry and add problems and algorithms
@@ -56,46 +56,46 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
   checkArg(by.algo, "logical", na.ok=FALSE, len=1L)
   checkArg(by.repl, "logical", na.ok=FALSE, len=1L)
 
-  # if not dealing with parameters, we can get the groups directly
-  # from the database
   if (missing(by.prob.pars) && missing(by.algo.pars)) {
+    # if not dealing with parameters, we can get the groups directly
+    # from the database
     cols = c("job_id", "prob_id", "algo_id", "repl")[c(TRUE, by.prob, by.algo, by.repl)]
     query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
-    res = BatchJobs:::dbSelectWithIds(reg, query, ids)[, -1L, drop=FALSE]
-    return(lapply(res, as.factor))
-  }
+    index = BatchJobs:::dbSelectWithIds(reg, query, ids)[, -1L, drop=FALSE]
+    names(index) = gsub("_id", "", names(index), fixed=TRUE)
+  } else {
+    # otherwise we have to get all jobs and calculate the groups on them
+    jobs = getJobs(reg, ids, check.ids=FALSE)
+    index = list()
 
-  # otherwise we have to get all jobs and calculate the groups on them
-  jobs = getJobs(reg, ids, check.ids=FALSE)
-  index = list()
+    exprToIndex = function(jobs, expr, name) {
+      str.expr = capture.output(print(expr))
+      evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]])), silent=TRUE)
+      if (is.error(evaluated))
+        stopf("Your %s expression resulted in an error:\n%s", name, as.character(evaluated))
+      evaluated = try(as.factor(unlist(evaluated)))
+      if (is.error(evaluated) || length(evaluated) != length(jobs))
+        stopf("The return value of expression %s ('%s') is not convertible to a factor", name, str.expr)
+      namedList(sprintf("algo.pars: %s", str.expr), evaluated)
+    }
 
-  exprToIndex = function(jobs, expr, name) {
-    str.expr = capture.output(print(expr))
-    evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]])), silent=TRUE)
-    if (is.error(evaluated))
-      stopf("Your %s expression resulted in an error:\n%s", name, as.character(evaluated))
-    evaluated = try(as.factor(unlist(evaluated)))
-    if (is.error(evaluated) || length(evaluated) != length(jobs))
-      stopf("The return value of expression %s ('%s') is not convertible to a factor", name, str.expr)
-    namedList(sprintf("algo.pars: %s", str.expr), evaluated)
-  }
+    if (by.prob)
+      index = c(index, list(prob = extractSubList(jobs, "prob.id", character(1L))))
+    if (by.algo)
+      index = c(index, list(algo = extractSubList(jobs, "algo.id", character(1L))))
+    if (by.repl)
+      index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
 
-  if (by.prob)
-    index = c(index, list(prob = extractSubList(jobs, "prob.id", character(1L))))
-  if (by.algo)
-    index = c(index, list(algo = extractSubList(jobs, "algo.id", character(1L))))
-  if (by.repl)
-    index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
-
-  if (!missing(by.prob.pars)) {
-    if (!BatchJobs:::is.evaluable(by.prob.pars))
-      stop("Argument by.prob.pars must be a call, expression or symbol")
-    index = c(index, exprToIndex(jobs, by.prob.pars, "prob.pars"))
-  }
-  if (!missing(by.algo.pars)) {
-    if (!BatchJobs:::is.evaluable(by.algo.pars))
-      stop("Argument by.algo.pars must be a call, expression or symbol")
-    index = c(index, exprToIndex(jobs, by.algo.pars, "algo.pars"))
+    if (!missing(by.prob.pars)) {
+      if (!BatchJobs:::is.evaluable(by.prob.pars))
+        stop("Argument by.prob.pars must be a call, expression or symbol")
+      index = c(index, exprToIndex(jobs, by.prob.pars, "prob.pars"))
+    }
+    if (!missing(by.algo.pars)) {
+      if (!BatchJobs:::is.evaluable(by.algo.pars))
+        stop("Argument by.algo.pars must be a call, expression or symbol")
+      index = c(index, exprToIndex(jobs, by.algo.pars, "algo.pars"))
+    }
   }
 
   lapply(index, as.factor)
