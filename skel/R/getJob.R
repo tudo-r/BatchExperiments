@@ -14,12 +14,5 @@
 #' @S3method getJobs ExperimentRegistry
 #' @export
 getJobs.ExperimentRegistry = function(reg, ids, load.fun=FALSE, check.ids=TRUE) {
-  if (check.ids) {
-    if (length(ids) == 0L)
-      return(list())
-    ids = convertIntegers(ids)
-    checkArg(ids, "integer", na.ok=FALSE)
-    BatchJobs:::checkIds(reg, ids)
-  }
   dbGetJobs(reg, ids)
 }
