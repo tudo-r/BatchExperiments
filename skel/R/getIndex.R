@@ -47,11 +47,8 @@
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
                          by.prob.pars, by.algo.pars) {
   checkArg(reg, "ExperimentRegistry")
-  if (!missing(ids)) {
-    ids = convertIntegers(ids)
-    checkArg(ids, "integer", na.ok=FALSE)
-    BatchJobs:::checkIds(reg, ids)
-  }
+  if (!missing(ids))
+    ids = BatchJobs:::checkIds(reg, ids)
   checkArg(by.prob, "logical", na.ok=FALSE, len=1L)
   checkArg(by.algo, "logical", na.ok=FALSE, len=1L)
   checkArg(by.repl, "logical", na.ok=FALSE, len=1L)

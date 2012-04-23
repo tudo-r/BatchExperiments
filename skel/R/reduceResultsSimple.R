@@ -38,9 +38,7 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   if (missing(ids)) {
     ids = done
   } else {
-    ids = convertIntegers(ids)
-    checkArg(ids, "integer", na.ok=FALSE, min.len=1L)
-    BatchJobs:::checkIds(reg, ids)
+    ids = BatchJobs:::checkIds(reg, ids)
     if (! all(ids %in% done))
       stopf("No results available for experiments with ids: %s", collapse(ids[! (ids %in% done)]))
   }

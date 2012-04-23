@@ -11,10 +11,8 @@
 #' @export
 summarizeExperiments = function(reg, ids, details=FALSE) {
   checkArg(reg, "ExperimentRegistry")
-  if (! missing(ids)) {
-    ids = convertIntegers(ids)
-    BatchJobs:::checkIds(reg, ids)
-  }
+  if (! missing(ids))
+    ids = BatchJobs:::checkIds(reg, ids)
 
   tab = BatchJobs:::dbGetExpandedJobsTable(reg, ids, c("job_id", "prob_id", "algo_id"))
   if(nrow(tab) == 0L)

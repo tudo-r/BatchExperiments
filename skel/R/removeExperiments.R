@@ -12,9 +12,7 @@ removeExperiments = function(reg, ids) {
   checkArg(reg, "Registry")
   if (missing(ids))
     return(invisible(NULL))
-  ids = convertIntegers(ids)
-  checkArg(ids, cl="integer", na.ok=FALSE)
-  BatchJobs:::checkIds(reg, ids)
+  ids = BatchJobs:::checkIds(reg, ids)
 
   messagef("Removing %i experiments ...", length(ids))
   BatchJobs:::dbRemoveJobs(reg, ids)
