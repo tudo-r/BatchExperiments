@@ -11,7 +11,9 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   if (!is.null(prob$dynamic)) {
     message("Setting problem seed: ", job$prob.seed)
     seed = BatchJobs:::seeder(reg, job$prob.seed)
-    prob$dynamic = try(do.call(prob$dynamic, c(list(static = prob$static), job$prob.pars)))
+    # don't build a list with all pars to save some memory
+    prob$dynamic = try(do.call(function(...) prob$dynamic(static=prob$static, ...),
+                               job$prob.pars))
     message("Switching back to previous seed.")
     seed$reset()
   }
@@ -23,5 +25,11 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   algo = loadAlgorithm(reg$file.dir, job$algo.id)
 
   message("Applying algorithm ", job$algo.id, "...")
-  do.call(algo$fun, c(list(static = prob$static, dynamic = prob$dynamic), job$algo.pars))
+
+  # using this function we avoid unnecessary copies of prob$static and prob$dynamic
+  applyJob = function(...) algo$fun(static = prob$static, dynamic = prob$dynamic, ...)
+
+  # don't build a list with all pars to save some memory
+  do.call(function(...) algo$fun(static=prob$static, dynamic=prob$dynamic, ...),
+          job$algo.pars)
 }
