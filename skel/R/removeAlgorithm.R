@@ -8,6 +8,7 @@
 #' @return Nothing.
 #' @export
 removeAlgorithm = function(reg, id) {
+  #FIXME force?
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
@@ -16,10 +17,10 @@ removeAlgorithm = function(reg, id) {
 
   message("Removing Experiments from database")
   ids = dbFindExperiments(reg, algo.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids)
+  removeExperiments(reg, ids=ids, force=TRUE)
   message("Removing Algorithm from database")
   dbRemoveAlgorithm(reg, id)
-  
+
   fn = getAlgorithmFilePath(reg$file.dir, id)
   message("Deleting algorithm file: ", fn)
   ok = file.remove(fn)

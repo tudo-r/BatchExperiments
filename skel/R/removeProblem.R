@@ -8,6 +8,7 @@
 #' @return Nothing.
 #' @export
 removeProblem = function(reg, id) {
+  #FIXME force?
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
@@ -16,7 +17,7 @@ removeProblem = function(reg, id) {
 
   message("Removing Experiments from database")
   ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids)
+  removeExperiments(reg, ids=ids, force=TRUE)
   message("Removing Problem from database")
   dbRemoveProblem(reg, id)
 
