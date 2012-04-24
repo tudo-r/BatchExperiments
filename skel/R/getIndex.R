@@ -45,7 +45,7 @@
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(i)), reduceResults, reg=reg, fun=f)
 #' @export
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
-                         by.prob.pars, by.algo.pars) {
+                    by.prob.pars, by.algo.pars) {
   checkArg(reg, "ExperimentRegistry")
   if (!missing(ids))
     ids = BatchJobs:::checkIds(reg, ids)
@@ -59,7 +59,7 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     cols = c("job_id", "prob_id", "algo_id", "repl")[c(TRUE, by.prob, by.algo, by.repl)]
     query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
     index = BatchJobs:::dbSelectWithIds(reg, query, ids)[, -1L, drop=FALSE]
-    names(index) = gsub("_id", "", names(index), fixed=TRUE)
+    names(index) = c("prob", "algo", "repl")[c(by.prob, by.algo, by.repl)]
   } else {
     # otherwise we have to get all jobs and calculate the groups on them
     jobs = getJobs(reg, ids, check.ids=FALSE)

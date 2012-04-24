@@ -30,8 +30,6 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
            "algo_pars", "seed", "prob_seed", "repl")
   query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
-  if(nrow(tab) == 0L)
-    stopf("No jobs found for ids: %s", collapse(ids))
 
   lapply(seq_len(nrow(tab)), function(i) {
     x = tab[i,]

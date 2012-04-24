@@ -32,9 +32,6 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   checkArg(fun, formals=c("job", "res"))
 
   done = BatchJobs:::dbGetDone(reg)
-  if (length(done) == 0L)
-    stop("No jobs finished (yet)!")
-
   if (missing(ids)) {
     ids = done
   } else {
@@ -58,6 +55,10 @@ reduceResultsSimple = function(reg, ids, part=as.character(NA), fun, ...,
   }
 
   aggr = data.frame()
+  #FIXME only for bar bug
+  if (length(ids) == 0L)
+    return(aggr)
+
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsSimple")
   bar(0L)
