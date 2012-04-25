@@ -21,10 +21,10 @@ removeProblem = function(reg, id) {
   message("Removing Problem from database")
   dbRemoveProblem(reg, id)
 
-  fn = getProblemFilePath(reg$file.dir, id)
-  message("Deleting problem file: ", fn)
+  fn = getProblemFilePaths(reg$file.dir, id)
+  message("Deleting problem files: ", collapse(fn, sep=", "))
   ok = file.remove(fn)
-  if (!ok)
-    warningf("Could not remove problem file: %s", fn)
+  if (!all(ok))
+    warningf("Could not remove problem files: %s", collapse(fn[!ok], sep=", "))
   invisible(NULL)
 }

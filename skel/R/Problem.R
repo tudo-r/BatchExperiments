@@ -16,7 +16,8 @@ makeProblem = function(id, static, dynamic) {
 #' @param dynamic [\code{function(static, ...)}]\cr
 #'   R generator function that creates dynamic / stochastic part of problem instance, which might be dependent on parameters.
 #'   First parameter is static problem part \code{static}, further parameters from design are passed to ... argument
-#'   on instance creation time.
+#'   on instance creation time. The argument \code{static} may be omitted. In this case, the \code{static} part will not
+#'   be loaded and hence not be passed to \code{fun}.
 #'   Default is \code{NULL}.
 #' @param seed [\code{integer(1)}]\cr
 #'   Start seed for this problem. This allows the \dQuote{synchronization} of a stochastic
@@ -48,17 +49,15 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
 
   if (is.null(static) && is.null(dynamic))
     stop("One of args 'static' or 'dynamic' must not be NULL!")
-  if (!is.null(dynamic))
-    checkArg(dynamic, formals = "static")
   if (id %in% dbGetAlgorithmIds(reg))
     stopf("Algorithm with same id as your problem already exists: %s", id)
   if (!overwrite && id %in% dbGetProblemIds(reg))
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
-  problem = makeProblem(id, static, dynamic)
-  fn = getProblemFilePath(reg$file.dir, id)
-  message("Writing problem file: ", fn)
-  save(file=fn, problem)
+  fn = getProblemFilePaths(reg$file.dir, id)
+  message("Writing problem files: ", collapse(fn, sep=", "))
+  save(file=fn["static"], static)
+  save(file=fn["dynamic"], dynamic)
   dbAddProblem(reg, id, seed)
   invisible(id)
 }
@@ -69,12 +68,19 @@ print.Problem = function(x, ...) {
 }
 
 loadProblem = function(reg, id, seed=TRUE) {
-  fn = getProblemFilePath(reg$file.dir, id)
-  message("Loading problem file: ", fn)
-  prob = BatchJobs:::loadSingleObject(fn, "problem")
+  prob = makeProblem(id = id,
+                     static = getProblemPart(reg$file.dir, id, "static"),
+                     dynamic = getProblemPart(reg$file.dir, id, "dynamic"))
   if (seed) {
     query = sprintf("SELECT pseed FROM %s_prob_def WHERE prob_id = '%s'", reg$id, id)
     prob$seed = BatchJobs:::dbDoQuery(reg, query)$pseed
   }
   prob
+}
+
+getProblemPart = function(file.dir, id, part) {
+  fn = getProblemFilePaths(file.dir, id)[part]
+  if (!file.exists(fn))
+    return(NULL)
+  BatchJobs:::loadSingleObject(fn, part)
 }

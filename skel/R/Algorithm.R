@@ -11,8 +11,10 @@ makeAlgorithm = function(id, fun) {
 #'   Name of algorithm.
 #' @param fun [\code{function(static, dynamic, ...)}]\cr
 #'   Function which applies the algorithm to a problem instance.
-#'   Has to take the the static and dynamic part of a problem instance as first two arguments.
-#'   Further parameters from design are passed to ... argument.
+#'   Takes the the static and the evaluated dynamic part of a problem as first two arguments.
+#'   You may omit \code{static} and/or \code{dynamic}. In this case, the respective problem
+#'   parts will not get passed to \code{fun}.
+#'   Further parameters from \link{Design} are passed to ... argument.
 #'   If you are using multiple result files this function must return a named list.
 #' @param overwrite [\code{logical(1)}]\cr
 #'   Overwrite the algorithm file if it already exists?
@@ -24,7 +26,6 @@ addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
-  checkArg(fun, formals=c("static", "dynamic"))
   checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
 
   if (id %in% dbGetProblemIds(reg))
@@ -47,6 +48,5 @@ print.Algorithm = function(x, ...) {
 
 loadAlgorithm = function(file.dir, id) {
   fn = getAlgorithmFilePath(file.dir, id)
-  message("Loading algorithm file: ", fn)
   BatchJobs:::loadSingleObject(fn, "algorithm")
 }
