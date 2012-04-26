@@ -69,9 +69,9 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
                      function(...) algo(job=job, ...),
                      function(...) algo(static=static(), ...),
                      function(...) algo(job=job, static=static(), ...),
-                     function(...) algo(dynamic=dynamic(), static=static(), ...),
-                     function(...) algo(job=job, dynamic=dynamic(), static(), ...),
-                     function(...) algo(dynamic=dynamic(), static=static(), ...),
+                     function(...) algo(dynamic=dynamic(), ...),
+                     function(...) algo(job=job, dynamic=dynamic(), ...),
+                     function(...) algo(static=static(), dynamic=dynamic(), ...),
                      function(...) algo(job=job, static=static(), dynamic=dynamic(), ...))
   do.call(applyAlgo, job$algo.pars)
 }
