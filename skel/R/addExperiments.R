@@ -142,7 +142,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
   mq(c("CREATE TEMP VIEW cp AS SELECT repls.repl, tmp.job_def_id FROM tmp",
        "CROSS JOIN repls"), con = con)
 
-  f = function(xs) sapply(xs, function(x) x$designIter$n.states)
+  f = function(xs) vapply(xs, function(x) x$designIter$n.states, integer(1L))
   n.exps = sum(outer(f(prob.designs), f(algo.designs)))
   messagef("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
