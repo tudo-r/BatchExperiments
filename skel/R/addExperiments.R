@@ -50,7 +50,7 @@
 #' submitJobs(reg)
 #'
 #' # Gather informations from the experiments, in this case function value and if the algorithm convergenced:
-#' reduceResultsSimple(reg, fun=function(job, res) res[c("value", "convergence")])
+#' reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
 #' @aliases Experiment
 #' @export
 addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {

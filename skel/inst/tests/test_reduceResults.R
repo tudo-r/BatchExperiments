@@ -21,7 +21,7 @@ test_that("reduceResults", {
     stringsAsFactors = FALSE
   )
   expect_equal(data, data2)
-  data = reduceResultsSimple(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=FALSE)
+  data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=FALSE)
   expect_equal(data, data2)
 
   reg = makeTestRegistry()
@@ -32,7 +32,7 @@ test_that("reduceResults", {
   ad2 = makeDesign("a2", exhaustive=list(a=3, b=c("b1", "b2")))
   addExperiments(reg, "p1", list(ad1, ad2))
   submitJobs(reg)
-  data = reduceResultsSimple(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=TRUE)
+  data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=TRUE)
   expect_equal(data, data.frame(
     prob = c("p1", "p1", "p1", "p1"),
     algo = c("a1", "a1", "a2", "a2"),
@@ -49,7 +49,7 @@ test_that("reduceResults", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic, a) 1*static)
   addExperiments(reg, "p1", ad1)
   submitJobs(reg)
-  data = reduceResultsSimple(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
+  data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
     strings.as.factors=FALSE)
   expect_equal(data, data.frame(
     prob = c("p1", "p1"),
@@ -62,15 +62,15 @@ test_that("reduceResults", {
   ))
 })
 
-test_that("reduceResultsSimple works on empty id sets", {
+test_that("reduceResultsExperiments works on empty id sets", {
   reg = makeTestRegistry()
   reg$seed = 1
   addProblem(reg, "p1", static=1)
   addAlgorithm(reg, id="a1", fun=function(static, dynamic, a) 1*static)
   addExperiments(reg, repls=10)
-  expect_equal(reduceResultsSimple(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE), data.frame())
+  expect_equal(reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE), data.frame())
   submitJobs(reg)
-  expect_equal(reduceResultsSimple(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE, ids = integer(0)), data.frame())
+  expect_equal(reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE, ids = integer(0)), data.frame())
 
 })
 test_that("params are available in reduceResults", {
