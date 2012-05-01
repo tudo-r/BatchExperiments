@@ -49,8 +49,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
 
         # choose an applyDynamic function
         # -> interpret logical use vector as binary number and switch on decimal:
-        sw = as.integer(1:2 %*% prob.use)
-        applyDynamic = switch(sw + 1L,
+        applyDynamic = switch(as.integer(c(1, 2) %*% prob.use) + 1L,
                               function(...) dynamic.fun(...),
                               function(...) dynamic.fun(job=job, ...),
                               function(...) dynamic.fun(static=static(), ...),
@@ -63,8 +62,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   messagef("Applying Algorithm %s ...", job$algo.id)
   # choose an applyAlgo function
   # -> interpret logical use vector as binary number and switch on decimal:
-  sw = as.integer(c(1, 2, 4) %*% algo.use)
-  applyAlgo = switch(sw + 1L, # switch on numerics is really weird in R ...
+  applyAlgo = switch(as.integer(c(1, 2, 4) %*% algo.use) + 1L,
                      function(...) algo(...),
                      function(...) algo(job=job, ...),
                      function(...) algo(static=static(), ...),

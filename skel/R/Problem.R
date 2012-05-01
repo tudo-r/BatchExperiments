@@ -13,11 +13,11 @@ makeProblem = function(id, static, dynamic) {
 #' @param static [any]\cr
 #'   Static part of problem that never changes and is not dependent on parameters.
 #'   Default is \code{NULL}.
-#' @param dynamic [\code{function(static, ...)}]\cr
+#' @param dynamic [\code{function(job, static, ...)}]\cr
 #'   R generator function that creates dynamic / stochastic part of problem instance, which might be dependent on parameters.
-#'   First parameter is static problem part \code{static}, further parameters from design are passed to ... argument
-#'   on instance creation time. The argument \code{static} may be omitted. In this case, the \code{static} part will not
-#'   be loaded and hence not be passed to \code{fun}.
+#'   First parameter \code{job} is a \link{Job} object, second is static problem part \code{static}.
+#'   Further parameters from design are passed to ... argument on instance creation time.
+#'   The arguments \code{job} and \code{static} may be omitted.
 #'   Default is \code{NULL}.
 #' @param seed [\code{integer(1)}]\cr
 #'   Start seed for this problem. This allows the \dQuote{synchronization} of a stochastic

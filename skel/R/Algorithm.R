@@ -9,11 +9,12 @@ makeAlgorithm = function(id, fun) {
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Name of algorithm.
-#' @param fun [\code{function(static, dynamic, ...)}]\cr
+#' @param fun [\code{function(job, static, dynamic, ...)}]\cr
 #'   Function which applies the algorithm to a problem instance.
-#'   Takes the the static and the evaluated dynamic part of a problem as first two arguments.
-#'   You may omit \code{static} and/or \code{dynamic}. In this case, the respective problem
-#'   parts will not get passed to \code{fun}.
+#'   Takes a \link{Job} object, the \code{static} problem part and the evaluated \code{dynamic}
+#'   problem part as arguments.
+#'   You may omit any of \code{job}, \code{static} or \code{dynamic}.
+#'   In this case, the respective arguments will not get passed to \code{fun}.
 #'   Further parameters from \link{Design} are passed to ... argument.
 #'   If you are using multiple result files this function must return a named list.
 #' @param overwrite [\code{logical(1)}]\cr
