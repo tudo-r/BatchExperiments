@@ -5,10 +5,12 @@
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Id of problem.
+#' @param force [\code{logical(1)}]\cr
+#'   Also remove jobs which seem to be still running.
+#'   Default is \code{FALSE}.
 #' @return Nothing.
 #' @export
-removeProblem = function(reg, id) {
-  #FIXME force?
+removeProblem = function(reg, id, force=FALSE) {
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
@@ -17,7 +19,7 @@ removeProblem = function(reg, id) {
 
   message("Removing Experiments from database")
   ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids, force=TRUE)
+  removeExperiments(reg, ids=ids, force=force)
   message("Removing Problem from database")
   dbRemoveProblem(reg, id)
 
