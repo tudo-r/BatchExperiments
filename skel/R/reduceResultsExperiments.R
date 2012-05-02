@@ -58,13 +58,15 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsExperiments")
   bar$set()
-
-  for(id.chunk in ids) {
-    jobs = getJobs(reg, id.chunk, check.ids=FALSE)
-    results = lapply(jobs, getRow, reg = reg, part = part, ...)
-    aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
-    bar$inc(1L)
-  }
+  
+  tryCatch({
+    for(id.chunk in ids) {
+      jobs = getJobs(reg, id.chunk, check.ids=FALSE)
+      results = lapply(jobs, getRow, reg = reg, part = part, ...)
+      aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
+      bar$inc(1L)
+    }
+  }, error=bar$error)
 
   if (strings.as.factors) {
     inds = which(vapply(aggr, is.character, logical(1L)))
