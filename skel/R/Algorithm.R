@@ -49,5 +49,5 @@ print.Algorithm = function(x, ...) {
 
 loadAlgorithm = function(file.dir, id) {
   fn = getAlgorithmFilePath(file.dir, id)
-  BatchJobs:::loadSingleObject(fn, "algorithm")
+  load2(fn, "algorithm")
 }

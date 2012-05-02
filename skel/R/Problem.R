@@ -82,5 +82,5 @@ getProblemPart = function(file.dir, id, part) {
   fn = getProblemFilePaths(file.dir, id)[part]
   if (!file.exists(fn))
     return(NULL)
-  BatchJobs:::loadSingleObject(fn, part)
+  load2(fn, part)
 }
