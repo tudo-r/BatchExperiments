@@ -55,19 +55,15 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
   }
 
   aggr = data.frame()
-  #FIXME only for bar bug
-  if (length(ids) == 0L)
-    return(aggr)
-
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsExperiments")
-  bar(0L)
+  bar$set()
 
-  for(i in seq_along(ids)) {
-    jobs = getJobs(reg, ids[[i]], check.ids=FALSE)
+  for(id.chunk in ids) {
+    jobs = getJobs(reg, id.chunk, check.ids=FALSE)
     results = lapply(jobs, getRow, reg = reg, part = part, ...)
     aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
-    bar(i)
+    bar$inc(1L)
   }
 
   if (strings.as.factors) {
