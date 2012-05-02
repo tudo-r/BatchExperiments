@@ -1,17 +1,16 @@
-#' Subset experiment ids from the registry
+#' Find ids of experiments that match a query.
 #'
-#' Finds ids of experiments that match a query.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param prob.pattern [\code{character(1)}]\cr
 #'   If not missing, all problem ids that match this string are selected.
 #' @param prob.pars [quoted R expression]\cr
-#'   If not missing, all problems whose selected parameters match
+#'   If not missing, all problems whose parameters match
 #'   the given expression are selected.
 #' @param algo.pattern [\code{character(1)}]\cr
 #'   If not missing, all algorithm ids that match this string are selected.
 #' @param algo.pars [quoted R expression]\cr
-#'   If not missing, all algorithms whose selected parameters match
+#'   If not missing, all algorithms whose parameters match
 #'   the given expression are selected.
 #' @param repls [\code{integer}]\cr
 #'   If not missing, restrict to jobs with given replication numbers.
@@ -21,8 +20,7 @@
 #'   Default is \code{TRUE}.
 #' @return [\code{integer}]. Ids for experiments which match the query.
 #' @export
-findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars, repls,
-                           match.substring=TRUE) {
+findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
   checkArg(reg, cl="ExperimentRegistry")
   if (!missing(prob.pattern))
     checkArg(prob.pattern, "character", len=1L, na.ok=FALSE)

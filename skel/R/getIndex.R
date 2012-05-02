@@ -22,6 +22,7 @@
 #'   The expression is evaluated in the environment of algorithm parameters and
 #'   converted to a factor using \code{\link{as.factor}}.
 #' @return [\code{list}]. List of factors.
+#' @export
 #' @examples
 #' # create a registry and add problems and algorithms
 #' reg = makeExperimentRegistry("getIndex", file.dir=tempfile(""))
@@ -43,7 +44,6 @@
 #' f = function(aggr, job, res) aggr + res
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(k)), reduceResults, reg=reg, fun=f)
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(i)), reduceResults, reg=reg, fun=f)
-#' @export
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
                     by.prob.pars, by.algo.pars) {
   checkArg(reg, "ExperimentRegistry")
