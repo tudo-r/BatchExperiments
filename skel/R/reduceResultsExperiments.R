@@ -1,8 +1,8 @@
-#' Reduce results into a simple data.frame.
+#' Reduce results into a data.frame with all relevant information.
 #'
 #' Generates a \code{data.frame} with one row per job id. The columns are: ids of problem and algorithm
-#' (prob.id and algo.id), one column per parameter of problem or algorithm (named by the parameter name),
-#' the replication number (named repl) and all columns defined in the function to collect the values.
+#' (named \dQuote{prob} and \dQuote{algo}), one column per parameter of problem or algorithm (named by the parameter name),
+#' the replication number (named \dQuote{repl}) and all columns defined in the function to collect the values.
 #' Note that you cannot rely on the order of the columns.
 #' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
@@ -13,9 +13,11 @@
 #' @param part [\code{character(1)}]
 #'   Only useful for multiple result files, then defines which result file part should be loaded.
 #'   \code{NA} means all parts are loaded, which is the default.
-#' @param fun [\code{function(job, res)}]\cr
+#' @param fun [\code{function(job, res, ...)}]\cr
 #'   Function to collect values from \code{job} and result \code{res} object, the latter from stored result file.
-#'   Must return an object which can be coerced to a \code{\link{data.frame}} (e.g. a \code{\link{list}})
+#'   Must return an object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
+#'   Default is a function that simply returns \code{res} which may or may not work, depending on the type
+#'   of \code{res}.
 #' @param ... [any]\cr
 #'   Additional arguments to \code{fun}.
 #' @param strings.as.factors [\code{logical(1)}]
@@ -28,20 +30,27 @@
 #' @export
 reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
   strings.as.factors=default.stringsAsFactors(), block.size=100L) {
-  checkArg(reg, cl = "ExperimentRegistry")
-  checkArg(fun, formals=c("job", "res"))
 
+  checkArg(reg, cl = "ExperimentRegistry")
   done = BatchJobs:::dbGetDone(reg)
   if (missing(ids)) {
     ids = done
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    if (! all(ids %in% done))
-      stopf("No results available for experiments with ids: %s", collapse(ids[! (ids %in% done)]))
+    if (!all(ids %in% done))
+      stopf("No results available for experiments with ids: %s", collapse(ids[!(ids %in% done)]))
   }
+  checkArg(part, "character", len=1L, na.ok=TRUE)
+  if (missing(fun)){
+    fun = function(job, res) res
+  } else {
+    force(fun)
+    checkArg(fun, formals=c("job", "res"))
+  }
+  checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
   block.size = convertInteger(block.size)
-  checkArg(block.size, "integer", na.ok=FALSE, len=1L)
-
+  checkArg(block.size, "integer", len=1L, na.ok=FALSE)
+  
   n = length(ids)
   messagef("Reducing %i results...", n)
 

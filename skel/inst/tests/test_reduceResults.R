@@ -109,3 +109,44 @@ test_that("getProblem is available in reduceResults", {
 })
 
 
+
+test_that("reduceResultsExperiments works with default fun", {
+  reg = makeTestRegistry()
+  addProblem(reg, "p1", static=1)
+  addAlgorithm(reg, id="a1", fun=function(static, dynamic) list(y=1))
+  addExperiments(reg, "p1", "a1", repls=2)
+  submitJobs(reg)
+  z = reduceResultsExperiments(reg)
+  expect_equal(z, data.frame(
+    prob = "p1",
+    algo = "a1",
+    repl = 1:2,
+    y = 1))
+
+  reg = makeTestRegistry()
+  addProblem(reg, "p1", static=1)
+  addAlgorithm(reg, id="a1", fun=function(static, dynamic) 1)
+  addExperiments(reg, "p1", "a1", repls=2)
+  submitJobs(reg)
+  z = reduceResultsExperiments(reg)
+  expect_equal(z, data.frame(
+    prob = "p1",
+    algo = "a1",
+    repl = 1:2,
+    X1 = 1))
+
+  reg = makeTestRegistry()
+  addProblem(reg, "p1", static=1)
+  addAlgorithm(reg, id="a1", fun=function(static, dynamic) c(foo=1, bar=2))
+  addExperiments(reg, "p1", "a1", repls=2)
+  submitJobs(reg)
+  z = reduceResultsExperiments(reg)
+  expect_equal(z, data.frame(
+    prob = "p1",
+    algo = "a1",
+    repl = 1:2,
+    foo = 1,
+    bar = 2))
+})
+
+
