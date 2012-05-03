@@ -1,5 +1,5 @@
 #' Get ids of algorithms in registry.
-#' @param reg [\code{\link{Registry}}]\cr
+#' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @return [\code{character}].
 #' @export

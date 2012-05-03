@@ -1,5 +1,5 @@
 #' Get jobs (here: experiments) from registry by id.
-#' @param reg [\code{\link{Registry}}]\cr
+#' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr
 #'   Ids of job.

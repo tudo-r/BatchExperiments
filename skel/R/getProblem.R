@@ -1,6 +1,7 @@
 #' Get problem from registry by id.
+#'
 #' The object is loaded from disk.
-#' @param reg [\code{\link{Registry}}]\cr
+#' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Id of problem.

@@ -1,7 +1,7 @@
 #' Remove algorithm from registry.
 #'
 #' THIS DELETES ALL FILES REGARDING THIS ALGORITHM, INCLUDING ALL JOBS AND RESULTS!
-#' @param reg [\code{\link{Registry}}]\cr
+#' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Id of algorithm.
