@@ -53,13 +53,14 @@
 #' reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
 #' @aliases Experiment
 #' @export
-addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
+addExperiments = function(reg, prob.designs, algo.designs, repls, skip.defined=FALSE) {
   checkArg(reg, cl = "ExperimentRegistry")
-  repls = convertIntegers(repls)
-  checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
-  skip.defined = as.logical(skip.defined)
-  checkArg(skip.defined, "logical", na.ok=FALSE)
+  UseMethod("addExperiments")
+}
 
+#' @method addExperiments ExperimentRegistry
+#' @S3method addExperiments ExperimentRegistry
+addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
   # check prob.designs
   if (missing(prob.designs)) {
     prob.designs = lapply(dbGetProblemIds(reg), makeDesign)
@@ -81,7 +82,6 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
       stopf("%i problems have not been added to registry for designs: %s",
             sum(!found), collapse(ids[!found]))
   }
-
   # check algo.designs
   if (missing(algo.designs)) {
     algo.designs = lapply(dbGetAlgorithmIds(reg), makeDesign)
@@ -103,7 +103,10 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
       stopf("%i algorithms have not been added to registry for designs: %s",
             sum(!found), collapse(ids[!found]))
   }
-
+  repls = convertIntegers(repls)
+  checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
+  checkArg(skip.defined, "logical", na.ok=FALSE)
+  
   # internal helper functions
   mq = function(lines, ..., con, bind.data=NULL) {
     q = sprintf(collapse(lines, sep=" "), ...)
