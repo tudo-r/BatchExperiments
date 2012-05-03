@@ -10,8 +10,8 @@
 #' @param ids [\code{integer}]\cr
 #'   Ids of selected experiments.
 #'   Default is all jobs for which results are available.
-#' @param part [\code{character(1)}]
-#'   Only useful for multiple result files, then defines which result file part should be loaded.
+#' @param part [\code{character}]
+#'   Only useful for multiple result files, then defines which result file part(s) should be loaded.
 #'   \code{NA} means all parts are loaded, which is the default.
 #' @param fun [\code{function(job, res, ...)}]\cr
 #'   Function to collect values from \code{job} and result \code{res} object, the latter from stored result file.
@@ -40,7 +40,7 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
     if (!all(ids %in% done))
       stopf("No results available for experiments with ids: %s", collapse(ids[!(ids %in% done)]))
   }
-  checkArg(part, "character", len=1L, na.ok=TRUE)
+  checkPart(reg, part)  
   if (missing(fun)){
     fun = function(job, res) res
   } else {
