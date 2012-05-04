@@ -33,7 +33,8 @@ addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
     stopf("Problem with same id as your algorithm already exists: %s", id)
   if (!overwrite && id %in% dbGetAlgorithmIds(reg))
     stopf("Algorithm with same id already exists and overwrite=FALSE: %s", id)
-
+  
+  environment(fun) = emptyenv()
   algorithm = makeAlgorithm(id, fun)
   fn = getAlgorithmFilePath(reg$file.dir, id)
   message("Writing algorithm file: ", fn)
