@@ -54,8 +54,6 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
   if (!overwrite && id %in% dbGetProblemIds(reg))
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
-  if (!is.null(dynamic))
-    environment(dynamic) = emptyenv()
   fn = getProblemFilePaths(reg$file.dir, id)
   message("Writing problem files: ", collapse(fn, sep=", "))
   save(file=fn["static"], static)
