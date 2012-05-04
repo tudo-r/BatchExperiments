@@ -125,6 +125,8 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
 #' data <- reduceResultsExperiments(reg)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
 getResultVars = function(data, type="group") {
+  checkArg(data, "ReducedResultsExperiments")
+  checkArg(type, choices=c("prob", "prob.pars", "algo", "algo.pars", "group", "result"))
   switch(type,
     prob = c("prob", attr(data, "prob.pars.names")),
     prob.pars = attr(data, "prob.pars.names"),
