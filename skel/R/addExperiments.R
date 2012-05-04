@@ -28,7 +28,7 @@
 #' testfun2 = function(x) -exp(-sum(abs(x)))
 #'
 #' # Define ExperimentRegistry:
-#' reg = makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile(""))
+#' reg = makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())
 #'
 #' # Add the testfunctions to the registry:
 #' addProblem(reg, "testfun1", static=testfun1)

@@ -22,6 +22,9 @@ test_that("reduceResults", {
   )
   expect_equal(data, data2)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=FALSE)
+  attr(data2, "prob.pars.names") = character(0)
+  attr(data2, "algo.pars.names") = character(0)
+  class(data2) = c("ReducedResultsExperiments", "data.frame")
   expect_equal(data, data2)
 
   reg = makeTestRegistry()
@@ -33,16 +36,22 @@ test_that("reduceResults", {
   addExperiments(reg, "p1", list(ad1, ad2))
   submitJobs(reg)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=TRUE)
-  expect_equal(data, data.frame(
+  data2 = data.frame(
     prob = c("p1", "p1", "p1", "p1"),
     algo = c("a1", "a1", "a2", "a2"),
     a = c(1,2,3,3),
     repl = rep(1L, 4),
     y = c(1,1,2,2),
     b = c(NA,NA,"b1","b2"),
-    stringsAsFactors = TRUE
-  ))
-
+    stringsAsFactors = TRUE)  
+  attr(data2, "prob.pars.names") = character(0)
+  attr(data2, "algo.pars.names") = c("a", "b")
+  class(data2) = c("ReducedResultsExperiments", "data.frame")
+  expect_equal(getResultVars(data, "prob.pars"), character(0))
+  expect_equal(getResultVars(data, "algo.pars"), c("a", "b"))
+  expect_equal(getResultVars(data, "group"), c("prob", "algo", "a", "b"))
+  expect_equal(getResultVars(data, "result"), "y")
+  
   reg = makeTestRegistry()
   reg$seed = 1
   addProblem(reg, "p1", static=1)
@@ -51,15 +60,18 @@ test_that("reduceResults", {
   submitJobs(reg)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
     strings.as.factors=FALSE)
-  expect_equal(data, data.frame(
+  data2 = data.frame(
     prob = c("p1", "p1"),
     algo = c("a1", "a1"),
     a = c(1,2),
     repl = rep(1L, 2),
     y = c(1,1),
     seed = 1:2,
-    stringsAsFactors = FALSE
-  ))
+    stringsAsFactors = FALSE)
+  attr(data2, "prob.pars.names") = character(0)
+  attr(data2, "algo.pars.names") = c("a")
+  class(data2) = c("ReducedResultsExperiments", "data.frame")
+  expect_equal(data, data2)
 })
 
 test_that("reduceResultsExperiments works on empty id sets", {
@@ -68,11 +80,21 @@ test_that("reduceResultsExperiments works on empty id sets", {
   addProblem(reg, "p1", static=1)
   addAlgorithm(reg, id="a1", fun=function(static, dynamic, a) 1*static)
   addExperiments(reg, repls=10)
-  expect_equal(reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE), data.frame())
+  data2 = data.frame()
+  attr(data2, "prob.pars.names") = character(0)
+  attr(data2, "algo.pars.names") = character(0)
+  class(data2) = c("ReducedResultsExperiments", "data.frame")
+  expect_equal(
+    reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), 
+      strings.as.factors=FALSE),
+    data2)
   submitJobs(reg)
-  expect_equal(reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), strings.as.factors=FALSE, ids = integer(0)), data.frame())
-
+  expect_equal(
+    reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed), 
+      strings.as.factors=FALSE, ids = integer(0)), 
+    data2)
 })
+
 test_that("params are available in reduceResults", {
   reg = makeTestRegistry()
   addProblem(reg, "p1", dynamic=function(static, alpha) alpha)
@@ -121,7 +143,7 @@ test_that("reduceResultsExperiments works with default fun", {
     prob = "p1",
     algo = "a1",
     repl = 1:2,
-    y = 1))
+    y = 1), check.attributes=FALSE)
 
   reg = makeTestRegistry()
   addProblem(reg, "p1", static=1)
@@ -133,7 +155,7 @@ test_that("reduceResultsExperiments works with default fun", {
     prob = "p1",
     algo = "a1",
     repl = 1:2,
-    X1 = 1))
+    X1 = 1), check.attributes=FALSE)
 
   reg = makeTestRegistry()
   addProblem(reg, "p1", static=1)
@@ -146,7 +168,7 @@ test_that("reduceResultsExperiments works with default fun", {
     algo = "a1",
     repl = 1:2,
     foo = 1,
-    bar = 2))
+    bar = 2), check.attributes=FALSE)
 })
 
 
