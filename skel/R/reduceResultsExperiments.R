@@ -7,7 +7,7 @@
 #' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.
 #' Have a look at \code{\link{getResultVars}} if you want to use somethink like \code{\link{ddply}} on the
 #' results.
-#' 
+#'
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
@@ -45,7 +45,7 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
     if (!all(ids %in% done))
       stopf("No results available for experiments with ids: %s", collapse(ids[!(ids %in% done)]))
   }
-  BatchJobs:::checkPart(reg, part)  
+  BatchJobs:::checkPart(reg, part)
   if (missing(fun)){
     fun = function(job, res) res
   } else {
@@ -55,7 +55,7 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
   block.size = convertInteger(block.size)
   checkArg(block.size, "integer", len=1L, na.ok=FALSE)
-  
+
   n = length(ids)
   messagef("Reducing %i results...", n)
 
@@ -72,14 +72,14 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
   ids = chunk(ids, chunk.size=block.size)
   bar = makeProgressBar(max=length(ids), label="reduceResultsExperiments")
   bar$set()
-  prob.pars = character(0)
-  algo.pars = character(0)
+  prob.pars = character(0L)
+  algo.pars = character(0L)
 
   tryCatch({
     for(id.chunk in ids) {
       jobs = getJobs(reg, id.chunk, check.ids=FALSE)
-      prob.pars = union(prob.pars, unique(unlist(sapply(jobs, function(j) names(j$prob.pars)))))
-      algo.pars = union(algo.pars, unique(unlist(sapply(jobs, function(j) names(j$algo.pars)))))
+      prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
+      algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
       results = lapply(jobs, getRow, reg = reg, part = part, ...)
       aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
       bar$inc(1L)
@@ -114,13 +114,13 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
 #' reg <- makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())
 #' addProblem(reg, "p1", static=1)
 #' addProblem(reg, "p2", static=2)
-#' addAlgorithm(reg, id="a1", 
+#' addAlgorithm(reg, id="a1",
 #'   fun=function(static, dynamic, alpha) c(y=static*alpha))
-#' addAlgorithm(reg, id="a2", 
+#' addAlgorithm(reg, id="a2",
 #'   fun=function(static, dynamica, alpha, beta) c(y=static*alpha+beta))
-#' ad1 <- makeDesign("a1", exhaustive=list(alpha=1:2))  
+#' ad1 <- makeDesign("a1", exhaustive=list(alpha=1:2))
 #' ad2 <- makeDesign("a2", exhaustive=list(alpha=1:2, beta=5:6))
-#' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2) 
+#' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
 #' submitJobs(reg)
 #' data <- reduceResultsExperiments(reg)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
