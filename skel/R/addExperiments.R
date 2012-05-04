@@ -54,7 +54,6 @@
 #' @aliases Experiment
 #' @export
 addExperiments = function(reg, prob.designs, algo.designs, repls, skip.defined=FALSE) {
-  checkArg(reg, cl = "ExperimentRegistry")
   UseMethod("addExperiments")
 }
 
@@ -106,7 +105,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   repls = convertIntegers(repls)
   checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
   checkArg(skip.defined, "logical", na.ok=FALSE)
-  
+
   # internal helper functions
   mq = function(lines, ..., con, bind.data=NULL) {
     q = sprintf(collapse(lines, sep=" "), ...)
