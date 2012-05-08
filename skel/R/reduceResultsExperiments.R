@@ -86,11 +86,7 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
     }
   }, error=bar$error)
 
-  if (strings.as.factors) {
-    inds = which(vapply(aggr, is.character, logical(1L)))
-    for (j in inds)
-      aggr[,j] = as.factor(aggr[,j])
-  }
+  aggr = stringsAsFactors(aggr, strings.as.factors)
   class(aggr) = c("ReducedResultsExperiments", class(aggr))
   attr(aggr, "prob.pars.names") = prob.pars
   attr(aggr, "algo.pars.names") = algo.pars
