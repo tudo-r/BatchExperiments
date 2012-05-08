@@ -118,9 +118,9 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     rawToChar(serialize(x, connection=NULL, ascii=TRUE))
   }
 
-  writeJobDefs = function(job.defs, n) {
+  writeJobDefs = function(job.defs) {
     #messagef("Creating %i job definitions", n)
-    data = as.data.frame(do.call(rbind, lapply(head(job.defs, n), unlist)))
+    data = as.data.frame(do.call(rbind, lapply(job.defs, unlist)))
     mq("INSERT INTO tmp(prob_id, prob_pars, algo_id, algo_pars) VALUES(?, ?, ?, ?)",
        con = con, bind.data = data)
   }
@@ -150,9 +150,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
   # iterate to generate job definitions
   # write to temporary table every x definitions
-  at.once = 5000L
-  job.defs = vector("list", at.once)
-  n = 0L
+  job.defs = BatchJobs:::buffer("list", 5000L, writeJobDefs)
   for (pd in prob.designs) {
     pd$designIter$reset()
     while (pd$designIter$hasNext()) {
@@ -161,22 +159,15 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
         ad$designIter$reset()
         while (ad$designIter$hasNext()) {
           algo.pars = seripars(ad$designIter$nextElem())
-
-          n = n + 1L
-          job.defs[[n]] = list(prob_id = pd$id, prob_pars = prob.pars,
-                               algo_id = ad$id, algo_pars = algo.pars)
-          if(n == at.once) {
-            writeJobDefs(job.defs, n)
-            n = 0L
-          }
+          job.defs$push(list(prob_id = pd$id, prob_pars = prob.pars,
+                             algo_id = ad$id, algo_pars = algo.pars))
         }
       }
     }
   }
 
   # add (remaining) defs to temporary job_defs table
-  if(n > 0L)
-    writeJobDefs(job.defs, n)
+  job.defs$clear()
   rm(job.defs)
 
   # query job_id to keep track of new ids
