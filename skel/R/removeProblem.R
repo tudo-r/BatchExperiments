@@ -14,7 +14,7 @@ removeProblem = function(reg, id, force=FALSE) {
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
-  if (!(id %in% dbGetProblemIds(reg)))
+  if (id %nin% dbGetProblemIds(reg))
     stop("Problem not present in registry: ", id)
 
   message("Removing Experiments from database")

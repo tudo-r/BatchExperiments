@@ -11,7 +11,7 @@ getProblem = function(reg, id) {
   checkArg(reg, "ExperimentRegistry")
   checkArg(id, "character", na.ok=FALSE, len=1L)
   pids = dbGetProblemIds(reg)
-  if (!(id %in% pids))
+  if (id %nin% pids)
     stop("Unknown problem id, possible candidates are: ", collapse(pids))
   loadProblem(reg, id, seed=TRUE)
 }

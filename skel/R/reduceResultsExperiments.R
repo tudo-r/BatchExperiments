@@ -42,8 +42,8 @@ reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
     ids = done
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    if (!all(ids %in% done))
-      stopf("No results available for experiments with ids: %s", collapse(ids[!(ids %in% done)]))
+    if (any(ids %nin% done))
+      stopf("No results available for experiments with ids: %s", collapse(ids[ids %nin% done]))
   }
   BatchJobs:::checkPart(reg, part)
   if (missing(fun)){
