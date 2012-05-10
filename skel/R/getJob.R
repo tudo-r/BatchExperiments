@@ -15,8 +15,7 @@
 #' @S3method getJobs ExperimentRegistry
 #' @export
 getJobs.ExperimentRegistry = function(reg, ids, load.fun=FALSE, check.ids=TRUE) {
-  if (! missing(ids) && check.ids) {
-    ids = checkIds(reg, ids)
-  }
+  if (!missing(ids) && check.ids)
+    ids = BatchJobs:::checkIds(reg, ids)
   dbGetJobs(reg, ids)
 }

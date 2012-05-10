@@ -3,7 +3,7 @@
 # Every object is a list that contains the passed arguments of the constructor.
 # @param id [\code{integer(1)}]\cr
 #   Job id, determined by DB autoincrement.
-#   Default is \code{as.integer(NA)}.
+#   Default is \code{NA}.
 # @aliases Experiment
 makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.pars, repl, seed, prob.seed) {
   structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
