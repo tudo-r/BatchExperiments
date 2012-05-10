@@ -33,7 +33,7 @@
 #' @return [\code{data.frame}] Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
-reduceResultsExperiments = function(reg, ids, part=as.character(NA), fun, ...,
+reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   strings.as.factors=default.stringsAsFactors(), block.size=100L) {
 
   checkArg(reg, cl = "ExperimentRegistry")

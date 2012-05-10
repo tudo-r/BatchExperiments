@@ -5,13 +5,13 @@
 #   Job id, determined by DB autoincrement.
 #   Default is \code{as.integer(NA)}.
 # @aliases Experiment
-makeExperimentJob = function(id=as.integer(NA), prob.id, prob.pars, algo.id, algo.pars, repl, seed, prob.seed) {
+makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.pars, repl, seed, prob.seed) {
   structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
                  algo.pars=algo.pars, repl=repl, seed=seed, prob.seed=prob.seed),
             class=c("ExperimentJob", "Job"))
 }
 
-makeReplicatedExperiment = function(id=as.integer(NA), prob.id, prob.pars, algo.id, algo.pars, repls) {
+makeReplicatedExperiment = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.pars, repls) {
   structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
                  algo.pars=algo.pars, repls=repls),
             class="ReplicatedExperiment")
