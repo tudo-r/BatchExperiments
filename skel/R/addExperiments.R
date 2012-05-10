@@ -23,7 +23,6 @@
 #'   Default is FALSE.
 #' @return Invisibly returns vector of ids of added experiments.
 #' @examples
-#'
 #' ### EXAMPLE 1 ###
 #' reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
 #'
@@ -107,7 +106,8 @@
 #' # (same problem, same algorithm and same parameters)
 #' library(plyr)
 #' vars <- setdiff(names(res), c("repl", "mcr"))
-#' ddply(res, vars, summarise, mean.mcr=mean(mcr))
+#' aggr <- ddply(res, vars, summarise, mean.mcr=mean(mcr))
+#' print(aggr)
 #'
 #'
 #'
