@@ -8,6 +8,7 @@ Maintainer: Bernd Bischl <bernd_bischl@gmx.net>
 URL: http://code.google.com/p/batchjobs
 License: BSD
 Depends: BatchJobs, plyr
+Suggests: randomForest, rpart
 LazyData: yes
 ByteCompile: yes
 Version: 1.1
