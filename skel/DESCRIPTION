@@ -4,11 +4,11 @@ Description:
 Author: Bernd Bischl <bernd_bischl@gmx.net>,
   Michel Lang <michellang@gmail.com>, 
   Olaf Mersmann <olafm@p-value.net>
-Maintainer: Bernd Bischl <bernd_bischl@gmx.net>
+Maintainer: Michel Lang <michellang@gmail.com>
 URL: http://code.google.com/p/batchjobs
 License: BSD
 Depends: BatchJobs, plyr
-Suggests: randomForest, rpart
+Suggests: randomForest, rpart, testthat
 LazyData: yes
 ByteCompile: yes
 Version: 1.1
