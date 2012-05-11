@@ -67,7 +67,8 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
 
     exprToIndex = function(jobs, expr, name) {
       str.expr = capture.output(print(expr))
-      evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]])), silent=TRUE)
+      #FIXME parent.frame(2) right?
+      evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]], parent.frame(2L))), silent=TRUE)
       if (is.error(evaluated))
         stopf("Your %s expression resulted in an error:\n%s", name, as.character(evaluated))
       evaluated = try(as.factor(unlist(evaluated)))
@@ -84,13 +85,11 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
       index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
 
     if (!missing(by.prob.pars)) {
-      if (!BatchJobs:::is.evaluable(by.prob.pars))
-        stop("Argument by.prob.pars must be a call, expression or symbol")
+      by.prob.pars = substitute(by.prob.pars)
       index = c(index, exprToIndex(jobs, by.prob.pars, "prob.pars"))
     }
     if (!missing(by.algo.pars)) {
-      if (!BatchJobs:::is.evaluable(by.algo.pars))
-        stop("Argument by.algo.pars must be a call, expression or symbol")
+      by.algo.pars = substitute(by.algo.pars)
       index = c(index, exprToIndex(jobs, by.algo.pars, "algo.pars"))
     }
   }

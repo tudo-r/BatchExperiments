@@ -39,14 +39,12 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
 
   jobs = getJobs(reg, ids, check.ids=FALSE)
   if (!missing(prob.pars)) {
-    if (!BatchJobs:::is.evaluable(prob.pars))
-      stop("Argument 'prob.pars' must be a call, expression or symbol!")
-    jobs = Filter(function(j) eval(prob.pars, j$prob.pars), jobs)
+    prob.pars = substitute(prob.pars)
+    jobs = Filter(function(j) eval(prob.pars, j$prob.pars, parent.frame()), jobs)
   }
   if (!missing(algo.pars)) {
-    if (!BatchJobs:::is.evaluable(algo.pars))
-      stop("Argument 'algo.pars' must be a call, expression or symbol!")
-    jobs = Filter(function(j) eval(algo.pars, j$algo.pars), jobs)
+    algo.pars = substitute(algo.pars)
+    jobs = Filter(function(j) eval(algo.pars, j$algo.pars, parent.frame()), jobs)
   }
   return(extractSubList(jobs, "id", element.value=integer(1L)))
 }

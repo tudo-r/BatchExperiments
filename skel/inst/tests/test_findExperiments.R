@@ -7,7 +7,7 @@ test_that("findExperiments", {
   a1 = addAlgorithm(r, "A", fun=function(static, dynamic) 1)
   a2 = addAlgorithm(r, "B", fun=function(static, dynamic) 1)
   addExperiments(r, list(makeDesign(p1), makeDesign(p2)), list(makeDesign(a1), makeDesign(a2)), repls=2)
-  
+
   i = findExperiments(r)
   expect_equal(i, getJobIds(r)[1:8])
   i = findExperiments(r, prob.pattern="on")
@@ -24,23 +24,23 @@ test_that("findExperiments", {
   expect_equal(i, getJobIds(r)[1:8])
   i = findExperiments(r, prob.pattern="wo", match.substring=TRUE)
   expect_equal(i, getJobIds(r)[5:8])
-  
+
   r = makeTestRegistry()
   p1 = addProblem(r, "one", 1)
   a3 = addAlgorithm(r, "A", fun=function(static, dynamic) 1)
   pd1 = makeDesign(p1, exhaustive=list(foo=1:3))
   addExperiments(r, pd1, makeDesign(a3))
-  i = findExperiments(r, prob.pars=quote(foo < 3))
+  i = findExperiments(r, prob.pars=foo < 3)
   expect_equal(i, getJobIds(r)[1:2])
   a4 = addAlgorithm(r, "B", function(static, dynamic, bar) 1)
   ad4 = makeDesign(a4, exhaustive =list(bar=c("x", "y")))
-  #o1 A, o1 Bx, o1 By, o2 A, o2 Bx, o2 By, o3 A, o3 Bx, o3 By 
+  #o1 A, o1 Bx, o1 By, o2 A, o2 Bx, o2 By, o3 A, o3 Bx, o3 By
   addExperiments(r, pd1, ad4)
-  i = findExperiments(r, algo.pattern="B", algo.pars=quote(bar=="x"))
+  i = findExperiments(r, algo.pattern="B", algo.pars=bar=="x")
   expect_equal(i, getJobIds(r)[c(4,6,8)])
-  i = findExperiments(r, prob.pars=quote(foo>2), algo.pattern="B", algo.pars=quote(bar=="x"))
+  i = findExperiments(r, prob.pars=foo>2, algo.pattern="B", algo.pars=bar=="x")
   expect_equal(i, getJobIds(r)[8])
-  i = findExperiments(r, prob.pars=quote(foo>100))
+  i = findExperiments(r, prob.pars=foo>100)
   expect_equal(i, integer(0))
 })
-  
+
