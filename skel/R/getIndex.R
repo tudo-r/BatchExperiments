@@ -62,20 +62,20 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     names(index) = c("prob", "algo", "repl")[c(by.prob, by.algo, by.repl)]
   } else {
     # otherwise we have to get all jobs and calculate the groups on them
+    exprToIndex = function(jobs, pars, ee, name) {
+      ind = try(lapply(jobs, function(job, pars, ee, name) eval(pars, job[[name]], ee),
+                       pars = pars, ee = ee, name=name), silent=TRUE)
+      if (is.error(ind))
+        stopf("Your %s expression resulted in an error:\n%s", name, as.character(ind))
+      ind = try(as.factor(unlist(ind)))
+      str.expr = capture.output(print(pars))
+      if (is.error(ind) || length(ind) != length(jobs))
+        stopf("The return value of expression %s ('%s') is not convertible to a factor", name, str.expr)
+      namedList(sprintf("%s: %s", name, str.expr), ind)
+    }
+
     jobs = getJobs(reg, ids, check.ids=FALSE)
     index = list()
-
-    exprToIndex = function(jobs, expr, name) {
-      str.expr = capture.output(print(expr))
-      #FIXME parent.frame(2) right?
-      evaluated = try(lapply(jobs, function(j) eval(expr, j[[name]], parent.frame(2L))), silent=TRUE)
-      if (is.error(evaluated))
-        stopf("Your %s expression resulted in an error:\n%s", name, as.character(evaluated))
-      evaluated = try(as.factor(unlist(evaluated)))
-      if (is.error(evaluated) || length(evaluated) != length(jobs))
-        stopf("The return value of expression %s ('%s') is not convertible to a factor", name, str.expr)
-      namedList(sprintf("algo.pars: %s", str.expr), evaluated)
-    }
 
     if (by.prob)
       index = c(index, list(prob = extractSubList(jobs, "prob.id", character(1L))))
@@ -83,15 +83,10 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
       index = c(index, list(algo = extractSubList(jobs, "algo.id", character(1L))))
     if (by.repl)
       index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
-
-    if (!missing(by.prob.pars)) {
-      by.prob.pars = substitute(by.prob.pars)
-      index = c(index, exprToIndex(jobs, by.prob.pars, "prob.pars"))
-    }
-    if (!missing(by.algo.pars)) {
-      by.algo.pars = substitute(by.algo.pars)
-      index = c(index, exprToIndex(jobs, by.algo.pars, "algo.pars"))
-    }
+    if (!missing(by.prob.pars))
+      index = c(index, exprToIndex(jobs, substitute(by.prob.pars), parent.frame(), "prob.pars"))
+    if (!missing(by.algo.pars))
+      index = c(index, exprToIndex(jobs, substitute(by.algo.pars), parent.frame(), "algo.pars"))
   }
 
   lapply(index, as.factor)

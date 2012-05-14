@@ -15,5 +15,16 @@ test_that("getIndex", {
   expect_true(length(getIndex(r, by.algo=TRUE, by.prob=TRUE)) == 2L)
   expect_true(length(getIndex(r, ids=integer(0))) == 0)
   expect_true(length(getIndex(r, ids=integer(0), by.prob=TRUE)) == 1)
-  #FIXME more tests
+
+  r = makeTestRegistry()
+  p1 = addProblem(r, "one", dynamic = function(i, k) i^k)
+  a1 = addAlgorithm(r, "A", fun=function(dynamic, k) dynamic^k)
+  addExperiments(r,
+                 makeDesign("one", exhaustive = list(i =1:3, k = 2)),
+                 makeDesign("A", exhaustive = list(k=1:3)))
+  foo = 1
+  expect_equal(getIndex(r, by.prob.pars=i == foo)[[1]],
+               factor(c(rep(TRUE, 3), rep(FALSE, 6)), levels=c("FALSE", "TRUE")))
+  expect_true(grepl("i == k", names(getIndex(r, by.prob.pars = i == k))))
+  expect_true(length(getIndex(r, by.prob.pars = k, by.algo.pars = k)) == 2)
 })

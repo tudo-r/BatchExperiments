@@ -38,13 +38,16 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
     return(ids)
 
   jobs = getJobs(reg, ids, check.ids=FALSE)
+
   if (!missing(prob.pars)) {
-    prob.pars = substitute(prob.pars)
-    jobs = Filter(function(j) eval(prob.pars, j$prob.pars, parent.frame()), jobs)
+    ind = vapply(jobs, function(job, pars, ee) eval(pars, job$prob.pars, ee),
+                 logical(1L), pars=substitute(prob.pars), ee=parent.frame())
+    jobs = jobs[na.omit(ind)]
   }
   if (!missing(algo.pars)) {
-    algo.pars = substitute(algo.pars)
-    jobs = Filter(function(j) eval(algo.pars, j$algo.pars, parent.frame()), jobs)
+    ind = vapply(jobs, function(job, pars, ee) eval(pars, job$algo.pars, ee),
+                 logical(1L), pars=substitute(algo.pars), ee=parent.frame())
+    jobs = jobs[na.omit(ind)]
   }
   return(extractSubList(jobs, "id", element.value=integer(1L)))
 }
