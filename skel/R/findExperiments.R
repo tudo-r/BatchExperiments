@@ -42,12 +42,12 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
   if (!missing(prob.pars)) {
     ind = vapply(jobs, function(job, pars, ee) eval(pars, job$prob.pars, ee),
                  logical(1L), pars=substitute(prob.pars), ee=parent.frame())
-    jobs = jobs[na.omit(ind)]
+    jobs = jobs[!is.na(ind) & ind]
   }
   if (!missing(algo.pars)) {
     ind = vapply(jobs, function(job, pars, ee) eval(pars, job$algo.pars, ee),
                  logical(1L), pars=substitute(algo.pars), ee=parent.frame())
-    jobs = jobs[na.omit(ind)]
+    jobs = jobs[!is.na(ind) & ind]
   }
   return(extractSubList(jobs, "id", element.value=integer(1L)))
 }
