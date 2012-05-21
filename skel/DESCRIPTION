@@ -1,10 +1,10 @@
 Package: BatchExperiments
-Title: Easily schedule many independent experiments on a cluster. 
-Description: 
+Title: Statistical experiments on batch computing clusters.
+Description: Extends the BatchJobs package to run statistical experiments on batch computing clusters. For further details see the project web page.
 Author: Bernd Bischl <bernd_bischl@gmx.net>,
   Michel Lang <michellang@gmail.com>, 
   Olaf Mersmann <olafm@p-value.net>
-Maintainer: Michel Lang <michellang@gmail.com>
+Maintainer: Bernd Bischl <bernd_bischl@gmx.net>
 URL: http://code.google.com/p/batchjobs
 License: BSD
 Depends: BatchJobs, plyr
