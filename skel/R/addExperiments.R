@@ -85,7 +85,7 @@
 #' if (do.tests) {
 #'   id1 <- findExperiments(reg, algo.pattern="tree")[1]
 #'   id2 <- findExperiments(reg, algo.pattern="forest",
-#'                          algo.pars=quote(ntree == 1000))[1]
+#'                          algo.pars=(ntree == 1000))[1]
 #'   testJob(reg, id1)
 #'   testJob(reg, id2)
 #' }

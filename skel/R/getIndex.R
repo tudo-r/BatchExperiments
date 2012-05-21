@@ -13,12 +13,12 @@
 #'   Group experiments by algorithm. Default is \code{FALSE}.
 #' @param by.repl [\code{logical}]\cr
 #'   Group experiments by replication. Default is \code{FALSE}.
-#' @param by.prob.pars [quoted R expression]\cr
-#'   If not missing, group experiments by this evaluated R expression.
+#' @param by.prob.pars [R expression]\cr
+#'   If not missing, group experiments by this R expression.
 #'   The expression is evaluated in the environment of problem parameters and
 #'   converted to a factor using \code{as.factor}.
-#' @param by.algo.pars [quoted R expression]\cr
-#'   If not missing, group experiments by this evaluated R expression.
+#' @param by.algo.pars [R expression]\cr
+#'   If not missing, group experiments by this R expression.
 #'   The expression is evaluated in the environment of algorithm parameters and
 #'   converted to a factor using \code{\link{as.factor}}.
 #' @return [\code{list}]. List of factors.
@@ -37,13 +37,13 @@
 #' ids = getJobIds(reg)
 #' by(ids, getIndex(reg, by.prob=TRUE, by.algo=TRUE), identity)
 #' ids.f1 = findExperiments(reg, algo.pattern="f1")
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(k == 1)), identity)
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=(k == 1)), identity)
 #'
 #' # groupwise reduction
 #' ids.f1 = findExperiments(reg, algo.pattern="f1")
 #' f = function(aggr, job, res) aggr + res
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(k)), reduceResults, reg=reg, fun=f)
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=quote(i)), reduceResults, reg=reg, fun=f)
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=k), reduceResults, reg=reg, fun=f)
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
                     by.prob.pars, by.algo.pars) {
   checkArg(reg, "ExperimentRegistry")

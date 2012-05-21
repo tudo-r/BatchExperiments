@@ -4,12 +4,12 @@
 #'   Registry.
 #' @param prob.pattern [\code{character(1)}]\cr
 #'   If not missing, all problem ids that match this string are selected.
-#' @param prob.pars [quoted R expression]\cr
+#' @param prob.pars [R expression]\cr
 #'   If not missing, all problems whose parameters match
 #'   the given expression are selected.
 #' @param algo.pattern [\code{character(1)}]\cr
 #'   If not missing, all algorithm ids that match this string are selected.
-#' @param algo.pars [quoted R expression]\cr
+#' @param algo.pars [R expression]\cr
 #'   If not missing, all algorithms whose parameters match
 #'   the given expression are selected.
 #' @param repls [\code{integer}]\cr
