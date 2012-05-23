@@ -237,6 +237,13 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   n.exps = sum(outer(f(prob.designs), f(algo.designs)))
   messagef("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
+  duplicated.err.msg = paste(
+    "You have added identical experiments.",
+    "Either there are duplicated problem or algorithm ids or you have defined an experiment with the same parameters twice.",
+    "For the latter case use replications.",
+    "If you know what you're doing, look at skip.defined=TRUE.",
+    sep = "\n")
+  
   # iterate to generate job definitions
   # write to temporary table every x definitions
   job.defs = BatchJobs:::buffer("list", 5000L, writeJobDefs)
@@ -271,12 +278,8 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   # test whether we would overwrite existing experiments
   if(!skip.defined) {
     n.dup = mq("SELECT COUNT(job_def_id) AS n FROM tmp", con = con)$n
-    if(n.dup > 0L) {
-      stop(paste("You have added identical experiments.",
-        "Mabye you have duplicated problem or algorithm ids?",
-        "If this is intended and you know what you're doing, try skip.defined=TRUE.",
-        sep = "\n"))
-    }
+    if(n.dup > 0L)
+      stop(duplicated.err.msg)
   }
 
   # we start the transaction here, everything above is temporary
@@ -317,11 +320,16 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
       mq("UPDATE %s_job_status SET seed = ?, prob_seed = ? WHERE job_id = ?",
          reg$id, con = con, bind.data = data.frame(df[c("seed", "prob_seed", "job_id")]))
     }
-  })
+  }, silent=TRUE)
 
   if(is.error(ok)) {
     dbRollback(con)
-    stopf("Error inserting new experiemts: %s", as.character(ok))
+    errmsg = as.character(ok)
+    # not really clean to match the english message here....
+    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE)) 
+      stopf(duplicated.err.msg)
+    else  
+      stopf("Error inserting new experiments: %s", errmsg)
   }
 
   dbCommit(con)

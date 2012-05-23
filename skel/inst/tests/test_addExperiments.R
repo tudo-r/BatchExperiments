@@ -102,6 +102,7 @@ test_that("addExperiments", {
   submitLoadAndCheck(reg, 2)
 
   # check that same exps cannot be added again
+  # in 2x addExperiments with same algo/prob
   reg = makeTestRegistry()
   p1 = addProblem(reg, "p1", 1)
   pd1 = makeDesign(p1)
@@ -109,7 +110,22 @@ test_that("addExperiments", {
   ad1 = makeDesign(a1)
   addExperiments(reg, pd1, ad1)
   expect_error(addExperiments(reg, pd1, ad1), "identical experiments")
-
+  # in 2x addExperiments with same params
+  reg = makeTestRegistry()
+  p1 = addProblem(reg, "p1", 1)
+  pd1 = makeDesign(p1)
+  a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic, x) static)
+  ad1 = makeDesign(a1, exhaustive=list(x=c(1)))
+  addExperiments(reg, pd1, ad1)
+  expect_error(addExperiments(reg, pd1, ad1), "identical experiments")
+  # 1x addExperiments with same params
+  reg = makeTestRegistry()
+  p1 = addProblem(reg, "p1", 1)
+  pd1 = makeDesign(p1)
+  a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic, x) static)
+  ad1 = makeDesign(a1, exhaustive=list(x=c(1,1)))
+  expect_error(addExperiments(reg, pd1, ad1), "identical experiments")
+  
   # check adding of repls
   reg = makeTestRegistry()
   p1 = addProblem(reg, "p1", 1)
@@ -130,15 +146,14 @@ test_that("addExperiments", {
   ad1 = makeDesign(a1, exhaustive = list(x = 1:2, y = 5:6))
   addExperiments(reg, pd1, ad1, repls=2, skip.defined = TRUE)
   tab = BatchJobs:::dbGetJobStatusTable(reg)
-  expect_true(all(! duplicated(tab$seed)))
-  expect_true(all(! duplicated(tab$job_id)))
-  expect_true(all(! duplicated(tab[c("job_def_id", "repl")])))
+  expect_true(!any(duplicated(tab$seed)))
+  expect_true(!any(duplicated(tab$job_id)))
+  expect_true(!any(duplicated(tab[c("job_def_id", "repl")])))
   tab = BatchJobs:::dbGetExpandedJobsTable(reg)
   dups = duplicated(tab$job_def_id)
   expect_equal(sum(dups), 4L)
   expect_equal(sum(duplicated(tab[c("prob_id", "algo_id", "prob_pars", "algo_pars")])), 4L)
-  expect_true(all(! duplicated(tab[! dups, c("prob_id", "algo_id", "prob_pars", "algo_pars")])))
-
+  expect_true(!any(duplicated(tab[! dups, c("prob_id", "algo_id", "prob_pars", "algo_pars")])))
 
   # test skip.defined
   reg = makeTestRegistry()
