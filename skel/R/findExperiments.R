@@ -28,7 +28,7 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
     checkArg(algo.pattern, "character", len=1L, na.ok=FALSE)
   if (!missing(repls)) {
     repls = convertIntegers(repls)
-    checkArg(repls, "integer", lower=1L, na.ok=TRUE)
+    checkArg(repls, "integer", lower=1L, na.ok=FALSE)
   }
 
   ids = dbFindExperiments(reg, prob.pattern, algo.pattern, repls, like=match.substring)
