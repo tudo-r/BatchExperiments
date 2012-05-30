@@ -8,7 +8,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
     static = NULL
     cached = FALSE
     function() {
-      message("Getting static problem part %s ...", id)
+      messagef("Getting static problem part %s ...", id)
       if(cache) {
         if (cached)
           return(static)
