@@ -59,7 +59,12 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
     }
   }
 
+  # IMPORTANT: Note that the order of the messages in the log files can be confusing.
+  # This is caused by lazy evaluation, but we cannot live w/o it.
+  # Therefore it is possible to get errors on the slave with the last message being
+  # "Generating problem[...]", but the actual error is thron in the algorithm
   messagef("Applying Algorithm %s ...", job$algo.id)
+
   # choose an applyAlgo function
   # -> interpret logical use vector as binary number and switch on decimal:
   applyAlgo = switch(as.integer(c(1, 2, 4) %*% algo.use) + 1L,
