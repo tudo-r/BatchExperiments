@@ -7,7 +7,7 @@ Author: Bernd Bischl <bernd_bischl@gmx.net>,
 Maintainer: Michel Lang <michellang@gmail.com>
 URL: http://batchjobs.googlecode.com
 License: BSD
-Depends: BatchJobs, plyr
+Depends: BBmisc, BatchJobs, plyr
 Suggests: randomForest, rpart, testthat
 LazyData: yes
 ByteCompile: yes
