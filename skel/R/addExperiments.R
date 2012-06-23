@@ -11,7 +11,7 @@
 #'   If missing, all problems are selected (without associating a design),
 #'   and this is the default.
 #' @param algo.designs [\code{character} | \code{\link{Design}} | list of \code{\link{Design}}]\cr
-#'   Either algorithm ids, a single algorithm design or a list of problem algorithm,
+#'   Either algorithm ids, a single algorithm design or a list of algorithm designs,
 #'   the latter two created by \code{\link{makeDesign}}.
 #'   If missing, all algorithms are selected (without associating a design),
 #'   and this is the default.
@@ -243,7 +243,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     "For the latter case use replications.",
     "If you know what you're doing, look at skip.defined=TRUE.",
     sep = "\n")
-  
+
   # iterate to generate job definitions
   # write to temporary table every x definitions
   job.defs = BatchJobs:::buffer("list", 5000L, writeJobDefs)
@@ -326,9 +326,9 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     dbRollback(con)
     errmsg = as.character(ok)
     # not really clean to match the english message here....
-    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE)) 
+    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE))
       stopf(duplicated.err.msg)
-    else  
+    else
       stopf("Error inserting new experiments: %s", errmsg)
   }
 
