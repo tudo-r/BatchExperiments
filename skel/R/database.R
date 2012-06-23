@@ -95,3 +95,13 @@ dbGetAlgorithmIds = function(reg) {
   query = sprintf("SELECT algo_id FROM %s_algo_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$algo_id
 }
+
+dbGetProblemIdsNotAdded = function(reg) {
+  query = sprintf("SELECT prob_id FROM %1$s_prob_def EXCEPT SELECT DISTINCT prob_id FROM %1$s_job_def", reg$id)
+  BatchJobs:::dbDoQuery(reg, query)$prob_id
+}
+
+dbGetAlgorithmIdsNotAdded = function(reg) {
+  query = sprintf("SELECT algo_id FROM %1$s_algo_def EXCEPT SELECT DISTINCT algo_id FROM %1$s_job_def", reg$id)
+  BatchJobs:::dbDoQuery(reg, query)$prob_id
+}
