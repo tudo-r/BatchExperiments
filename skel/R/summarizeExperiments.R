@@ -1,11 +1,11 @@
 #' Summarize selected experiments.
 #'
-#' A data.frame is returned that contains summary information 
+#' A data.frame is returned that contains summary information
 #' about the selected experiments. The data.frame is constructed
 #' by building the columns \dQuote{prob, <prob.pars>, algo, <algo.pars>, repl},
 #' \code{\link{rbind.fill}} is used to connect the rows, so if some parameters do not appear
 #  in some experiments, they will be set to \code{NA}.
-#' Now only the columns in \code{show} will be selected, how many of such experiments 
+#' Now only the columns in \code{show} will be selected, how many of such experiments
 #' exist will be counted in a new column \dQuote{.count}.
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
@@ -30,23 +30,21 @@
 #' print(summarizeExperiments(reg, show=c("prob", "algo", "alpha", "gamma")))
 summarizeExperiments = function(reg, ids, show=c("prob", "algo")) {
   checkArg(reg, "ExperimentRegistry")
-  if (!missing(ids))
-    ids = BatchJobs:::checkIds(reg, ids)
-  checkArg(show, "character", min.len=1, na.ok=FALSE)   
-  jobs = getJobs(reg, ids, check.ids=FALSE)
-  prob = do.call(rbind.fill, lapply(jobs, function(j) 
-    if (length(j$prob.pars) == 0)
+  checkArg(show, "character", min.len=1, na.ok=FALSE)
+  jobs = getJobs(reg, ids)
+  prob = do.call(rbind.fill, lapply(jobs, function(j)
+    if (length(j$prob.pars) == 0L)
       data.frame(prob=j$prob.id)
     else
       cbind(prob=j$prob.id, as.data.frame(j$prob.pars))
-  ))    
-  algo = do.call(rbind.fill, lapply(jobs, function(j) 
-    if (length(j$algo.pars) == 0)
+  ))
+  algo = do.call(rbind.fill, lapply(jobs, function(j)
+    if (length(j$algo.pars) == 0L)
       data.frame(algo=j$algo.id)
     else
       cbind(algo=j$algo.id, as.data.frame(j$algo.pars))
-  ))    
-  repl = sapply(jobs, function(j) j$repl)
+  ))
+  repl = extractSubList(jobs, "repl", integer(1L))
   d = as.data.frame(cbind(prob, algo, repl=repl))
   ddply(d, show, function(x) c(.count=nrow(x)))
 }
