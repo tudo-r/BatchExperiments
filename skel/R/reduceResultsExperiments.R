@@ -119,6 +119,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
 #' submitJobs(reg)
 #' data <- reduceResultsExperiments(reg)
+#' library(plyr)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
 getResultVars = function(data, type="group") {
   checkArg(data, "ReducedResultsExperiments")
