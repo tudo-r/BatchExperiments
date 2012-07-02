@@ -149,6 +149,8 @@ addExperiments = function(reg, prob.designs, algo.designs, repls, skip.defined=F
 #' @method addExperiments ExperimentRegistry
 #' @S3method addExperiments ExperimentRegistry
 addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
+  checkArg(reg, "ExperimentRegistry")
+
   # check prob.designs
   if (missing(prob.designs)) {
     prob.designs = lapply(dbGetProblemIds(reg), makeDesign)
@@ -158,8 +160,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     } else if (is(prob.designs, "Design")) {
       prob.designs = list(prob.designs)
     } else if (is.list(prob.designs)) {
-      if (length(prob.designs) == 0L)
-        stop("'prob.designs' is empty!")
       checkListElementClass(prob.designs, "Design")
     } else {
       stop("Format of prob.designs not supported. Must be a character vector, a design or list of designs")
@@ -170,6 +170,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
       stopf("%i problems have not been added to registry for designs: %s",
             sum(!found), collapse(ids[!found]))
   }
+
   # check algo.designs
   if (missing(algo.designs)) {
     algo.designs = lapply(dbGetAlgorithmIds(reg), makeDesign)
@@ -179,8 +180,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     } else if (is(algo.designs, "Design")) {
       algo.designs = list(algo.designs)
     } else if (is.list(algo.designs)) {
-      if (length(algo.designs) == 0L)
-        stop("'algo.designs' is empty!")
       checkListElementClass(algo.designs, "Design")
     } else {
       stop("Format of algo.designs not supported. Must be a character vector, a design or list of designs")
@@ -191,6 +190,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
       stopf("%i algorithms have not been added to registry for designs: %s",
             sum(!found), collapse(ids[!found]))
   }
+
   repls = convertIntegers(repls)
   checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
   checkArg(skip.defined, "logical", na.ok=FALSE)
@@ -208,7 +208,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   }
 
   writeJobDefs = function(job.defs) {
-    #messagef("Creating %i job definitions", n)
     data = as.data.frame(do.call(rbind, lapply(job.defs, unlist)))
     mq("INSERT INTO tmp(prob_id, prob_pars, algo_id, algo_pars) VALUES(?, ?, ?, ?)",
        con = con, bind.data = data)
@@ -220,9 +219,8 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   on.exit(dbDisconnect(con))
 
   # create temporary table for job definitions
-  mq(c("CREATE TEMP TABLE tmp(tid INTEGER PRIMARY KEY,",
-       "job_def_id INTEGER, prob_id TEXT, prob_pars TEXT,",
-       "algo_id TEXT, algo_pars TEXT)"), con = con)
+  mq(c("CREATE TEMP TABLE tmp(job_def_id INTEGER, prob_id TEXT,",
+       "prob_pars TEXT, algo_id TEXT, algo_pars TEXT)"), con = con)
 
   # write auxiliary temporary table with replication numbers
   mq("CREATE TEMP TABLE repls(repl INTEGER)", con = con)
@@ -277,8 +275,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
   # test whether we would overwrite existing experiments
   if(!skip.defined) {
-    n.dup = mq("SELECT COUNT(job_def_id) AS n FROM tmp", con = con)$n
-    if(n.dup > 0L)
+    if (mq("SELECT COUNT(job_def_id) AS n FROM tmp", con = con)$n > 0L)
       stop(duplicated.err.msg)
   }
 
@@ -286,7 +283,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   dbBeginTransaction(con)
   ok = try({
     # insert new job defs
-    #message("Writing job definitions ...")
     mq(c("INSERT INTO %s_job_def(prob_id, prob_pars, algo_id, algo_pars)",
          "SELECT prob_id, prob_pars, algo_id, algo_pars FROM tmp",
          "WHERE job_def_id IS NULL"), reg$id, con = con)
@@ -298,7 +294,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
          "WHERE tmp.job_def_id IS NULL"), reg$id, con = con)
 
     # insert into job status table
-    #message("Writing job status information ...")
     mq(c("INSERT INTO %1$s_job_status(job_def_id, repl)",
          "SELECT cp.job_def_id, cp.repl FROM cp WHERE NOT EXISTS",
          "(SELECT * FROM %1$s_job_status AS js WHERE",
@@ -308,24 +303,24 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
     # We could do this w/o bulk insert, but we are not allowed to
     # use external RNGs
-    #message("Setting seeds ...")
     df = mq("SELECT job_id, pseed, repl FROM %s_expanded_jobs WHERE job_id > %i",
             reg$id, max.job.id, con = con)
 
     if(nrow(df) > 0L) {
       df$seed = BatchJobs:::addIntModulo(df$job_id, reg$seed - 1L)
       na = is.na(df$pseed)
-      df$prob_seed[na] = BatchJobs:::getRandomSeed(sum(na))
+      df$prob_seed[ na] = BatchJobs:::getRandomSeed(sum(na))
       df$prob_seed[!na] = BatchJobs:::addIntModulo(df$pseed[!na], df$repl[!na] - 1L)
       mq("UPDATE %s_job_status SET seed = ?, prob_seed = ? WHERE job_id = ?",
-         reg$id, con = con, bind.data = data.frame(df[c("seed", "prob_seed", "job_id")]))
+         reg$id, con = con, bind.data = df[c("seed", "prob_seed", "job_id")])
     }
   }, silent=TRUE)
 
   if(is.error(ok)) {
     dbRollback(con)
     errmsg = as.character(ok)
-    # not really clean to match the english message here....
+    # not really clean to match the english message here...
+    # lets hope there are not localized versions of (R)SQLite out there
     if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE))
       stopf(duplicated.err.msg)
     else
@@ -333,8 +328,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   }
 
   dbCommit(con)
-
-  #message("Creating directories ...")
   BatchJobs:::createShardedDirs(reg, df$job_id)
   invisible(df$job_id)
 }
