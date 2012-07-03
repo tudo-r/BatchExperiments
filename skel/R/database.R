@@ -40,6 +40,23 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
   })
 }
 
+dbGetReplicatedExperiments = function(reg, ids) {
+  query = "SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs %s GROUP BY job_def_id"
+  if (missing(ids))
+    query = sprintf(query, reg$id, "")
+  else
+    query = sprintf(query, reg$id, sprintf("WHERE job_id IN (%s)", collapse(ids)))
+  tab = BatchJobs:::dbDoQuery(reg, query, flags="ro")
+  lapply(seq_len(nrow(tab)), function(i) {
+    x = tab[i,]
+    prob.pars = unserialize(charToRaw(x$prob_pars))
+    algo.pars = unserialize(charToRaw(x$algo_pars))
+    makeReplicatedExperiment(id=x$job_def_id, prob.id=x$prob_id, prob.pars=prob.pars,
+                                algo.id=x$algo_id, algo.pars=algo.pars, repls=x$repls)
+  })
+}
+
+
 dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) {
   clause = character(0L)
   if (!missing(repls))
