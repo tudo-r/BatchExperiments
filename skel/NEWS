@@ -1,3 +1,8 @@
+BatchExperiments_1.0-607: 
+- reworked summarizeExperiments, the previous "details" options was basically unuseable
+- minor bug fixes
+
+
 BatchExperiments_1.0-528: 
 - very minor bug fixes
 
