@@ -8,7 +8,7 @@ Maintainer: Michel Lang <michellang@gmail.com>
 URL: http://batchjobs.googlecode.com
 License: BSD
 Depends: BatchJobs
-Imports: BBmisc, RSQLite, plyr
+Imports: BBmisc, DBI, RSQLite, plyr
 Suggests: randomForest, rpart, testthat
 LazyData: yes
 ByteCompile: yes
