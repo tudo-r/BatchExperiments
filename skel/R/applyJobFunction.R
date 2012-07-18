@@ -3,11 +3,11 @@
 applyJobFunction.ExperimentRegistry = function(reg, job) {
   getStash = function(file.dir) {
     list(get = function(id)
-           BatchExperiments:::getStash(file.dir, id),
+           getStash(file.dir, id),
          put = function(id, item, overwrite=FALSE)
-           BatchExperiments:::putStash(file.dir, id, item, overwrite),
+           putStash(file.dir, id, item, overwrite),
          list = function(pattern="*", ignore.case=FALSE)
-           BatchExperiments:::listStash(file.dir, pattern, ignore.case, details=FALSE))
+           listStash(file.dir, pattern, ignore.case, details=FALSE))
   }
 
   getStatic = function(file.dir, id) {
