@@ -9,7 +9,7 @@ makeAlgorithm = function(id, fun) {
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Name of algorithm.
-#' @param fun [\code{function(job, static, dynamic, ...)}]\cr
+#' @param fun [\code{function(job, static, dynamic, stash, ...)}]\cr
 #'   Function which applies the algorithm to a problem instance.
 #'   Takes a \link{Job} object, the \code{static} problem part and the evaluated \code{dynamic}
 #'   problem part as arguments.

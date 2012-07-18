@@ -1,22 +1,32 @@
 #' @method applyJobFunction ExperimentRegistry
 #' @S3method applyJobFunction ExperimentRegistry
 applyJobFunction.ExperimentRegistry = function(reg, job) {
-  # helper function which either returns the already cached static part
-  # or loads the static part from the file system.
-  # returns a function with its own environment containing cache flags
-  staticGetter = function(file.dir, id, cache) {
-    static = NULL
-    cached = FALSE
+  getStash = function(file.dir, items) {
+    function() sapply(items, getStashed, file.dir = file.dir, simplify=FALSE)
+  }
+
+  getStatic = function(file.dir, id) {
+    function() getProblemPart(file.dir, id, "static")
+  }
+
+  getDynamic = function(prob.use) {
+    # we avoid copies and let lazy evaluation kick in if the specific parts are not
+    # needed. Seems a bit cumbersome, but worth it
+    f = switch(sum(c(1L, 2L, 4L)[prob.use]) + 1L,
+      function(...) dynamic.fun(...),
+      function(...) dynamic.fun(job=job, ...),
+      function(...) dynamic.fun(static=static(), ...),
+      function(...) dynamic.fun(job=job, static=static(), ...),
+      function(...) dynamic.fun(stash=prob.stash(), ...),
+      function(...) dynamic.fun(job=job, stash=prob.stash(), ...),
+      function(...) dynamic.fun(static=static(), stash=prob.stash(), ...),
+      function(...) dynamic.fun(job=job, static=static(), stash=prob.stash(), ...))
+
     function() {
-      messagef("Getting static problem part %s ...", id)
-      if(cache) {
-        if (cached)
-          return(static)
-        static <<- getProblemPart(file.dir, id, "static")
-        cached <<- TRUE
-        return(static)
-      }
-      return(getProblemPart(file.dir, id, "static"))
+      messagef("Generating problem %s ...", job$prob.id)
+      seed = BatchJobs:::seeder(reg, job$prob.seed)
+      on.exit(seed$reset())
+      do.call(f, job$prob.pars[setdiff(names(job$prob.pars), "stash")])
     }
   }
 
@@ -27,37 +37,25 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   algo = loadAlgorithm(reg$file.dir, job$algo.id)$fun
 
   # create named logical caches for the formals
-  prob.use = c("job", "static") %in% names(formals(dynamic.fun))
-  names(prob.use) = c("job", "static")
-  algo.use = c("job", "static", "dynamic") %in% names(formals(algo))
-  names(algo.use) = c("job", "static", "dynamic")
+  prob.use = c("job", "static", "stash") %in% names(formals(dynamic.fun))
+  names(prob.use) = c("job", "static", "stash")
+  algo.use = c("job", "static", "dynamic", "stash") %in% names(formals(algo))
+  names(algo.use) = c("job", "static", "dynamic", "stash")
 
-  # if both problem and algorithm rely on the static part we use a
-  # cache to avoid reading the file twice. If the static part is only
-  # required once we try hard to let lazy evaluation kick in
+  # determine what we need and define getter functions
+  if (prob.use["stash"])
+    prob.stash = getStash(reg$file.dir, job$prob.pars$stash)
+  if (algo.use["stash"])
+    algo.stash = getStash(reg$file.dir, job$algo.pars$stash)
   if (prob.use["static"] || algo.use["static"])
-    static = staticGetter(reg$file.dir, job$prob.id, prob.use["static"] && algo.use["static"])
-
+    static = getStatic(reg$file.dir, job$prob.id)
   if (algo.use["dynamic"]) {
-    if(is.null(dynamic.fun)) {
+    if (is.null(dynamic.fun))
       dynamic = function() NULL
-    } else {
-      dynamic = function() {
-        messagef("Generating problem %s ...", job$prob.id)
-        seed = BatchJobs:::seeder(reg, job$prob.seed)
-        on.exit(seed$reset())
-
-        # choose an applyDynamic function
-        # -> interpret logical use vector as binary number and switch on decimal:
-        applyDynamic = switch(as.integer(c(1, 2) %*% prob.use) + 1L,
-                              function(...) dynamic.fun(...),
-                              function(...) dynamic.fun(job=job, ...),
-                              function(...) dynamic.fun(static=static(), ...),
-                              function(...) dynamic.fun(job=job, static=static(), ...))
-        do.call(applyDynamic, job$prob.pars)
-      }
-    }
+    else
+      dynamic = getDynamic(prob.use)
   }
+
 
   # IMPORTANT: Note that the order of the messages in the log files can be confusing.
   # This is caused by lazy evaluation, but we cannot live w/o it.
@@ -65,16 +63,24 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   # "Generating problem[...]", but the actual error is thron in the algorithm
   messagef("Applying Algorithm %s ...", job$algo.id)
 
-  # choose an applyAlgo function
-  # -> interpret logical use vector as binary number and switch on decimal:
-  applyAlgo = switch(as.integer(c(1, 2, 4) %*% algo.use) + 1L,
-                     function(...) algo(...),
-                     function(...) algo(job=job, ...),
-                     function(...) algo(static=static(), ...),
-                     function(...) algo(job=job, static=static(), ...),
-                     function(...) algo(dynamic=dynamic(), ...),
-                     function(...) algo(job=job, dynamic=dynamic(), ...),
-                     function(...) algo(static=static(), dynamic=dynamic(), ...),
-                     function(...) algo(job=job, static=static(), dynamic=dynamic(), ...))
-  do.call(applyAlgo, job$algo.pars)
+  # switch on algo formals and apply algorithm function
+  f = switch(sum(c(1L, 2L, 4L, 8L)[algo.use]) + 1L,
+    function(...) algo(...),
+    function(...) algo(job=job, ...),
+    function(...) algo(static=static(), ...),
+    function(...) algo(job=job, static=static(), ...),
+    function(...) algo(dynamic=dynamic(), ...),
+    function(...) algo(job=job, dynamic=dynamic(), ...),
+    function(...) algo(static=static(), dynamic=dynamic(), ...),
+    function(...) algo(job=job, static=static(), dynamic=dynamic(), ...),
+    function(...) algo(stash=algo.stash(), ...),
+    function(...) algo(job=job, stash=algo.stash(), ...),
+    function(...) algo(static=static(), stash=algo.stash(), ...),
+    function(...) algo(job=job, static=static(), stash=algo.stash(), ...),
+    function(...) algo(dynamic=dynamic(), stash=algo.stash(), ...),
+    function(...) algo(job=job, dynamic=dynamic(), stash=algo.stash(), ...),
+    function(...) algo(static=static(), dynamic=dynamic(), stash=algo.stash(), ...),
+    function(...) algo(job=job, static=static(), dynamic=dynamic(), stash=algo.stash(), ...))
+
+  do.call(f, job$algo.pars[setdiff(names(job$algo.pars), "stash")])
 }
