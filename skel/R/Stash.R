@@ -1,12 +1,12 @@
 #' Add an R object to the stash.
 #'
 #' You can store objects in the special folder \code{stash} inside your
-#' \code{file.dir}. Both problems and algorithms accept the parameter
-#' \code{stash} as vector of IDs of stashed objects.
+#' \code{file.dir}. Both problems and algorithms accept the formal argument
+#' \code{stash} which makes the contents available on the nodes.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
-#'   Name of the stashed object
+#'   Name for the stashed object.
 #' @param item [\code{any}]\cr
 #'   Item to stash. Can be any R object.
 #' @param overwrite [\code{logical(1)}]\cr
@@ -15,13 +15,18 @@
 #' @return [\code{character(1)}]. Invisibly returns the id on success.
 #' @aliases Stash
 #' @export
-saveToStash = function(reg, id, item, overwrite=FALSE) {
+putInStash = function(reg, id=deparse(substitute(item)), item, overwrite=FALSE) {
   checkArg(reg, cl="ExperimentRegistry")
   checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
 
-  fn = getStashFilePath(reg$file.dir, id)
+  putStash(reg$file.dir, id, item, overwrite)
+}
+
+# internal use only
+putStash = function(file.dir, id, item, overwrite=FALSE) {
+  fn = getStashFilePath(file.dir, id)
   if (!overwrite && file.exists(fn))
     stopf("Item with id='%s' already exists in stash", id)
 
@@ -43,7 +48,15 @@ getFromStash = function(reg, ids) {
   checkArg(reg, cl="ExperimentRegistry")
   checkArg(ids, cl = "character", min.len=1L, na.ok=FALSE)
 
-  sapply(ids, getStashed, file.dir=reg$file.dir, simplify=FALSE)
+  sapply(ids, getStash, file.dir=reg$file.dir, simplify=FALSE)
+}
+
+# internal use only
+getStash = function(file.dir, id) {
+  fn = getStashFilePath(file.dir, id)
+  if (!file.exists(fn))
+    stopf("Stashed item with id='%s' not found", id)
+  load2(fn, "item")
 }
 
 #' Look up what is in the stash.
@@ -62,13 +75,17 @@ getFromStash = function(reg, ids) {
 #'   Default is \code{FALSE}.
 #' @return [\code{character}]. Vector of matched stash IDs.
 #' @export
-showStashed = function(reg, pattern="*", ignore.case=FALSE, details=FALSE) {
+showStash = function(reg, pattern="*", ignore.case=FALSE, details=FALSE) {
   checkArg(reg, cl="ExperimentRegistry")
   checkArg(pattern, "character", len=1L, na.ok=FALSE)
   checkArg(ignore.case, "logical", len=1L, na.ok=FALSE)
   checkArg(details, "logical", len=1L, na.ok=FALSE)
 
-  fns = list.files(getStashDir(reg$file.dir), pattern=pattern,
+  listStash(reg$file.dir, pattern, ignore.case, details)
+}
+
+listStash = function(file.dir, pattern="*", ignore.case=FALSE, details=FALSE) {
+  fns = list.files(getStashDir(file.dir), pattern=pattern,
                    ignore.case=ignore.case, full.names=TRUE)
   ids = sub("\\.RData$", "", basename(fns))
   if (!details)
@@ -81,12 +98,4 @@ showStashed = function(reg, pattern="*", ignore.case=FALSE, details=FALSE) {
     if(i < n) message("")
   }
   invisible(ids)
-}
-
-# internal use only
-getStashed = function(file.dir, id) {
-  fn = getStashFilePath(file.dir, id)
-  if (!file.exists(fn))
-    stopf("Stashed item with id='%s' not found", id)
-  load2(fn, "item")
 }

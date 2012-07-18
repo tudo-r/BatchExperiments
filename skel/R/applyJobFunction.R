@@ -1,8 +1,13 @@
 #' @method applyJobFunction ExperimentRegistry
 #' @S3method applyJobFunction ExperimentRegistry
 applyJobFunction.ExperimentRegistry = function(reg, job) {
-  getStash = function(file.dir, items) {
-    function() sapply(items, getStashed, file.dir = file.dir, simplify=FALSE)
+  getStash = function(file.dir) {
+    list(get = function(id)
+           BatchExperiments:::getStash(file.dir, id),
+         put = function(id, item, overwrite=FALSE)
+           BatchExperiments:::putStash(file.dir, id, item, overwrite),
+         list = function(pattern="*", ignore.case=FALSE)
+           BatchExperiments:::listStash(file.dir, pattern, ignore.case, details=FALSE))
   }
 
   getStatic = function(file.dir, id) {
@@ -17,16 +22,16 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
       function(...) dynamic.fun(job=job, ...),
       function(...) dynamic.fun(static=static(), ...),
       function(...) dynamic.fun(job=job, static=static(), ...),
-      function(...) dynamic.fun(stash=prob.stash(), ...),
-      function(...) dynamic.fun(job=job, stash=prob.stash(), ...),
-      function(...) dynamic.fun(static=static(), stash=prob.stash(), ...),
-      function(...) dynamic.fun(job=job, static=static(), stash=prob.stash(), ...))
+      function(...) dynamic.fun(stash=stash, ...),
+      function(...) dynamic.fun(job=job, stash=stash, ...),
+      function(...) dynamic.fun(static=static(), stash=stash, ...),
+      function(...) dynamic.fun(job=job, static=static(), stash=stash, ...))
 
     function() {
       messagef("Generating problem %s ...", job$prob.id)
       seed = BatchJobs:::seeder(reg, job$prob.seed)
       on.exit(seed$reset())
-      do.call(f, job$prob.pars[setdiff(names(job$prob.pars), "stash")])
+      do.call(f, job$prob.pars)
     }
   }
 
@@ -43,10 +48,8 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   names(algo.use) = c("job", "static", "dynamic", "stash")
 
   # determine what we need and define getter functions
-  if (prob.use["stash"])
-    prob.stash = getStash(reg$file.dir, job$prob.pars$stash)
-  if (algo.use["stash"])
-    algo.stash = getStash(reg$file.dir, job$algo.pars$stash)
+  if (prob.use["stash"] || algo.use["stash"])
+    stash = getStash(reg$file.dir)
   if (prob.use["static"] || algo.use["static"])
     static = getStatic(reg$file.dir, job$prob.id)
   if (algo.use["dynamic"]) {
@@ -73,14 +76,14 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
     function(...) algo(job=job, dynamic=dynamic(), ...),
     function(...) algo(static=static(), dynamic=dynamic(), ...),
     function(...) algo(job=job, static=static(), dynamic=dynamic(), ...),
-    function(...) algo(stash=algo.stash(), ...),
-    function(...) algo(job=job, stash=algo.stash(), ...),
-    function(...) algo(static=static(), stash=algo.stash(), ...),
-    function(...) algo(job=job, static=static(), stash=algo.stash(), ...),
-    function(...) algo(dynamic=dynamic(), stash=algo.stash(), ...),
-    function(...) algo(job=job, dynamic=dynamic(), stash=algo.stash(), ...),
-    function(...) algo(static=static(), dynamic=dynamic(), stash=algo.stash(), ...),
-    function(...) algo(job=job, static=static(), dynamic=dynamic(), stash=algo.stash(), ...))
+    function(...) algo(stash=stash, ...),
+    function(...) algo(job=job, stash=stash, ...),
+    function(...) algo(static=static(), stash=stash, ...),
+    function(...) algo(job=job, static=static(), stash=stash, ...),
+    function(...) algo(dynamic=dynamic(), stash=stash, ...),
+    function(...) algo(job=job, dynamic=dynamic(), stash=stash, ...),
+    function(...) algo(static=static(), dynamic=dynamic(), stash=stash, ...),
+    function(...) algo(job=job, static=static(), dynamic=dynamic(), stash=stash, ...))
 
-  do.call(f, job$algo.pars[setdiff(names(job$algo.pars), "stash")])
+  do.call(f, job$algo.pars)
 }
