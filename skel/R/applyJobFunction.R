@@ -1,7 +1,7 @@
 #' @method applyJobFunction ExperimentRegistry
 #' @S3method applyJobFunction ExperimentRegistry
 applyJobFunction.ExperimentRegistry = function(reg, job) {
-  stashObject = function(file.dir) {
+  getStashObject = function(file.dir) {
     list(get = function(id)
            getStash(file.dir, id),
          put = function(id, item, overwrite=FALSE)
@@ -49,7 +49,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
 
   # determine what we need and define getter functions
   if (prob.use["stash"] || algo.use["stash"])
-    stash = stashObject(reg$file.dir)
+    stash = getStashObject(reg$file.dir)
   if (prob.use["static"] || algo.use["static"])
     static = getStatic(reg$file.dir, job$prob.id)
   if (algo.use["dynamic"]) {

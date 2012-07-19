@@ -4,7 +4,7 @@ test_that("Stash", {
   reg = makeTestRegistry()
   putInStash(reg, "foo", 1:2)
   putInStash(reg, "bar", 99)
-  expect_equal(getFromStash(reg, "foo")[[1L]], 1:2)
+  expect_equal(getFromStash(reg, "foo"), 1:2)
   expect_error(putInStash(reg, "foo", 1:2))
 
   addProblem(reg, "p1", static = 1, dynamic = function(stash) stash$get("foo"))

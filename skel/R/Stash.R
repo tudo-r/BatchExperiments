@@ -15,17 +15,16 @@
 #' @return [\code{character(1)}]. Invisibly returns the id on success.
 #' @aliases Stash
 #' @export
-putInStash = function(reg, id=deparse(substitute(item)), item, overwrite=FALSE) {
+putInStash = function(reg, id, item, overwrite=FALSE) {
   checkArg(reg, cl="ExperimentRegistry")
-  checkArg(id, cl = "character", len=1L, na.ok=FALSE)
-  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
-  BatchJobs:::checkIdValid(id)
-
   putStash(reg$file.dir, id, item, overwrite)
 }
 
 # internal use only
 putStash = function(file.dir, id, item, overwrite=FALSE) {
+  checkArg(id, cl = "character", len=1L, na.ok=FALSE)
+  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
+  BatchJobs:::checkIdValid(id)
   fn = getStashFilePath(file.dir, id)
   if (!overwrite && file.exists(fn))
     stopf("Item with id='%s' already exists in stash", id)
@@ -34,25 +33,23 @@ putStash = function(file.dir, id, item, overwrite=FALSE) {
   invisible(id)
 }
 
-#' Retrieve R objects from the stash.
+#' Retrieve R object from the stash.
 #'
-#' The previosly stashed objects will be loaded and returned as a
-#' list with stash IDs as names.
+#' The previosly stashed object will be loaded and returned.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
-#' @param ids [\code{character}]\cr
-#'   Vector of stash IDs.
+#' @param id [\code{character}]\cr
+#'   Name of stashed object.
 #' @return [\code{list}]. Named list of loaded stashed objects.
 #' @export
-getFromStash = function(reg, ids) {
+getFromStash = function(reg, id) {
   checkArg(reg, cl="ExperimentRegistry")
-  checkArg(ids, cl = "character", min.len=1L, na.ok=FALSE)
-
-  sapply(ids, getStash, file.dir=reg$file.dir, simplify=FALSE)
+  getStash(reg$file.dir, id)
 }
 
 # internal use only
 getStash = function(file.dir, id) {
+  checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   fn = getStashFilePath(file.dir, id)
   if (!file.exists(fn))
     stopf("Stashed item with id='%s' not found", id)
@@ -64,8 +61,8 @@ getStash = function(file.dir, id) {
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param pattern [\code{character(1)}]\cr
-#'   Pattern to restrict stash IDs to. Will be passed to \code{\link{list.files}}.
 #'   Default is \code{"*"}.
+#'   Pattern to restrict stash IDs to. Will be passed to \code{\link{list.files}}.
 #' @param ignore.case [\code{logical(1)}]\cr
 #'   Will be passed to \code{\link{list.files}}.
 #'   Default is \code{FALSE}.
@@ -77,14 +74,13 @@ getStash = function(file.dir, id) {
 #' @export
 showStash = function(reg, pattern="*", ignore.case=FALSE, details=FALSE) {
   checkArg(reg, cl="ExperimentRegistry")
-  checkArg(pattern, "character", len=1L, na.ok=FALSE)
-  checkArg(ignore.case, "logical", len=1L, na.ok=FALSE)
-  checkArg(details, "logical", len=1L, na.ok=FALSE)
-
   listStash(reg$file.dir, pattern, ignore.case, details)
 }
 
 listStash = function(file.dir, pattern="*", ignore.case=FALSE, details=FALSE) {
+  checkArg(pattern, "character", len=1L, na.ok=FALSE)
+  checkArg(ignore.case, "logical", len=1L, na.ok=FALSE)
+  checkArg(details, "logical", len=1L, na.ok=FALSE)
   fns = list.files(getStashDir(file.dir), pattern=pattern,
                    ignore.case=ignore.case, full.names=TRUE)
   ids = sub("\\.RData$", "", basename(fns))
