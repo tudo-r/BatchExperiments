@@ -57,7 +57,7 @@ dbGetReplicatedExperiments = function(reg, ids) {
 }
 
 
-dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) {
+dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like=TRUE) {
   clause = character(0L)
   if (!missing(repls))
     clause = c(clause, sprintf("repl IN (%s)", collapse(repls)))
@@ -75,9 +75,11 @@ dbFindExperiments = function(reg, prob.pattern, algo.pattern, repls, like=TRUE) 
   }
 
   query = sprintf("SELECT job_id from %s_expanded_jobs", reg$id)
-  if (length(clause) > 0L)
-    query = paste(query, "WHERE", collapse(clause, sep = " AND "))
-  BatchJobs:::dbDoQuery(reg, query)$job_id
+  if (length(clause) == 0L)
+    return(BatchJobs:::dbSelectWithIds(reg, query, ids)$job_id)
+
+  query = paste(query, "WHERE", collapse(clause, sep = " AND "))
+  BatchJobs:::dbSelectWithIds(reg, query, ids, where=FALSE)$job_id
 }
 
 dbAddProblem = function(reg, id, seed) {

@@ -2,6 +2,9 @@
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
+#' @param ids [\code{integer}]\cr
+#'   Ids of selected experiments to restrict to.
+#'   Default is all experiments.
 #' @param prob.pattern [\code{character(1)}]\cr
 #'   If not missing, all problem ids that match this string are selected.
 #' @param prob.pars [R expression]\cr
@@ -20,7 +23,7 @@
 #'   Default is \code{TRUE}.
 #' @return [\code{integer}]. Ids for experiments which match the query.
 #' @export
-findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
+findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
   checkArg(reg, cl="ExperimentRegistry")
   if (!missing(prob.pattern))
     checkArg(prob.pattern, "character", len=1L, na.ok=FALSE)
@@ -31,9 +34,9 @@ findExperiments = function(reg, prob.pattern, prob.pars, algo.pattern, algo.pars
     checkArg(repls, "integer", lower=1L, na.ok=FALSE)
   }
 
-  ids = dbFindExperiments(reg, prob.pattern, algo.pattern, repls, like=match.substring)
+  ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like=match.substring)
 
-  # skip possible expensive furhter calculations if possible
+  # skip possible expensive calculations if possible
   if (length(ids) == 0L || (missing(prob.pars) && missing(algo.pars)))
     return(ids)
 

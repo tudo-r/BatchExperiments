@@ -10,6 +10,8 @@ test_that("findExperiments", {
 
   i = findExperiments(r)
   expect_equal(i, getJobIds(r)[1:8])
+  i = findExperiments(r, 2:3)
+  expect_equal(i, getJobIds(r)[2:3])
   i = findExperiments(r, prob.pattern="on")
   expect_equal(i, getJobIds(r)[1:4])
   i = findExperiments(r, algo.pattern="A")
@@ -18,6 +20,8 @@ test_that("findExperiments", {
   expect_equal(i, integer(0))
   i = findExperiments(r, repls=1)
   expect_equal(i, getJobIds(r)[seq(1,8,2)])
+  i = findExperiments(r, ids = 1:4, repls=1)
+  expect_equal(i, getJobIds(r)[c(1, 3)])
   i = findExperiments(r, prob.pattern="o", match.substring=FALSE)
   expect_equal(i, integer(0))
   i = findExperiments(r, prob.pattern="o", match.substring=TRUE)
