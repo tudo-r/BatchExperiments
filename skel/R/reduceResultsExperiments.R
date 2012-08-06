@@ -65,7 +65,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
       list(algo = j$algo.id),
       j$algo.pars,
       list(repl = j$repl),
-      fun(j, loadResult(reg, j$id, part, check.id=FALSE), ...))
+      fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
   }
 
   aggr = data.frame()
