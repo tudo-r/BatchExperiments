@@ -86,23 +86,28 @@ getProblemPart = function(file.dir, id, part) {
 }
 
 # returns a functions which returns the static problem part
-getStatic = function(reg, job) {
+getStaticLazy = function(reg, job) {
   function() getProblemPart(reg$file.dir, job$prob.id, "static")
 }
 
 # returns a function which computes the dynamic problem part
-getDynamic = function(reg, job) {
-  dynamic.fun = BatchExperiments:::getProblemPart(reg$file.dir, job$prob.id, "dynamic")
+getDynamicLazy = function(reg, job, with.attr=FALSE) {
+  dynamic.fun = getProblemPart(reg$file.dir, job$prob.id, "dynamic")
+
   if (is.null(dynamic.fun)) {
-    prob.use = rep(FALSE, 3)
-    names(prob.use) = c("job", "static", "stash")
-    return(structure(.Data = function() NULL, prob.use = prob.use))
+    ret = function() NULL
+    if (with.attr) {
+      prob.use = rep.int(FALSE, 3L)
+      names(prob.use) = c("job", "static", "stash")
+      ret = structure(ret, prob.use = prob.use)
+    }
+    return(ret)
   }
 
   prob.use = c("job", "static", "stash") %in% names(formals(dynamic.fun))
   names(prob.use) = c("job", "static", "stash")
   if (prob.use["static"])
-    static = getStatic(reg, job)
+    static = getStaticLazy(reg, job)
   if (prob.use["stash"])
     stash = getStashObject(reg$file.dir)
 
@@ -118,11 +123,14 @@ getDynamic = function(reg, job) {
              function(...) dynamic.fun(static=static(), stash=stash, ...),
              function(...) dynamic.fun(job=job, static=static(), stash=stash, ...))
 
-  return(structure(.Data =
-    function() {
-      messagef("Generating problem %s ...", job$prob.id)
-      seed = BatchJobs:::seeder(reg, job$prob.seed)
-      on.exit(seed$reset())
-      do.call(f, job$prob.pars)
-    }, prob.use = prob.use))
+  ret = function() {
+    messagef("Generating problem %s ...", job$prob.id)
+    seed = BatchJobs:::seeder(reg, job$prob.seed)
+    on.exit(seed$reset())
+    do.call(f, job$prob.pars)
+  }
+  if(with.attr)
+    ret = structure(dynamic, prob.use = prob.use)
+
+  ret
 }

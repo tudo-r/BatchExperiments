@@ -4,7 +4,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   # first, load the dynamic problem function and the
   # algorithm. As functions, these should be quite small and
   # their formals will determine which tasks next to perform.
-  dynamic = getDynamic(reg, job)
+  dynamic = getDynamicLazy(reg, job, with.attr=TRUE)
   algo = loadAlgorithm(reg$file.dir, job$algo.id)$fun
 
   # create named logical caches for the formals
@@ -14,7 +14,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
 
   # determine what we need and define getter functions
   if (algo.use["static"])
-    static = BatchExperiments:::getStatic(reg, job)
+    static = getStaticLazy(reg, job)
   if (algo.use["stash"])
     stash = getStashObject(reg$file.dir)
 

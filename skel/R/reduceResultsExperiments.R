@@ -113,7 +113,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' addAlgorithm(reg, id="a1",
 #'   fun=function(static, dynamic, alpha) c(y=static*alpha))
 #' addAlgorithm(reg, id="a2",
-#'   fun=function(static, dynamica, alpha, beta) c(y=static*alpha+beta))
+#'   fun=function(static, dynamic, alpha, beta) c(y=static*alpha+beta))
 #' ad1 <- makeDesign("a1", exhaustive=list(alpha=1:2))
 #' ad2 <- makeDesign("a2", exhaustive=list(alpha=1:2, beta=5:6))
 #' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
