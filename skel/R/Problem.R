@@ -91,18 +91,10 @@ getStaticLazy = function(reg, job) {
 }
 
 # returns a function which computes the dynamic problem part
-getDynamicLazy = function(reg, job, with.attr=FALSE) {
+getDynamicLazy = function(reg, job) {
   dynamic.fun = getProblemPart(reg$file.dir, job$prob.id, "dynamic")
-
-  if (is.null(dynamic.fun)) {
-    ret = function() NULL
-    if (with.attr) {
-      prob.use = rep.int(FALSE, 3L)
-      names(prob.use) = c("job", "static", "stash")
-      ret = structure(ret, prob.use = prob.use)
-    }
-    return(ret)
-  }
+  if (is.null(dynamic.fun))
+    return(function() NULL)
 
   prob.use = c("job", "static", "stash") %in% names(formals(dynamic.fun))
   names(prob.use) = c("job", "static", "stash")
@@ -123,14 +115,10 @@ getDynamicLazy = function(reg, job, with.attr=FALSE) {
              function(...) dynamic.fun(static=static(), stash=stash, ...),
              function(...) dynamic.fun(job=job, static=static(), stash=stash, ...))
 
-  ret = function() {
+  function() {
     messagef("Generating problem %s ...", job$prob.id)
     seed = BatchJobs:::seeder(reg, job$prob.seed)
     on.exit(seed$reset())
     do.call(f, job$prob.pars)
   }
-  if(with.attr)
-    ret = structure(dynamic, prob.use = prob.use)
-
-  ret
 }

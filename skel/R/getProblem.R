@@ -13,5 +13,5 @@ getProblem = function(reg, id) {
   pids = dbGetProblemIds(reg)
   if (id %nin% pids)
     stop("Unknown problem id, possible candidates are: ", collapse(pids))
-  loadProblem(reg, id, seed=TRUE)
+  loadProblem(reg, id)
 }
