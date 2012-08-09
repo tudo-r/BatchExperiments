@@ -26,9 +26,8 @@ dbCreateExpandedJobsViewBE = function(reg) {
 #' @method dbGetJobs ExperimentRegistry
 #' @S3method dbGetJobs ExperimentRegistry
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
-  cols = c("job_id", "prob_id", "prob_pars", "algo_id",
-           "algo_pars", "seed", "prob_seed", "repl")
-  query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
+  query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", 
+                  reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
 
   lapply(seq_len(nrow(tab)), function(i) {
@@ -41,12 +40,10 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
 }
 
 dbGetReplicatedExperiments = function(reg, ids) {
-  query = "SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs %s GROUP BY job_def_id"
-  if (missing(ids))
-    query = sprintf(query, reg$id, "")
-  else
-    query = sprintf(query, reg$id, sprintf("WHERE job_id IN (%s)", collapse(ids)))
-  tab = BatchJobs:::dbDoQuery(reg, query, flags="ro")
+  query = sprintf("SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs", 
+                  reg$id)
+  tab = BatchJobs:::dbSelectWithIds(reg, query, ids, group.by="job_def_id")
+  
   lapply(seq_len(nrow(tab)), function(i) {
     x = tab[i,]
     prob.pars = unserialize(charToRaw(x$prob_pars))
