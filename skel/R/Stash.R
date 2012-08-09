@@ -95,3 +95,14 @@ listStash = function(file.dir, pattern="*", ignore.case=FALSE, details=FALSE) {
   }
   invisible(ids)
 }
+
+# stash object used on the notes
+getStashObject = function(file.dir) {
+  force(file.dir)
+  list(get = function(id)
+         getStash(file.dir, id),
+       put = function(id, item, overwrite=FALSE)
+         putStash(file.dir, id, item, overwrite),
+       list = function(pattern="*", ignore.case=FALSE)
+         listStash(file.dir, pattern, ignore.case, details=FALSE))
+}

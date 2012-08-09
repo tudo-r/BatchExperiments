@@ -84,3 +84,45 @@ getProblemPart = function(file.dir, id, part) {
     return(NULL)
   load2(fn, part)
 }
+
+# returns a functions which returns the static problem part
+getStatic = function(reg, job) {
+  function() getProblemPart(reg$file.dir, job$prob.id, "static")
+}
+
+# returns a function which computes the dynamic problem part
+getDynamic = function(reg, job) {
+  dynamic.fun = BatchExperiments:::getProblemPart(reg$file.dir, job$prob.id, "dynamic")
+  if (is.null(dynamic.fun)) {
+    prob.use = rep(FALSE, 3)
+    names(prob.use) = c("job", "static", "stash")
+    return(structure(.Data = function() NULL, prob.use = prob.use))
+  }
+
+  prob.use = c("job", "static", "stash") %in% names(formals(dynamic.fun))
+  names(prob.use) = c("job", "static", "stash")
+  if (prob.use["static"])
+    static = getStatic(reg, job)
+  if (prob.use["stash"])
+    stash = getStashObject(reg$file.dir)
+
+  # we avoid copies and let lazy evaluation kick in if the specific parts are not
+  # needed. Seems a bit cumbersome, but worth it
+  f = switch(sum(c(1L, 2L, 4L)[prob.use]) + 1L,
+             function(...) dynamic.fun(...),
+             function(...) dynamic.fun(job=job, ...),
+             function(...) dynamic.fun(static=static(), ...),
+             function(...) dynamic.fun(job=job, static=static(), ...),
+             function(...) dynamic.fun(stash=stash, ...),
+             function(...) dynamic.fun(job=job, stash=stash, ...),
+             function(...) dynamic.fun(static=static(), stash=stash, ...),
+             function(...) dynamic.fun(job=job, static=static(), stash=stash, ...))
+
+  return(structure(.Data =
+    function() {
+      messagef("Generating problem %s ...", job$prob.id)
+      seed = BatchJobs:::seeder(reg, job$prob.seed)
+      on.exit(seed$reset())
+      do.call(f, job$prob.pars)
+    }, prob.use = prob.use))
+}
