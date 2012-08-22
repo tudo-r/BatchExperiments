@@ -30,7 +30,7 @@
 #' @param block.size [\code{integer(1)}]
 #'   Results will be fetched in blocks of size \code{block.size}.
 #'   Default is 100.
-#' @return [\code{data.frame}] Aggregated results, containing problem and algorithm paramaters and collected values.
+#' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
