@@ -26,7 +26,7 @@ dbCreateExpandedJobsViewBE = function(reg) {
 #' @method dbGetJobs ExperimentRegistry
 #' @S3method dbGetJobs ExperimentRegistry
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
-  query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", 
+  query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs",
                   reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
 
@@ -40,10 +40,10 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
 }
 
 dbGetReplicatedExperiments = function(reg, ids) {
-  query = sprintf("SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs", 
+  query = sprintf("SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs",
                   reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids, group.by="job_def_id")
-  
+
   lapply(seq_len(nrow(tab)), function(i) {
     x = tab[i,]
     prob.pars = unserialize(charToRaw(x$prob_pars))
@@ -120,4 +120,9 @@ dbGetProblemIdsNotAdded = function(reg) {
 dbGetAlgorithmIdsNotAdded = function(reg) {
   query = sprintf("SELECT algo_id FROM %1$s_algo_def EXCEPT SELECT DISTINCT algo_id FROM %1$s_job_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$algo_id
+}
+
+dbGetReplicationNumber = function(reg, ids) {
+  query = sprintf("SELECT job_id, repl FROM %s_job_status")
+  BatchJobs:::dbSelectWithIds(reg, query, ids)
 }
