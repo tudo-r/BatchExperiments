@@ -39,18 +39,27 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
   })
 }
 
-dbGetReplicatedExperiments = function(reg, ids) {
-  query = sprintf("SELECT job_id, job_def_id, prob_id, prob_pars, algo_id, algo_pars, COUNT(job_id) AS repls FROM %s_expanded_jobs",
-                  reg$id)
-  tab = BatchJobs:::dbSelectWithIds(reg, query, ids, group.by="job_def_id")
 
-  lapply(seq_len(nrow(tab)), function(i) {
-    x = tab[i,]
-    prob.pars = unserialize(charToRaw(x$prob_pars))
-    algo.pars = unserialize(charToRaw(x$algo_pars))
-    makeReplicatedExperiment(id=x$job_def_id, prob.id=x$prob_id, prob.pars=prob.pars,
-                                algo.id=x$algo_id, algo.pars=algo.pars, repls=x$repls)
-  })
+dbSummarizeExperiments = function(reg, ids, show) {
+  if (all(show %in% c("prob", "algo"))) {
+    cols = sprintf("%1$s_id", show)
+    query = sprintf("SELECT %s, COUNT(job_id) FROM %s_expanded_jobs", collapse(cols), reg$id)
+    summary = BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder=FALSE)
+    names(summary) = c(show, ".count")
+  } else {
+    uc = function(x) unserialize(charToRaw(x))
+    query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars FROM %s_expanded_jobs", reg$id)
+    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, reorder=FALSE)
+    tab = cbind(subset(tab, select = c("job_id", "prob", "algo")),
+      BatchJobs:::list2df(lapply(tab$prob_pars, uc)),
+      BatchJobs:::list2df(lapply(tab$algo_pars, uc)))
+
+    diff = setdiff(show, colnames(tab))
+    if (length(diff) > 0L)
+      stopf("Trying to select columns in arg 'show' which are not available: %s", collapse(diff))
+    summary = ddply(tab, show, summarise, .count = length(job_id))
+  }
+  summary
 }
 
 

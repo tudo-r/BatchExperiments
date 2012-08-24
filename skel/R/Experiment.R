@@ -11,11 +11,6 @@ makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.p
             class=c("ExperimentJob", "Job"))
 }
 
-makeReplicatedExperiment = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.pars, repls) {
-  structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
-                 algo.pars=algo.pars, repls=repls),
-            class="ReplicatedExperiment")
-}
 
 
 #' @S3method print ExperimentJob
