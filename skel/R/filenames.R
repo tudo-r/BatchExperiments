@@ -4,8 +4,7 @@ getAlgorithmFilePath = function(file.dir, id) {
 
 getProblemFilePaths = function(file.dir, id) {
   parts = c("static", "dynamic")
-  structure(file.path(file.dir, "problems", sprintf("%s_%s.RData", id, parts)),
-            names = parts)
+  setNames(file.path(file.dir, "problems", sprintf("%s_%s.RData", id, parts)), parts)
 }
 
 getStashDir = function(file.dir) {
