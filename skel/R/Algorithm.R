@@ -11,7 +11,7 @@ makeAlgorithm = function(id, fun) {
 #'   Name of algorithm.
 #' @param fun [\code{function(job, static, dynamic, stash, ...)}]\cr
 #'   Function which applies the algorithm to a problem instance.
-#'   Takes a \link{Job} object, the \code{static} problem part and the evaluated \code{dynamic}
+#'   Takes a \code{\link[BatchJobs]{Job}} object, the \code{static} problem part and the evaluated \code{dynamic}
 #'   problem part as arguments.
 #'   You may omit any of \code{job}, \code{static} or \code{dynamic}.
 #'   In this case, the respective arguments will not get passed to \code{fun}.

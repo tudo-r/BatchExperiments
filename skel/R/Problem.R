@@ -15,7 +15,7 @@ makeProblem = function(id, static, dynamic) {
 #'   Default is \code{NULL}.
 #' @param dynamic [\code{function(job, static, ...)}]\cr
 #'   R generator function that creates dynamic / stochastic part of problem instance, which might be dependent on parameters.
-#'   First parameter \code{job} is a \link{Job} object, second is static problem part \code{static}.
+#'   First parameter \code{job} is a \code{\link[BatchJobs]{Job}} object, second is static problem part \code{static}.
 #'   Further parameters from design are passed to ... argument on instance creation time.
 #'   The arguments \code{job} and \code{static} may be omitted.
 #'   Default is \code{NULL}.
