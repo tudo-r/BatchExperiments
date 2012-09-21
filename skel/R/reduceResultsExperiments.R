@@ -77,9 +77,12 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 
   tryCatch({
     for(id.chunk in ids) {
+      # FIXME: getJobs is inefficient here, we just want a data.frame
+      # FIXME: also check all other functions using getJobs / rbind.fill
       jobs = getJobs(reg, id.chunk, check.ids=FALSE)
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
+      # FIXME m/b use list2df instead of rbind.fill
       results = lapply(jobs, getRow, reg = reg, part = part, ...)
       aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
       bar$inc(1L)
@@ -90,6 +93,8 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   class(aggr) = c("ReducedResultsExperiments", class(aggr))
   attr(aggr, "prob.pars.names") = prob.pars
   attr(aggr, "algo.pars.names") = algo.pars
+  # FIXME do we have ids as row names?
+  # FIXME also check other reduce functions
   return(aggr)
 }
 

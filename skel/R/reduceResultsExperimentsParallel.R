@@ -1,7 +1,7 @@
 #' Reduce very many results in parallel.
 #'
 #' Basically the same as \code{\link{reduceResultsExperiments}} but creates a few (hopefully short) jobs
-#' to reduce the results in parallel. The function internally calls \code{\link{batchMapQuick}}, 
+#' to reduce the results in parallel. The function internally calls \code{\link{batchMapQuick}},
 #' does \dQuote{busy-waiting} till
 #' all jobs are done and cleans all temporary files up.
 #' Useful when you have very results and reducing is slow.
@@ -49,34 +49,41 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
   njobs = convertInteger(njobs)
   checkArg(njobs, "integer", len=1L, na.ok=FALSE)
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
-  
+
   n = length(ids)
   messagef("Reducing %i results...", n)
-  
+
   ch = chunk(ids, n.chunks=njobs, shuffle=FALSE)
   more.args = c(list(reg=reg, part=part, fun=fun, strings.as.factors=strings.as.factors), list(...))
+  # FIXME: Magic constant 10
+  # FIXME: file.dir of reg2 should point to subdir of reg$file.dir
+  #        m/b provide option
   reg2 = batchMapQuick(function(reg, ii, fun, part, strings.as.factors, ...) {
-    reduceResultsExperiments(reg, ii, part=part, fun=fun, 
+    reduceResultsExperiments(reg, ii, part=part, fun=fun,
       block.size=ceiling(length(ii) / 10), strings.as.factors=strings.as.factors, ...)
   }, ch, more.args=more.args)
-  while (length(findMissingResults(reg2)) > 0) {
+  while (length(findMissingResults(reg2)) > 0L) {
+    # FIXME: what happens if jobs hit the wall time?
+    #        infinite loop?
     errids = findErrors(reg2)
-    if (length(errids) > 0) {
-      df = BatchJobs:::dbGetJobStatusTable(reg2, errids[1])
-      stopf("There were some errors like: %s", df$error[1])
+    if (length(errids) > 0L) {
+      # FIXME: wrong db fun
+      df = BatchJobs:::dbGetJobStatusTable(reg2, errids[1L])
+      stopf("There were some errors like: %s", df$error[1L])
     }
     Sys.sleep(10)
-  } 
+  }
+
   res = reduceResults(reg2, fun=function(aggr, job, res) {
     d = rbind.fill(aggr, res)
     attr(d, "prob.pars.names") = union(attr(aggr, "prob.pars.names"), attr(res, "prob.pars.names"))
     attr(d, "algo.pars.names") = union(attr(aggr, "algo.pars.names"), attr(res, "algo.pars.names"))
-    return(d) 
+    return(d)
   }, init=data.frame())
   class(res) = c("ReducedResultsExperiments", class(res))
-  if (nrow(res) == 0) {
-    attr(res, "prob.pars.names") = character(0)
-    attr(res, "algo.pars.names") = character(0)
+  if (nrow(res) == 0L) {
+    attr(res, "prob.pars.names") = character(0L)
+    attr(res, "algo.pars.names") = character(0L)
   }
   unlink(reg2$file.dir, recursive=TRUE)
   return(res)
