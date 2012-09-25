@@ -96,8 +96,8 @@ getDynamicLazy = function(reg, job) {
   if (is.null(dynamic.fun))
     return(function() NULL)
 
-  prob.use = c("job", "static", "stash") %in% names(formals(dynamic.fun))
-  names(prob.use) = c("job", "static", "stash")
+  prob.use = setNames(c("job", "static", "stash") %in% names(formals(dynamic.fun)),
+                      c("job", "static", "stash"))
   if (prob.use["static"])
     static = getStaticLazy(reg, job)
   if (prob.use["stash"])

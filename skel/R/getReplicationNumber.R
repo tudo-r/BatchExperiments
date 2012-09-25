@@ -12,7 +12,5 @@ getReplicationNumber = function(reg, ids) {
     ids = BatchJobs:::checkIds(reg, ids)
 
   tab = dbGetReplicationNumber(reg, ids)
-  repl = tab$repl
-  names(repl) = tab$job_id
-  return(repl)
+  setNames(tab$repl, tab$job_id)
 }

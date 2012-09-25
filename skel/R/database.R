@@ -44,8 +44,8 @@ dbSummarizeExperiments = function(reg, ids, show) {
   if (all(show %in% c("prob", "algo"))) {
     cols = sprintf("%1$s_id", show)
     query = sprintf("SELECT %s, COUNT(job_id) FROM %s_expanded_jobs", collapse(cols), reg$id)
-    summary = BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder=FALSE)
-    names(summary) = c(show, ".count")
+    summary = setNames(BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder=FALSE),
+                       c(show, ".count"))
   } else {
     uc = function(x) unserialize(charToRaw(x))
     query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars FROM %s_expanded_jobs", reg$id)

@@ -2,8 +2,8 @@
 #' @S3method applyJobFunction ExperimentRegistry
 applyJobFunction.ExperimentRegistry = function(reg, job) {
   algo = loadAlgorithm(reg$file.dir, job$algo.id)$fun
-  algo.use = c("job", "static", "dynamic", "stash") %in% names(formals(algo))
-  names(algo.use) = c("job", "static", "dynamic", "stash")
+  algo.use = setNames(c("job", "static", "dynamic", "stash") %in% names(formals(algo)),
+                      c("job", "static", "dynamic", "stash"))
 
   # determine what we need and define getter functions
   if (algo.use["static"])
@@ -36,7 +36,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   # This is caused by lazy evaluation, but we cannot live w/o it.
   # Therefore it is possible to get errors on the slave with the last message being
   # "Generating problem[...]", but the actual error is thron in the algorithm
-  
+
   messagef("Applying Algorithm %s ...", job$algo.id)
   do.call(f, job$algo.pars)
 }
