@@ -6,9 +6,9 @@
 #   Default is \code{NA}.
 # @aliases Experiment
 makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.pars, repl, seed, prob.seed) {
-  structure(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
-                 algo.pars=algo.pars, repl=repl, seed=seed, prob.seed=prob.seed),
-            class=c("ExperimentJob", "Job"))
+  setClasses(list(id=id, prob.id=prob.id, prob.pars=prob.pars, algo.id=algo.id,
+                  algo.pars=algo.pars, repl=repl, seed=seed, prob.seed=prob.seed),
+             c("ExperimentJob", "Job"))
 }
 
 

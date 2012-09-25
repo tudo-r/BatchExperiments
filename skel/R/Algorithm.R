@@ -1,5 +1,5 @@
 makeAlgorithm = function(id, fun) {
-  structure(list(id=id, fun=fun), class="Algorithm")
+  setClasses(list(id=id, fun=fun), "Algorithm")
 }
 
 #' Add an algorithm to registry.

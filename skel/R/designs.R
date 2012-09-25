@@ -95,8 +95,8 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
     if (!all(vapply(design, function(x) is.atomic(x) | is.factor(x), logical(1L))))
       stop("All columns of design must be either of atomic type or a factor!")
   }
-  structure(list(id = id, designIter=designIterator(exhaustive, .design = design)),
-            class = "Design")
+  setClasses(list(id = id, designIter=designIterator(exhaustive, .design = design)),
+             "Design")
 }
 
 #' @S3method print Design

@@ -1,6 +1,6 @@
 makeProblem = function(id, static, dynamic) {
-  structure(list(id=id, static=static, dynamic=dynamic),
-            class="Problem")
+  setClasses(list(id=id, static=static, dynamic=dynamic),
+             "Problem")
 }
 
 #' Add a problem to registry.
