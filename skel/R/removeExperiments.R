@@ -14,7 +14,8 @@
 #' @return Vector of type \code{integer} of removed job ids.
 #' @export
 removeExperiments = function(reg, ids, force=FALSE) {
-  checkArg(reg, "Registry")
+  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))
   ids = BatchJobs:::checkIds(reg, ids)
@@ -24,7 +25,7 @@ removeExperiments = function(reg, ids, force=FALSE) {
       stop("Listing or killing of jobs not supported by your cluster functions\n",
            "You need to set force=TRUE to remove jobs, but note the warning in ?removeExperiments")
     }
-    running = findRunning(reg, ids)
+    running = BatchJobs:::dbFindRunning(reg, ids)
     if (length(running) > 0L)
       stopf("Can't remove jobs which are still running. You have to kill them first.\nRunning: %s",
             collapse(running))

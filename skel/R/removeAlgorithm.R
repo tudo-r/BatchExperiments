@@ -12,6 +12,7 @@
 #' @export
 removeAlgorithm = function(reg, id, force=FALSE) {
   checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::syncRegistry(reg)
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
   if (id %nin% dbGetAlgorithmIds(reg))

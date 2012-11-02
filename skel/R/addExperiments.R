@@ -150,6 +150,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls, skip.defined=F
 #' @S3method addExperiments ExperimentRegistry
 addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
   checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::syncRegistry(reg)
 
   # check prob.designs
   if (missing(prob.designs)) {

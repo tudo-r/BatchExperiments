@@ -26,8 +26,7 @@ dbCreateExpandedJobsViewBE = function(reg) {
 #' @method dbGetJobs ExperimentRegistry
 #' @S3method dbGetJobs ExperimentRegistry
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
-  query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs",
-                  reg$id)
+  query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
 
   lapply(seq_len(nrow(tab)), function(i) {

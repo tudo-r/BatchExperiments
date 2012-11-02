@@ -31,6 +31,7 @@
 #' @export
 reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun, ..., njobs=20L, strings.as.factors=default.stringsAsFactors()) {
   checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::syncRegistry(reg)
   done = BatchJobs:::dbGetDone(reg)
   if (missing(ids)) {
     ids = done
@@ -62,10 +63,10 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
     reduceResultsExperiments(reg, ii, part=part, fun=fun,
       block.size=ceiling(length(ii) / 10), strings.as.factors=strings.as.factors, ...)
   }, ch, more.args=more.args)
-  while (length(findMissingResults(reg2)) > 0L) {
+  while (length(BatchJobs:::dbGetMissingResults(reg2)) > 0L) {
     # FIXME: what happens if jobs hit the wall time?
     #        infinite loop?
-    errids = findErrors(reg2)
+    errids = BatchJobs:::dbGetErrors(reg2)
     if (length(errids) > 0L) {
       # FIXME: wrong db fun
       df = BatchJobs:::dbGetJobStatusTable(reg2, errids[1L])
