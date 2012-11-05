@@ -236,12 +236,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   n.exps = sum(outer(f(prob.designs), f(algo.designs)))
   messagef("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
-  duplicated.err.msg = paste(
-    "You have added identical experiments.",
-    "Either there are duplicated problem or algorithm ids or you have defined an experiment with the same parameters twice.",
-    "For the latter case use replications.",
-    "If you know what you're doing, look at skip.defined=TRUE.",
-    sep = "\n")
 
   # iterate to generate job definitions
   # write to temporary table every x definitions
@@ -277,7 +271,11 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   # test whether we would overwrite existing experiments
   if(!skip.defined) {
     if (mq("SELECT COUNT(job_def_id) AS n FROM tmp", con = con)$n > 0L)
-      stop(duplicated.err.msg)
+      stop(paste("You have added identical experiments.",
+                 "Either there are duplicated problem or algorithm ids or you have defined an experiment with the same parameters twice.",
+                 "For the latter case use replications.",
+                 "If you know what you're doing, look at skip.defined=TRUE.",
+                 sep = "\n"))
   }
 
   # we start the transaction here, everything above is temporary
@@ -322,10 +320,15 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     errmsg = as.character(ok)
     # not really clean to match the english message here...
     # lets hope there are not localized versions of (R)SQLite out there
-    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE))
-      stopf(duplicated.err.msg)
-    else
+    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed=TRUE)) {
+      stop(paste("You have added identical experiments.",
+                 "Either there are duplicated problem or algorithm ids or you have defined an experiment with the same parameters twice.",
+                 "For the latter case use replications.",
+                 "If you know what you're doing, look at skip.defined=TRUE.",
+                 sep = "\n"))
+    } else {
       stopf("Error inserting new experiments: %s", errmsg)
+    }
   }
 
   dbCommit(con)
