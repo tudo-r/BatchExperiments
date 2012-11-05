@@ -44,7 +44,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
   if (missing(fun)){
     fun = function(job, res) res
   } else {
-    force(fun)
+    fun = match.fun(fun)
     checkArg(fun, formals=c("job", "res"))
   }
   njobs = convertInteger(njobs)
@@ -54,25 +54,26 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
   n = length(ids)
   messagef("Reducing %i results...", n)
 
-  ch = chunk(ids, n.chunks=njobs, shuffle=FALSE)
+  ch = chunk(ids, n.chunks=njobs, shuffle=TRUE)
   more.args = c(list(reg=reg, part=part, fun=fun, strings.as.factors=strings.as.factors), list(...))
   # FIXME: Magic constant 10
   # FIXME: file.dir of reg2 should point to subdir of reg$file.dir
   #        m/b provide option
   reg2 = batchMapQuick(function(reg, ii, fun, part, strings.as.factors, ...) {
+    # FIXME this synchronizes the registry on the node!
     reduceResultsExperiments(reg, ii, part=part, fun=fun,
       block.size=ceiling(length(ii) / 10), strings.as.factors=strings.as.factors, ...)
   }, ch, more.args=more.args)
+
+  BatchJobs:::syncRegistry(reg2)
   while (length(BatchJobs:::dbGetMissingResults(reg2)) > 0L) {
     # FIXME: what happens if jobs hit the wall time?
     #        infinite loop?
-    errids = BatchJobs:::dbGetErrors(reg2)
-    if (length(errids) > 0L) {
-      # FIXME: wrong db fun
-      df = BatchJobs:::dbGetJobStatusTable(reg2, errids[1L])
-      stopf("There were some errors like: %s", df$error[1L])
-    }
+    errors = BatchJobs:::dbGetErrorMsgs(reg2, filter = TRUE, limit = 1L)
+    if (nrow(errors) > 0L)
+      stopf("There were some errors while reducing. First error:\n%s", errors$error)
     Sys.sleep(10)
+    BatchJobs:::syncRegistry(reg2)
   }
 
   res = reduceResults(reg2, fun=function(aggr, job, res) {
