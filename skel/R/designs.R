@@ -74,6 +74,9 @@ designIterator = function(ex, .design = data.frame()) {
 #' @return [\code{\link{Design}}].
 #' @export
 #' @aliases Design
+#' @examples
+#' FIXME lapply example
+#' would be nice to associate one design with multiple probs or algos with one call. makeDesigns?
 makeDesign = function(id, design=data.frame(), exhaustive=list()) {
   checkArg(id, "character", len=1L, na.ok=FALSE)
   checkArg(design, "data.frame")
