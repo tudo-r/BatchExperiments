@@ -25,7 +25,7 @@ putStash = function(file.dir, id, item, overwrite=FALSE) {
   checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
-  fn = getStashFilePath(file.dir, id)
+  fn = getStashFilename(file.dir, id)
   if (!overwrite && file.exists(fn))
     stopf("Item with id='%s' already exists in stash", id)
 
@@ -50,7 +50,7 @@ getFromStash = function(reg, id) {
 # internal use only
 getStash = function(file.dir, id) {
   checkArg(id, cl = "character", len=1L, na.ok=FALSE)
-  fn = getStashFilePath(file.dir, id)
+  fn = getStashFilename(file.dir, id)
   if (!file.exists(fn))
     stopf("Stashed item with id='%s' not found", id)
   load2(fn, "item")
@@ -81,7 +81,7 @@ listStash = function(file.dir, pattern="*", ignore.case=FALSE, details=FALSE) {
   checkArg(pattern, "character", len=1L, na.ok=FALSE)
   checkArg(ignore.case, "logical", len=1L, na.ok=FALSE)
   checkArg(details, "logical", len=1L, na.ok=FALSE)
-  fns = list.files(getStashDir(file.dir), pattern=pattern,
+  fns = list.files(getStashPath(file.dir), pattern=pattern,
                    ignore.case=ignore.case, full.names=TRUE)
   ids = sub("\\.RData$", "", basename(fns))
   if (!details)

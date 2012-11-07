@@ -48,11 +48,10 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
   dbCreateExpandedJobsViewBE(reg)
   BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create=TRUE)
   BatchJobs:::checkDir(file.path(reg$file.dir, "algorithms"), create=TRUE)
-  BatchJobs:::checkDir(file.path(reg$file.dir, "stash"), create=TRUE)
+  BatchJobs:::checkDir(getStashPath(reg$file.dir), create=TRUE)
   BatchJobs:::saveRegistry(reg)
   return(reg)
 }
-
 
 #' @S3method print ExperimentRegistry
 print.ExperimentRegistry = function(x, ...) {

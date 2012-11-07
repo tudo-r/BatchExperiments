@@ -7,10 +7,10 @@ getProblemFilePaths = function(file.dir, id) {
   setNames(file.path(file.dir, "problems", sprintf("%s_%s.RData", id, parts)), parts)
 }
 
-getStashDir = function(file.dir) {
+getStashPath = function(file.dir) {
   file.path(file.dir, "stash")
 }
 
-getStashFilePath = function(file.dir, id) {
+getStashFilename = function(file.dir, id) {
   file.path(file.dir, "stash", sprintf("%s.RData", id))
 }
