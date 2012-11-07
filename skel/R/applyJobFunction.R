@@ -11,7 +11,7 @@ applyJobFunction.ExperimentRegistry = function(reg, job) {
   if (algo.use["dynamic"])
     dynamic = getDynamicLazy(reg, job)
   if (algo.use["stash"])
-    stash = getStashObject(reg$file.dir)
+    stash = getStashObject(reg)
 
   # switch on algo formals and apply algorithm function
   f = switch(sum(c(1L, 2L, 4L, 8L)[algo.use]) + 1L,

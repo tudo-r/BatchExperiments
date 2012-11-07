@@ -101,7 +101,7 @@ getDynamicLazy = function(reg, job) {
   if (prob.use["static"])
     static = getStaticLazy(reg, job)
   if (prob.use["stash"])
-    stash = getStashObject(reg$file.dir)
+    stash = getStashObject(reg)
 
   # we avoid copies and let lazy evaluation kick in if the specific parts are not
   # needed. Seems a bit cumbersome, but worth it

@@ -97,8 +97,10 @@ listStash = function(file.dir, pattern="*", ignore.case=FALSE, details=FALSE) {
 }
 
 # stash object used on the notes
-getStashObject = function(file.dir) {
-  force(file.dir)
+# FIXME export this, this is useful for debugging
+# FIXME maybe rename
+getStashObject = function(reg) {
+  file.dir = reg$file.dir
   list(get = function(id)
          getStash(file.dir, id),
        put = function(id, item, overwrite=FALSE)
