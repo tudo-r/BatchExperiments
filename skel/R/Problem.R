@@ -18,6 +18,8 @@ makeProblem = function(id, static, dynamic) {
 #'   First parameter \code{job} is a \code{\link[BatchJobs]{Job}} object, second is static problem part \code{static}.
 #'   Further parameters from design are passed to ... argument on instance creation time.
 #'   The arguments \code{job} and \code{static} may be omitted.
+#'   To retrieve job informations from the \code{job} object
+#'   see the documentation on \link{ExperimentJob}.
 #'   Default is \code{NULL}.
 #' @param seed [\code{integer(1)}]\cr
 #'   Start seed for this problem. This allows the \dQuote{synchronization} of a stochastic
