@@ -96,24 +96,18 @@ getDynamicLazy = function(reg, job) {
   if (is.null(dynamic.fun))
     return(function() NULL)
 
-  prob.use = setNames(c("job", "static", "stash") %in% names(formals(dynamic.fun)),
-                      c("job", "static", "stash"))
+  prob.use = c("job", "static")
+  prob.use = setNames(prob.use %in% names(formals(dynamic.fun)), prob.use)
   if (prob.use["static"])
     static = getStaticLazy(reg, job)
-  if (prob.use["stash"])
-    stash = getStashObject(reg)
 
   # we avoid copies and let lazy evaluation kick in if the specific parts are not
   # needed. Seems a bit cumbersome, but worth it
-  f = switch(sum(c(1L, 2L, 4L)[prob.use]) + 1L,
+  f = switch(sum(c(1L, 2L)[prob.use]) + 1L,
              function(...) dynamic.fun(...),
              function(...) dynamic.fun(job=job, ...),
              function(...) dynamic.fun(static=static(), ...),
-             function(...) dynamic.fun(job=job, static=static(), ...),
-             function(...) dynamic.fun(stash=stash, ...),
-             function(...) dynamic.fun(job=job, stash=stash, ...),
-             function(...) dynamic.fun(static=static(), stash=stash, ...),
-             function(...) dynamic.fun(job=job, static=static(), stash=stash, ...))
+             function(...) dynamic.fun(job=job, static=static(), ...))
 
   function() {
     messagef("Generating problem %s ...", job$prob.id)

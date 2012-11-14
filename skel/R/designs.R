@@ -64,7 +64,7 @@ designIterator = function(ex, .design = data.frame()) {
 #' in the sense that either \code{is.atomic} is \code{TRUE} or \code{is.factor} is \code{TRUE}.
 #'
 #' Be aware of R's default behaviour of converting strings into factors if you use the \code{design}
-#' parameter. See option \code{stringsAsFactors} in \code\link{data.frame}} to turn this off.
+#' parameter. See option \code{stringsAsFactors} in \code{\link{data.frame}} to turn this off.
 #' @param id [\code{character(1)}]\cr
 #'   Id of algorithm or problem.
 #' @param design [\code{data.frame}]\cr

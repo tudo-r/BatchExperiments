@@ -7,7 +7,7 @@ updateRegistry.ExperimentRegistry = function(reg) {
   # update the BatchJobs part first
   # FIXME NextMethod() ?
   updated = BatchJobs:::updateRegistry.Registry(reg)
-  is.updated = !BatchJobs:::isFALSE(updated)
+  is.updated = !isFALSE(updated)
 
   if (!is.updated && version.reg == version.pkg)
     return(FALSE)
@@ -18,11 +18,7 @@ updateRegistry.ExperimentRegistry = function(reg) {
       return(FALSE)
   }
 
-  # update registry
-  message("Updating ExperimentRegistry and DB to newer version.")
-  if (version.reg < package.version("1.0.630")) {
-    checkDir(getStashPath(reg$file.dir), create=TRUE)
-  }
+  # FIXME here is actually nothing to do.
 
   reg$packages$BatchExperiments$version = version.pkg
   reg
