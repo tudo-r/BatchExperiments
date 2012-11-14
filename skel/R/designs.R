@@ -77,9 +77,18 @@ designIterator = function(ex, .design = data.frame()) {
 #' @return [\code{\link{Design}}].
 #' @export
 #' @aliases Design
-#' @examples
-#' FIXME lapply example
-#' would be nice to associate one design with multiple probs or algos with one call. makeDesigns?
+#' @examples \dontrun{
+#' # simple design for algorithm "a1" with no parameters:
+#' design <- makeDesign("a1")
+#'
+#' # design for problem "p1" using predefined parameter combinations
+#' design <- makeDesign("p1", design = data.frame(alpha = 0:1, beta = c(0.1, 0.2)))
+#'
+#' # creating a list of designs for several algorithms at once, all using the same
+#' # exhaustive grid of parameters
+#' designs <- lapply(c("a1", "a2", "a3"), makeDesign,
+#'                   exhaustive = list(alpha = 0:1, gamma = 1:10/10))
+#' }
 makeDesign = function(id, design=data.frame(), exhaustive=list()) {
   checkArg(id, "character", len=1L, na.ok=FALSE)
   checkArg(design, "data.frame")
