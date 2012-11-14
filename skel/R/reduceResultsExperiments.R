@@ -84,6 +84,8 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
       # FIXME m/b use list2df instead of rbind.fill
+      # -> major problem: how to deal with missing names in return value of fun?
+      #    rbind.fill might not do the right thing here, also.
       results = lapply(jobs, getRow, reg = reg, part = part, ...)
       aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
       bar$inc(1L)
