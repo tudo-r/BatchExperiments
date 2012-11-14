@@ -76,6 +76,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   prob.pars = character(0L)
   algo.pars = character(0L)
 
+
   tryCatch({
     for(id.chunk in ids) {
       # FIXME: getJobs is inefficient here, we just want a data.frame

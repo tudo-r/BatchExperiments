@@ -131,6 +131,6 @@ dbGetAlgorithmIdsNotAdded = function(reg) {
 }
 
 dbGetReplicationNumber = function(reg, ids) {
-  query = sprintf("SELECT job_id, repl FROM %s_job_status")
+  query = sprintf("SELECT job_id, repl FROM %s_job_status", reg$id)
   BatchJobs:::dbSelectWithIds(reg, query, ids)
 }
