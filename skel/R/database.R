@@ -129,8 +129,3 @@ dbGetAlgorithmIdsNotAdded = function(reg) {
   query = sprintf("SELECT algo_id FROM %1$s_algo_def EXCEPT SELECT DISTINCT algo_id FROM %1$s_job_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$algo_id
 }
-
-dbGetReplicationNumber = function(reg, ids) {
-  query = sprintf("SELECT job_id, repl FROM %s_job_status", reg$id)
-  BatchJobs:::dbSelectWithIds(reg, query, ids)
-}
