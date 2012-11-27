@@ -25,13 +25,13 @@ updateRegistry.ExperimentRegistry = function(reg) {
     path = file.path(reg$file.dir, "problems")
     src = list.files(path, full.names = TRUE, pattern="_static\\.RData$")
     ids = sub("\\.RData$", "", basename(src))
-    dest = sapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)$static)
+    dest = vapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)["static"], character(1L))
     file.rename(src, dest)
 
     path = file.path(reg$file.dir, "problems")
     src = list.files(path, full.names = TRUE, pattern="_dynamic\\.RData$")
     ids = sub("\\.RData$", "", basename(src))
-    dest = sapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)$dynamic)
+    dest = vapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)["static"], character(1L))
     file.rename(src, dest)
 
     path = file.path(reg$file.dir, "algorithms")
