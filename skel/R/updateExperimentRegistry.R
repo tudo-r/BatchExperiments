@@ -2,8 +2,10 @@
 #' @S3method updateRegistry ExperimentRegistry
 updateRegistry.ExperimentRegistry = function(reg) {
   # update the BatchJobs part first
+  # FIXME NextMethod
   updated = NextMethod()
   is.updated = !isFALSE(updated)
+  if (is.updated) reg = updated
 
   version.reg = reg$packages$BatchExperiments$version
   version.pkg = packageVersion("BatchExperiments")
