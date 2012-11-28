@@ -3,7 +3,8 @@
 updateRegistry.ExperimentRegistry = function(reg) {
   # update the BatchJobs part first
   # FIXME NextMethod() ?
-  updated = BatchJobs:::updateRegistry.Registry(reg)
+  updated = NextMethod()
+  #updated = BatchJobs:::.Registry(reg)
   is.updated = !isFALSE(updated)
 
   version.reg = reg$packages$BatchExperiments$version
