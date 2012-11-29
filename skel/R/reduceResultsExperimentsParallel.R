@@ -52,9 +52,16 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
 
   n = length(ids)
+  if (n == 0) {
+    res = data.frame()
+    attr(res, "prob.pars.names") = character(0L)
+    attr(res, "algo.pars.names") = character(0L)
+    return(addClasses(res, "ReducedResultsExperiments"))
+  }
+
   messagef("Reducing %i results...", n)
 
-  ch = chunk(ids, n.chunks=njobs, shuffle=TRUE)
+  ch = chunk(ids, n.chunks=njobs, shuffle=FALSE)
   more.args = c(list(reg=reg, part=part, fun=fun, strings.as.factors=strings.as.factors), list(...))
   # FIXME: Magic constant 10
   # FIXME: file.dir of reg2 should point to subdir of reg$file.dir
@@ -82,12 +89,8 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
     attr(d, "algo.pars.names") = union(attr(aggr, "algo.pars.names"), attr(res, "algo.pars.names"))
     return(d)
   }, init=data.frame())
-  class(res) = c("ReducedResultsExperiments", class(res))
-  if (nrow(res) == 0L) {
-    attr(res, "prob.pars.names") = character(0L)
-    attr(res, "algo.pars.names") = character(0L)
-  }
+
   unlink(reg2$file.dir, recursive=TRUE)
-  return(res)
+  return(addClasses(res, "ReducedResultsExperiments"))
 }
 

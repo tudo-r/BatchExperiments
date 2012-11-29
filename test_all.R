@@ -10,6 +10,8 @@ conf$mail.done = "none"
 conf$mail.error = "none"
 
 if (interactive()) {
+  library("RSQLite")  
+  library("plyr")  
   load_all("skel")
 } else {
   library("BatchExperiments")  
