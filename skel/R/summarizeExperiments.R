@@ -4,7 +4,7 @@
 #' about the selected experiments. The data.frame is constructed
 #' by building the columns \dQuote{prob, <prob.pars>, algo, <algo.pars>, repl},
 #' \code{\link{rbind.fill}} is used to connect the rows, so if some parameters do not appear
-#  in some experiments, they will be set to \code{NA}.
+#'  in some experiments, they will be set to \code{NA}.
 #' Now only the columns in \code{show} will be selected, how many of such experiments
 #' exist will be counted in a new column \dQuote{.count}.
 #'
