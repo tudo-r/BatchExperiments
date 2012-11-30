@@ -28,13 +28,13 @@
 #'   Should all character columns in result be converted to factors?
 #'   Default is \code{default.stringsAsFactors()}.
 #' @param block.size [\code{integer(1)}]
-#'   Results will be fetched in blocks of size \code{block.size}.
-#'   Default is 100.
+#'   Results will be fetched in blocks of this size.
+#'   Default is max(100, 5 percent of ids).
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
-  strings.as.factors=default.stringsAsFactors(), block.size=100L) {
+  strings.as.factors=default.stringsAsFactors(), block.size) {
 
   checkArg(reg, cl = "ExperimentRegistry")
   BatchJobs:::syncRegistry(reg)
@@ -54,8 +54,12 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
     checkArg(fun, formals=c("job", "res"))
   }
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
-  block.size = convertInteger(block.size)
-  checkArg(block.size, "integer", len=1L, na.ok=FALSE)
+  if (missing(block.size)) {
+    block.size = as.integer(0.05 * length(ids))
+  } else {
+    block.size = convertInteger(block.size)
+    checkArg(block.size, "integer", len=1L, na.ok=FALSE)
+  }
 
   n = length(ids)
   messagef("Reducing %i results...", n)
