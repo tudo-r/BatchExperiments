@@ -55,7 +55,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   }
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
   if (missing(block.size)) {
-    block.size = as.integer(0.05 * length(ids))
+    block.size = max(100, as.integer(0.05 * length(ids)))
   } else {
     block.size = convertInteger(block.size)
     checkArg(block.size, "integer", len=1L, na.ok=FALSE)
