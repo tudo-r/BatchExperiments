@@ -70,15 +70,15 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   }
 
   aggr = data.frame()
-  ids = chunk(ids, chunk.size=block.size)
-  bar = makeProgressBar(max=length(ids), label="reduceResultsExperiments")
+  ids2 = chunk(ids, chunk.size=block.size, shuffle=FALSE)
+  bar = makeProgressBar(max=length(ids2), label="reduceResultsExperiments")
   bar$set()
   prob.pars = character(0L)
   algo.pars = character(0L)
 
 
   tryCatch({
-    for(id.chunk in ids) {
+    for(id.chunk in ids2) {
       # FIXME: getJobs is inefficient here, we just want a data.frame
       # FIXME: also check all other functions using getJobs / rbind.fill
       jobs = getJobs(reg, id.chunk, check.ids=FALSE)
@@ -94,11 +94,11 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   }, error=bar$error)
 
   aggr = stringsAsFactors(aggr, strings.as.factors)
-  class(aggr) = c("ReducedResultsExperiments", class(aggr))
+  if (nrow(aggr) > 0)
+    aggr = setRowNames(cbind(id=ids, aggr), ids)
+  aggr = addClasses(aggr, "ReducedResultsExperiments")
   attr(aggr, "prob.pars.names") = prob.pars
   attr(aggr, "algo.pars.names") = algo.pars
-  # FIXME do we have ids as row names?
-  # FIXME also check other reduce functions
   return(aggr)
 }
 
@@ -139,6 +139,6 @@ getResultVars = function(data, type="group") {
     algo = c("algo", attr(data, "algo.pars.names")),
     algo.pars = attr(data, "algo.pars.names"),
     group = c("prob", "algo", attr(data, "prob.pars.names"), attr(data, "algo.pars.names")),
-    result = setdiff(colnames(data), c("algo", "prob", "repl", attr(data, "prob.pars.names"), attr(data, "algo.pars.names")))
+    result = setdiff(colnames(data), c("id", "algo", "prob", "repl", attr(data, "prob.pars.names"), attr(data, "algo.pars.names")))
   )
 }

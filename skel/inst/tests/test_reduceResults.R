@@ -9,11 +9,12 @@ test_that("reduceResults", {
   addExperiments(reg, c("p1", "p2"), c("a1", "a2"), 2)
   submitJobs(reg)
   data = reduceResults(reg, fun=function(aggr, job, res)
-    rbind(aggr, data.frame(prob=job$prob.id, algo=job$algo.id,
+    rbind(aggr, data.frame(id=job$id, prob=job$prob.id, algo=job$algo.id,
       repl=job$repl, y=res, stringsAsFactors = FALSE)),
     init = data.frame()
   )
   data2 = data.frame(
+    id = 1:8,
     prob = c("p1", "p1", "p1", "p1", "p2", "p2", "p2", "p2"),
     algo = c("a1", "a1", "a2", "a2", "a1", "a1", "a2", "a2"),
     repl = as.integer(c(1,2,1,2,1,2,1,2)),
@@ -37,6 +38,7 @@ test_that("reduceResults", {
   submitJobs(reg)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=TRUE)
   data2 = data.frame(
+    id = 1:4,
     prob = c("p1", "p1", "p1", "p1"),
     algo = c("a1", "a1", "a2", "a2"),
     a = c(1,2,3,3),
@@ -61,6 +63,7 @@ test_that("reduceResults", {
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
     strings.as.factors=FALSE)
   data2 = data.frame(
+    id = 1:2,
     prob = c("p1", "p1"),
     algo = c("a1", "a1"),
     a = c(1,2),
@@ -140,6 +143,7 @@ test_that("reduceResultsExperiments works with default fun", {
   submitJobs(reg)
   z = reduceResultsExperiments(reg)
   expect_equal(z, data.frame(
+    id = 1:2,
     prob = "p1",
     algo = "a1",
     repl = 1:2,
@@ -152,6 +156,7 @@ test_that("reduceResultsExperiments works with default fun", {
   submitJobs(reg)
   z = reduceResultsExperiments(reg)
   expect_equal(z, data.frame(
+    id = 1:2,
     prob = "p1",
     algo = "a1",
     repl = 1:2,
@@ -162,13 +167,19 @@ test_that("reduceResultsExperiments works with default fun", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) c(foo=1, bar=2))
   addExperiments(reg, "p1", "a1", repls=2)
   submitJobs(reg)
-  z = reduceResultsExperiments(reg)
-  expect_equal(z, data.frame(
+  z = reduceResultsExperiments(reg, ids=2)
+  data2 = setRowNames(data.frame(
+    id = 2L,
     prob = "p1",
     algo = "a1",
-    repl = 1:2,
+    repl = 2L,
     foo = 1,
-    bar = 2), check.attributes=FALSE)
+    bar = 2
+  ), 2L)
+  attr(data2, "prob.pars.names") = character(0)
+  attr(data2, "algo.pars.names") = character(0)
+  class(data2) = c("ReducedResultsExperiments", "data.frame")
+  expect_equal(z, data2)
 })
 
 

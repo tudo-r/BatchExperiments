@@ -11,6 +11,7 @@ test_that("reduceResultsExperimentsParallel", {
   submitJobs(reg)
   data = reduceResultsExperimentsParallel(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=FALSE, njobs=njobs)
   data2 = data.frame(
+    id = 1:8, 
     prob = c("p1", "p1", "p1", "p1", "p2", "p2", "p2", "p2"),
     algo = c("a1", "a1", "a2", "a2", "a1", "a1", "a2", "a2"),
     repl = as.integer(c(1,2,1,2,1,2,1,2)),
@@ -56,6 +57,7 @@ test_that("reduceResultsExperimentsParallel", {
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
                                   strings.as.factors=FALSE)
   data2 = data.frame(
+    id = 1:2, 
     prob = c("p1", "p1"),
     algo = c("a1", "a1"),
     a = c(1,2),
@@ -99,6 +101,7 @@ test_that("reduceResultsExperimentsParallel works with default fun", {
   submitJobs(reg)
   z = reduceResultsExperimentsParallel(reg)
   expect_equal(z, data.frame(
+    id = 1:2,
     prob = "p1",
     algo = "a1",
     repl = 1:2,
@@ -111,6 +114,7 @@ test_that("reduceResultsExperimentsParallel works with default fun", {
   submitJobs(reg)
   z = reduceResultsExperimentsParallel(reg)
   expect_equal(z, data.frame(
+    id = 1:2, 
     prob = "p1",
     algo = "a1",
     repl = 1:2,
@@ -123,6 +127,7 @@ test_that("reduceResultsExperimentsParallel works with default fun", {
   submitJobs(reg)
   z = reduceResultsExperimentsParallel(reg)
   expect_equal(z, data.frame(
+    id = 1:2, 
     prob = "p1",
     algo = "a1",
     repl = 1:2,
