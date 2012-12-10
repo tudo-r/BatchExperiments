@@ -32,13 +32,13 @@
 reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun, ..., njobs=20L, strings.as.factors=default.stringsAsFactors()) {
   checkArg(reg, "ExperimentRegistry")
   BatchJobs:::syncRegistry(reg)
-  done = BatchJobs:::dbGetDone(reg)
   if (missing(ids)) {
-    ids = done
+    ids = BatchJobs:::dbFindDone(reg)
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    if (any(ids %nin% done))
-      stopf("No results available for experiments with ids: %s", collapse(ids[ids %nin% done]))
+    ndone = BatchJobs:::dbFindDone(reg, ids, negate=TRUE)
+    if (length(ndone) > 0L)
+      stopf("No results available for experiments with ids: %s", collapse(ndone))
   }
   BatchJobs:::checkPart(reg, part)
   if (missing(fun)){
@@ -73,7 +73,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
   }, ch, more.args=more.args)
 
   BatchJobs:::syncRegistry(reg2)
-  while (length(BatchJobs:::dbGetMissingResults(reg2)) > 0L) {
+  while (length(BatchJobs:::dbFindDone(reg2, negate=TRUE)) > 0L) {
     # FIXME: what happens if jobs hit the wall time?
     #        infinite loop?
     errors = BatchJobs:::dbGetErrorMsgs(reg2, filter = TRUE, limit = 1L)

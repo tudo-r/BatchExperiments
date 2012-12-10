@@ -16,14 +16,14 @@ test_that("addExperiments", {
   expect_equal(res, 1)
   removeExperiments(reg, force=TRUE)
   expect_equal(findExperiments(reg), id)
-  expect_equal(findMissingResults(reg), integer(0))
+  expect_equal(findNotDone(reg), integer(0))
   loadResult(reg, id)
   expect_output({
     d = showStatus(reg)
   }, "Status for jobs: 1")
   removeExperiments(reg, id, force=TRUE)
   expect_equal(findExperiments(reg), integer(0))
-  expect_equal(findMissingResults(reg), integer(0))
+  expect_equal(findNotDone(reg), integer(0))
   expect_error(loadResult(reg, id), "Ids not present")
   expect_output({
     d = showStatus(reg)
@@ -125,7 +125,7 @@ test_that("addExperiments", {
   a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic, x) static)
   ad1 = makeDesign(a1, exhaustive=list(x=c(1,1)))
   expect_error(addExperiments(reg, pd1, ad1), "identical experiments")
-  
+
   # check adding of repls
   reg = makeTestRegistry()
   p1 = addProblem(reg, "p1", 1)

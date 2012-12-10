@@ -38,13 +38,13 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 
   checkArg(reg, cl = "ExperimentRegistry")
   BatchJobs:::syncRegistry(reg)
-  done = BatchJobs:::dbGetDone(reg)
   if (missing(ids)) {
-    ids = done
+    ids = BatchJobs:::dbFindDone(reg)
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    if (any(ids %nin% done))
-      stopf("No results available for experiments with ids: %s", collapse(ids[ids %nin% done]))
+    ndone = BatchJobs:::dbFindDone(reg, ids, negate=TRUE)
+    if (length(ndone) > 0L)
+      stopf("No results available for experiments with ids: %s", collapse(ndone))
   }
   BatchJobs:::checkPart(reg, part)
   if (missing(fun)){

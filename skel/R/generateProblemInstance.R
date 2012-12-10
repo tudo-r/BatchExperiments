@@ -8,8 +8,7 @@
 #' @export
 generateProblemInstance = function(reg, id) {
   checkArg(reg, "ExperimentRegistry")
-  id = convertInteger(id)
-  checkArg(id, cl = "integer", len=1L, na.ok = FALSE)
+  id = BatchJobs:::checkId(reg, id)
 
   dynamic = getDynamicLazy(reg, getJob(reg, id, check.id=FALSE))
   dynamic()
