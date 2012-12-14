@@ -4,7 +4,7 @@
 #' to dynamic problem functions and algorithms. The object is a named list with the following
 #' elements:
 #' \describe{
-#'   \item{\code{id [\code{integer(1)}]}:}{Job ID.}
+#'   \item{\code{id} [\code{integer(1)}]:}{Job ID.}
 #'   \item{\code{prob.id} [\code{character(1)}]:}{Problem ID.}
 #'   \item{\code{prob.pars} [\code{list}]:}{Problem parameters as named list.}
 #'   \item{\code{algo.id} [\code{character(1)}]:}{algo.id}{Algorithm ID.}
