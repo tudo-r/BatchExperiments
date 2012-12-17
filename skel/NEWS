@@ -1,3 +1,9 @@
+BatchExperiments_1.0-xxx:
+- new helper: getJobInf, reduceResultsExperimentsParallel
+- fix for case-insensitive file systems
+- documentation fixes
+- various smaller fixes
+
 BatchExperiments_1.0-621: 
 - added missing import for R versions < 2.15.1
 
