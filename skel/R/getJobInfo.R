@@ -3,7 +3,7 @@
 getJobInfo.ExperimentRegistry = function(reg, ids, pars=FALSE, prefix.pars=FALSE, select, unit = "seconds") {
   BatchJobs:::syncRegistry(reg)
   checkArg(pars, "logical", len=1L, na.ok=FALSE)
-  columns = c(job.id="job_id", prob="prob_id", algo="algo_id", repl="repl")
+  columns = c(id="job_id", prob="prob_id", algo="algo_id", repl="repl")
   if (pars)
     columns = c(columns, c(prob.pars="prob_pars", algo.pars="algo_pars"))
   tab = BatchJobs:::getJobInfoInternal(reg, ids, pars, select, unit, columns)
