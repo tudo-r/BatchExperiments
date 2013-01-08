@@ -56,7 +56,7 @@ dbSummarizeExperiments = function(reg, ids, show) {
     diff = setdiff(show, colnames(tab))
     if (length(diff) > 0L)
       stopf("Trying to select columns in arg 'show' which are not available: %s", collapse(diff))
-    summary = ddply(tab, show, summarise, .count = length(job_id))
+    summary = ddply(tab, show, nrow)
   }
   summary
 }
