@@ -41,7 +41,7 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
 
 dbSummarizeExperiments = function(reg, ids, show) {
   if (all(show %in% c("prob", "algo"))) {
-    cols = sprintf("%1$s_id", show)
+    cols = sprintf("%s_id", show)
     query = sprintf("SELECT %s, COUNT(job_id) FROM %s_expanded_jobs", collapse(cols), reg$id)
     summary = setNames(BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder=FALSE),
                        c(show, ".count"))
