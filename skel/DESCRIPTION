@@ -2,12 +2,12 @@ Package: BatchExperiments
 Title: Statistical experiments on batch computing clusters.
 Description: Extends the BatchJobs package to run statistical experiments on batch computing clusters. For further details see the project web page.
 Author: Bernd Bischl <bernd_bischl@gmx.net>,
-  Michel Lang <michellang@gmail.com>, 
+  Michel Lang <michellang@gmail.com>,
   Olaf Mersmann <olafm@p-value.net>
 Maintainer: Michel Lang <michellang@gmail.com>
 URL: http://batchjobs.googlecode.com
 License: BSD
-Depends: BatchJobs
+Depends: BatchJobs (>= 1.0.911)
 Imports: BBmisc, DBI, RSQLite, plyr
 Suggests: randomForest, rpart, testthat
 LazyData: yes
