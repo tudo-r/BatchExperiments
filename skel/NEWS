@@ -1,4 +1,4 @@
-BatchExperiments_1.0-911:
+BatchExperiments_1.0-915:
 - new helper: getJobInf, reduceResultsExperimentsParallel
 - fix for case-insensitive file systems
 - documentation fixes
