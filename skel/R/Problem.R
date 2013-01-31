@@ -3,6 +3,8 @@ makeProblem = function(id, static, dynamic) {
              "Problem")
 }
 
+#FIXME the seed mechansim is described slighlty wrong! fix! random seed!
+
 #' Add a problem to registry.
 #'
 #' Add a algorithm to problem and stores it on disk.
