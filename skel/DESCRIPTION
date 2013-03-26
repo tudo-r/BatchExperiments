@@ -7,7 +7,7 @@ Author: Bernd Bischl <bernd_bischl@gmx.net>,
 Maintainer: Michel Lang <michellang@gmail.com>
 URL: http://batchjobs.googlecode.com
 License: BSD
-Depends: BatchJobs (>= 1.0.915)
+Depends: R (>= 2.13.0), BatchJobs (>= 1.0.915)
 Imports: BBmisc, DBI, RSQLite, plyr
 Suggests: randomForest, rpart, testthat
 LazyData: yes
