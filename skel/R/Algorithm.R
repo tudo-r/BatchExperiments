@@ -27,7 +27,7 @@ makeAlgorithm = function(id, fun) {
 #' @aliases Algorithm
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
   checkArg(overwrite, "logical", len=1L, na.ok=FALSE)

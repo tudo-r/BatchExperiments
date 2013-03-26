@@ -4,6 +4,6 @@
 #' @return [\code{character}].
 #' @export
 getAlgorithmIds = function(reg) {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   dbGetAlgorithmIds(reg)
 }

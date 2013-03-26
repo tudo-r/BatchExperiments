@@ -7,7 +7,7 @@
 #' @return [\code{\link{Algorithm}}].
 #' @export
 getAlgorithm = function(reg, id) {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   checkArg(id, "character", na.ok=FALSE, len=1L)
   aids = dbGetAlgorithmIds(reg)
   if (id %nin% aids)

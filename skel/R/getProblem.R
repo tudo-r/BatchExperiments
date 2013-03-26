@@ -8,7 +8,7 @@
 #' @return [\code{\link{Problem}}].
 #' @export
 getProblem = function(reg, id) {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   checkArg(id, "character", na.ok=FALSE, len=1L)
   pids = dbGetProblemIds(reg)
   if (id %nin% pids)

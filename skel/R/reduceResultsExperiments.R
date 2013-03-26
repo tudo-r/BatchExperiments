@@ -36,7 +36,7 @@
 reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   strings.as.factors=default.stringsAsFactors(), block.size) {
 
-  checkArg(reg, cl = "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids)) {
     ids = BatchJobs:::dbFindDone(reg)

@@ -11,7 +11,7 @@
 #' @return Nothing.
 #' @export
 removeProblem = function(reg, id, force=FALSE) {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   checkArg(id, "character", len=1L, na.ok=FALSE)
 

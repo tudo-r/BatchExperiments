@@ -29,7 +29,7 @@
 #' print(summarizeExperiments(reg))
 #' print(summarizeExperiments(reg, show=c("prob", "algo", "alpha", "gamma")))
 summarizeExperiments = function(reg, ids, show=c("prob", "algo")) {
-  checkArg(reg, "ExperimentRegistry")
+  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   checkArg(show, "character", min.len=1, na.ok=FALSE)
   dbSummarizeExperiments(reg, ids, show)
