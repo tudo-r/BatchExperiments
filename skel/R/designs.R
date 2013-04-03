@@ -7,7 +7,7 @@
 #   All elements of the list must be primitive vectors like numeric, integer, factor, etc.
 # @param .design [\code{data.frame}]\cr
 #   The design. Rows define one 'point'.
-# @return List of funs. nextElem returns a named list.
+# @return List of funs. nextElem returns a named list (ordered by list element names).
 designIterator = function(ex, .design = data.frame()) {
   nextState = function(state, pos = 1L) {
     if (state[pos] < state.last[pos])
@@ -20,11 +20,9 @@ designIterator = function(ex, .design = data.frame()) {
     state <<- nextState(state)
     counter <<- counter + 1L
 
-    c(as.list(.design[state[! is.ex.state], , drop = FALSE]),
-      mapply(function(n, s) ex[[n]][s],
-             n = names.ex.state,
-             s = state[is.ex.state],
-             SIMPLIFY = FALSE))
+    x = c(as.list(.design[state[! is.ex.state], , drop = FALSE]),
+          mapply(function(n, s) ex[[n]][s], n = names.ex.state, s = state[is.ex.state], SIMPLIFY = FALSE))
+    sortListByNames(x)
   }
 
   hasNext = function() {
@@ -37,6 +35,7 @@ designIterator = function(ex, .design = data.frame()) {
     invisible(TRUE)
   }
 
+
   state.last = sort(setNames(c(vapply(ex, length, 1L), max(nrow(.design), 1L)), c(names(ex), ".design.row")), decreasing = TRUE)
   state.init = setNames(c(0L, rep(1L, length(state.last) - 1L)), names(state.last))
   counter.max = prod(state.last)
@@ -46,6 +45,7 @@ designIterator = function(ex, .design = data.frame()) {
   counter.max = as.integer(counter.max)
   is.ex.state = (names(state.init) != ".design.row")
   names.ex.state = names(state.init)[is.ex.state]
+  sortListByNames = function(x) x[order(names(x))]
 
   state = state.init
   counter = 0L
