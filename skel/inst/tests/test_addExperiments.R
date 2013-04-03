@@ -154,7 +154,10 @@ test_that("addExperiments", {
   expect_equal(sum(dups), 4L)
   expect_equal(sum(duplicated(tab[c("prob_id", "algo_id", "prob_pars", "algo_pars")])), 4L)
   expect_true(!any(duplicated(tab[! dups, c("prob_id", "algo_id", "prob_pars", "algo_pars")])))
+})
 
+
+test_that("skip.defined works", {
   # test skip.defined
   reg = makeTestRegistry()
   p1 = addProblem(reg, "p1", 1)
@@ -170,6 +173,32 @@ test_that("addExperiments", {
   addExperiments(reg, pd1, ad1, repls=3, skip.defined=TRUE)
   n3 = getJobNr(reg)
   expect_equal(n3, as.integer(n1 / 2 * 3))
+  
+  # bug with param = 1 (num) and 1L (int)
+  # we must make sure that this is handled as the same setting
+  reg = makeTestRegistry()
+  addProblem(reg, id="p", static = 1)
+  addAlgorithm(reg, id="a", fun=identity)
+  ades = makeDesign("a", exhaustive = list(x=1))
+  addExperiments(reg, algo.designs=ades)
+  expect_equal(getJobNr(reg), 1)
+  ades = makeDesign("a", exhaustive = list(x=1:2))
+  addExperiments(reg, algo.designs=ades, skip.defined = TRUE)
+  expect_equal(getJobNr(reg), 2)
+  
+  # this checks a bug where the parameter position the
+  # algo.pars list gets permuted
+  # in the 2nd case we produced y=1, x=1, which is then 
+  # considered as something different as the first setting
+  reg = makeTestRegistry()
+  addProblem(reg, id="p", static = 1)
+  addAlgorithm(reg, id="a", fun=identity)
+  ades = makeDesign("a", exhaustive = list(x=1L, y=1L))
+  addExperiments(reg, algo.designs=ades)
+  expect_equal(getJobNr(reg), 1)
+  ades = makeDesign("a", exhaustive = list(x=1L, y=1:2))
+  addExperiments(reg, algo.designs=ades, skip.defined = TRUE)
+  expect_equal(getJobNr(reg), 2)
 })
 
 
