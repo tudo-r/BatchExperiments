@@ -22,7 +22,8 @@ designIterator = function(ex, .design = data.frame()) {
 
     x = c(as.list(.design[state[! is.ex.state], , drop = FALSE]),
           mapply(function(n, s) ex[[n]][s], n = names.ex.state, s = state[is.ex.state], SIMPLIFY = FALSE))
-    sortListByNames(x)
+    # FIXME names2 is going to BBmisc
+    x[order(BatchJobs:::names2(x))]
   }
 
   hasNext = function() {
@@ -45,7 +46,6 @@ designIterator = function(ex, .design = data.frame()) {
   counter.max = as.integer(counter.max)
   is.ex.state = (names(state.init) != ".design.row")
   names.ex.state = names(state.init)[is.ex.state]
-  sortListByNames = function(x) x[order(names(x))]
 
   state = state.init
   counter = 0L
@@ -90,6 +90,10 @@ designIterator = function(ex, .design = data.frame()) {
 #'                   exhaustive = list(alpha = 0:1, gamma = 1:10/10))
 #' }
 makeDesign = function(id, design=data.frame(), exhaustive=list()) {
+  # ... if we had the registry here, we could do some sanity checks, e.g.
+  # test if the storage mode of parameters matches the storage mode of those
+  # in the database
+  # if we push out a not backward compatible version, do this here.
   checkArg(id, "character", len=1L, na.ok=FALSE)
   checkArg(design, "data.frame")
   checkArg(exhaustive, "list")
