@@ -38,7 +38,7 @@ designIterator = function(ex, .design = data.frame()) {
 
 
   state.last = sort(setNames(c(vapply(ex, length, 1L), max(nrow(.design), 1L)), c(names(ex), ".design.row")), decreasing = TRUE)
-  state.init = setNames(c(0L, rep(1L, length(state.last) - 1L)), names(state.last))
+  state.init = setNames(c(0L, rep.int(1L, length(state.last) - 1L)), names(state.last))
   counter.max = prod(state.last)
   if (counter.max > .Machine$integer.max)
     stop("The generated design is too big. Designs with up to ",
