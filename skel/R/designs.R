@@ -53,7 +53,9 @@ designIterator = function(ex, .design = data.frame()) {
   list(nextElem = nextElem,
        hasNext = hasNext,
        reset = reset,
-       n.states = counter.max)
+       n.states = counter.max,
+       storage = c(vapply(.design, storage.mode, character(1L)),
+                   vapply(ex, storage.mode, character(1L))))
 }
 
 #' Create parameter designs for problems and algorithms.
@@ -110,6 +112,7 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
     if (!all(vapply(design, function(x) is.atomic(x) | is.factor(x), logical(1L))))
       stop("All columns of design must be either of atomic type or a factor!")
   }
+
   setClasses(list(id = id, designIter=designIterator(exhaustive, .design = design)),
              "Design")
 }
@@ -117,5 +120,7 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
 #' @S3method print Design
 print.Design = function(x, ...) {
   n = x$designIter$n.states
+  storage = x$designIter$storage
   catf("Design for %s with %i row%s", x$id, n, ifelse(n == 1L, "", "s"))
+  cat(collapse(sprintf("  %-10s: %s", names(storage), storage), "\n"))
 }

@@ -173,7 +173,7 @@ test_that("skip.defined works", {
   addExperiments(reg, pd1, ad1, repls=3, skip.defined=TRUE)
   n3 = getJobNr(reg)
   expect_equal(n3, as.integer(n1 / 2 * 3))
-  
+
   # bug with param = 1 (num) and 1L (int)
   # we must make sure that this is handled as the same setting
   reg = makeTestRegistry()
@@ -185,10 +185,10 @@ test_that("skip.defined works", {
   ades = makeDesign("a", exhaustive = list(x=1:2))
   addExperiments(reg, algo.designs=ades, skip.defined = TRUE)
   expect_equal(getJobNr(reg), 2)
-  
+
   # this checks a bug where the parameter position the
   # algo.pars list gets permuted
-  # in the 2nd case we produced y=1, x=1, which is then 
+  # in the 2nd case we produced y=1, x=1, which is then
   # considered as something different as the first setting
   reg = makeTestRegistry()
   addProblem(reg, id="p", static = 1)
