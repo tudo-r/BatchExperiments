@@ -142,7 +142,7 @@
 #' reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
 #' @aliases Experiment
 #' @export
-addExperiments = function(reg, prob.designs, algo.designs, repls, skip.defined=FALSE) {
+addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
   UseMethod("addExperiments")
 }
 
