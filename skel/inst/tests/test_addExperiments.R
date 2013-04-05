@@ -20,7 +20,7 @@ test_that("addExperiments", {
   loadResult(reg, id)
   expect_output({
     d = showStatus(reg)
-  }, "Status for jobs: 1")
+  }, "Status for 1 jobs")
   removeExperiments(reg, id, force=TRUE)
   expect_equal(findExperiments(reg), integer(0))
   expect_equal(findNotDone(reg), integer(0))
