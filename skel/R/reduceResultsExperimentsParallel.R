@@ -30,7 +30,7 @@
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @export
 reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun, ..., njobs=20L, strings.as.factors=default.stringsAsFactors()) {
-  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
+  checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids)) {
     ids = BatchJobs:::dbFindDone(reg)

@@ -42,7 +42,7 @@ makeProblem = function(id, static, dynamic) {
 #' @aliases Problem
 #' @export
 addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=FALSE)  {
-  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
+  checkExperimentRegistry(reg, strict=TRUE)
   checkArg(id, cl = "character", len=1L, na.ok = FALSE)
   BatchJobs:::checkIdValid(id)
   if (!is.null(seed)) {

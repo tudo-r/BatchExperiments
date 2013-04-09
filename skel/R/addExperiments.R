@@ -149,7 +149,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.define
 #' @method addExperiments ExperimentRegistry
 #' @S3method addExperiments ExperimentRegistry
 addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {
-  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
+  checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
 
   # check prob.designs

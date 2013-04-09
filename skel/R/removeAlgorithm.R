@@ -11,7 +11,7 @@
 #' @return Nothing.
 #' @export
 removeAlgorithm = function(reg, id, force=FALSE) {
-  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
+  checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   checkArg(id, "character", len=1L, na.ok=FALSE)
 

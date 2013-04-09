@@ -14,7 +14,7 @@
 #' @return Vector of type \code{integer} of removed job ids.
 #' @export
 removeExperiments = function(reg, ids, force=FALSE) {
-  BatchJobs:::checkRegistry(reg, "ExperimentRegistry", strict=TRUE)
+  checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))
