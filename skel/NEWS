@@ -1,4 +1,4 @@
-BatchExperiments_1.0-xxx:
+BatchExperiments_1.0-967:
 - fixed a bug regarding addExperiments and reordering of parameters
 - print method for designs now contains parameter storage informations 
 
