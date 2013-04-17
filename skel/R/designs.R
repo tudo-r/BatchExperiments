@@ -122,5 +122,5 @@ print.Design = function(x, ...) {
   n = x$designIter$n.states
   storage = x$designIter$storage
   catf("Design for %s with %i row%s", x$id, n, ifelse(n == 1L, "", "s"))
-  cat(collapse(sprintf("  %-10s: %s", names(storage), storage), "\n"))
+  cat(collapse(sprintf("  %-10s: %s", names(storage), storage), "\n"), "\n")
 }
