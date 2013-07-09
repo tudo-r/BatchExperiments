@@ -1,3 +1,4 @@
+context("id special chars")
 
 
 test_that("problem / algo ids", {

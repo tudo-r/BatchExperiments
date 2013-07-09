@@ -9,7 +9,7 @@ test_that("we can trafo with bj", {
   addExperiments(reg, algo.designs=list(makeDesign("a1"), ad2))
   submitJobs(reg)
   y1 = loadResults(reg, simplify=TRUE)
-  
+
   td = file.path(tempdir(), "foo")
   unlink(td, recursive=TRUE)
   reg2 = makeRegistry(id="foo", file.dir = td)
@@ -18,5 +18,3 @@ test_that("we can trafo with bj", {
   y2 = loadResults(reg2, simplify=TRUE)
   expect_equal(2*y1, y2, check.names=FALSE)
 })
-
-

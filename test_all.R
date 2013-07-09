@@ -3,6 +3,7 @@ library(methods)
 library(devtools)
 library(testthat)
 library(BatchJobs)
+options(BBmisc.ProgressBar.style = "off")
 conf = BatchJobs:::getBatchJobsConf()
 conf$cluster.functions = BatchJobs:::makeClusterFunctionsUnitTests()
 conf$mail.start = "none"
@@ -10,11 +11,11 @@ conf$mail.done = "none"
 conf$mail.error = "none"
 
 if (interactive()) {
-  library("RSQLite")  
-  library("plyr")  
+  library("RSQLite")
+  library("plyr")
   load_all("skel")
 } else {
-  library("BatchExperiments")  
+  library("BatchExperiments")
 }
 
 test_dir("skel/inst/tests")

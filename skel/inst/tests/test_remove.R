@@ -22,5 +22,3 @@ test_that("remove", {
   expect_equal(getAlgorithmIds(reg), "a2")
   expect_error(removeAlgorithm(reg, "aa", force=TRUE), "not present")
 })
-
-

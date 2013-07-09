@@ -63,6 +63,7 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
   } else {
     # otherwise we have to get all jobs and calculate the groups on them
     exprToIndex = function(jobs, pars, ee, name) {
+      force(ee)
       ind = try(lapply(jobs, function(job, pars, ee, name) eval(pars, job[[name]], ee),
                        pars = pars, ee = ee, name=name), silent=TRUE)
       if (is.error(ind))
