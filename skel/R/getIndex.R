@@ -89,10 +89,10 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     if (by.repl)
       index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
     if (!missing(by.prob.pars)) {
-      index = c(index, exprToIndex(jobs, by.prob.pars, enclos, "prob.pars"))
+      index = c(index, exprToIndex(jobs, substitute(by.prob.pars), enclos, "prob.pars"))
     }
     if (!missing(by.algo.pars)) {
-      index = c(index, exprToIndex(jobs, by.algo.pars, enclos, "algo.pars"))
+      index = c(index, exprToIndex(jobs, substitute(by.algo.pars), enclos, "algo.pars"))
     }
   }
 
