@@ -10,7 +10,7 @@
 getProblem = function(reg, id) {
   checkExperimentRegistry(reg, strict=TRUE)
   checkArg(id, "character", na.ok=FALSE, len=1L)
-  pids = dbGetProblemIds(reg)
+  pids = dbGetAllProblemIds(reg)
   if (id %nin% pids)
     stop("Unknown problem id, possible candidates are: ", collapse(pids))
   loadProblem(reg, id)

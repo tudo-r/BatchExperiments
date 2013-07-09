@@ -108,12 +108,22 @@ dbRemoveAlgorithm = function(reg, id) {
   BatchJobs:::dbDoQuery(reg, query, flags="rw")
 }
 
-dbGetProblemIds = function(reg) {
+dbGetAllProblemIds = function(reg) {
   query = sprintf("SELECT prob_id FROM %s_prob_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$prob_id
 }
 
-dbGetAlgorithmIds = function(reg) {
+dbGetAllAlgorithmIds = function(reg) {
   query = sprintf("SELECT algo_id FROM %s_algo_def", reg$id)
   BatchJobs:::dbDoQuery(reg, query)$algo_id
+}
+
+dbGetProblemIds = function(reg, ids) {
+  query = sprintf("SELECT job_id, prob_id FROM %s_expanded_jobs", reg$id)
+  BatchJobs:::dbSelectWithIds(reg, query, ids)$prob_id
+}
+
+dbGetAlgorithmIds = function(reg, ids) {
+  query = sprintf("SELECT job_id, prob_id FROM %s_expanded_jobs", reg$id)
+  BatchJobs:::dbSelectWithIds(reg, query, ids)$algo_id
 }

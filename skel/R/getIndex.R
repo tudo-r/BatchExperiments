@@ -21,6 +21,10 @@
 #'   If not missing, group experiments by this R expression.
 #'   The expression is evaluated in the environment of algorithm parameters and
 #'   converted to a factor using \code{\link{as.factor}}.
+#' @param enclos [\code{environment}]\cr
+#'   Enclosing frame for evaluation of parameters used by \code{by.prob.pars} and
+#'   \code{by.algo.pars}, see \code{\link[base]{eval}}. Defaults to the parent
+#'   frame.
 #' @return [\code{list}]. List of factors.
 #' @export
 #' @examples
@@ -45,7 +49,7 @@
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=k), reduceResults, reg=reg, fun=f)
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
-                    by.prob.pars, by.algo.pars) {
+                    by.prob.pars, by.algo.pars, enclos = parent.frame()) {
   checkArg(reg, "ExperimentRegistry")
   if (!missing(ids))
     ids = BatchJobs:::checkIds(reg, ids)
@@ -62,10 +66,9 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     names(index) = c("prob", "algo", "repl")[c(by.prob, by.algo, by.repl)]
   } else {
     # otherwise we have to get all jobs and calculate the groups on them
-    exprToIndex = function(jobs, pars, ee, name) {
-      force(ee)
-      ind = try(lapply(jobs, function(job, pars, ee, name) eval(pars, job[[name]], ee),
-                       pars = pars, ee = ee, name=name), silent=TRUE)
+    exprToIndex = function(jobs, pars, enclos, name) {
+      ind = try(lapply(jobs, function(job, pars, enclos, name) eval(pars, job[[name]], enclos),
+                       pars = pars, enclos = enclos, name=name), silent=TRUE)
       if (is.error(ind))
         stopf("Your %s expression resulted in an error:\n%s", name, as.character(ind))
       ind = try(as.factor(unlist(ind)))
@@ -77,6 +80,7 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
 
     jobs = getJobs(reg, ids, check.ids=FALSE)
     index = list()
+    force(enclos)
 
     if (by.prob)
       index = c(index, list(prob = extractSubList(jobs, "prob.id", character(1L))))
@@ -84,10 +88,12 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
       index = c(index, list(algo = extractSubList(jobs, "algo.id", character(1L))))
     if (by.repl)
       index = c(index, list(repl = extractSubList(jobs, "repl", integer(1L))))
-    if (!missing(by.prob.pars))
-      index = c(index, exprToIndex(jobs, substitute(by.prob.pars), parent.frame(), "prob.pars"))
-    if (!missing(by.algo.pars))
-      index = c(index, exprToIndex(jobs, substitute(by.algo.pars), parent.frame(), "algo.pars"))
+    if (!missing(by.prob.pars)) {
+      index = c(index, exprToIndex(jobs, by.prob.pars, enclos, "prob.pars"))
+    }
+    if (!missing(by.algo.pars)) {
+      index = c(index, exprToIndex(jobs, by.algo.pars, enclos, "algo.pars"))
+    }
   }
 
   lapply(index, as.factor)

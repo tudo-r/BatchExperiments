@@ -9,7 +9,7 @@
 getAlgorithm = function(reg, id) {
   checkExperimentRegistry(reg, strict=TRUE)
   checkArg(id, "character", na.ok=FALSE, len=1L)
-  aids = dbGetAlgorithmIds(reg)
+  aids = dbGetAllAlgorithmIds(reg)
   if (id %nin% aids)
     stop("Unknown algorithm id, possible candidates are: ", collapse(aids))
   loadAlgorithm(reg$file.dir, id)

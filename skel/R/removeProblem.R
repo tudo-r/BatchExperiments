@@ -15,7 +15,7 @@ removeProblem = function(reg, id, force=FALSE) {
   BatchJobs:::syncRegistry(reg)
   checkArg(id, "character", len=1L, na.ok=FALSE)
 
-  if (id %nin% dbGetProblemIds(reg))
+  if (id %nin% dbGetAllProblemIds(reg))
     stop("Problem not present in registry: ", id)
 
   message("Removing Experiments from database")

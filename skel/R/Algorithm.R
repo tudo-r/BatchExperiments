@@ -32,9 +32,9 @@ addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
   BatchJobs:::checkIdValid(id)
   checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
 
-  if (id %in% dbGetProblemIds(reg))
+  if (id %in% dbGetAllProblemIds(reg))
     stopf("Problem with same id as your algorithm already exists: %s", id)
-  if (!overwrite && id %in% dbGetAlgorithmIds(reg))
+  if (!overwrite && id %in% dbGetAllAlgorithmIds(reg))
     stopf("Algorithm with same id already exists and overwrite=FALSE: %s", id)
 
   algorithm = makeAlgorithm(id, fun)

@@ -53,9 +53,9 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
 
   if (is.null(static) && is.null(dynamic))
     stop("One of args 'static' or 'dynamic' must not be NULL!")
-  if (id %in% dbGetAlgorithmIds(reg))
+  if (id %in% dbGetAllAlgorithmIds(reg))
     stopf("Algorithm with same id as your problem already exists: %s", id)
-  if (!overwrite && id %in% dbGetProblemIds(reg))
+  if (!overwrite && id %in% dbGetAllProblemIds(reg))
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
   fn = getProblemFilePaths(reg$file.dir, id)
