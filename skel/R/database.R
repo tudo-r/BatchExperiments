@@ -27,7 +27,7 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
   query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
 
-  lapply(seq_len(nrow(tab)), function(i) {
+  lapply(seq_row(tab), function(i) {
     x = tab[i,]
     prob.pars = unserialize(charToRaw(x$prob_pars))
     algo.pars = unserialize(charToRaw(x$algo_pars))
