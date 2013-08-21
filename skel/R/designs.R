@@ -22,8 +22,7 @@ designIterator = function(ex, .design = data.frame()) {
 
     x = c(as.list(.design[state[! is.ex.state], , drop = FALSE]),
           mapply(function(n, s) ex[[n]][s], n = names.ex.state, s = state[is.ex.state], SIMPLIFY = FALSE))
-    # FIXME names2 is going to BBmisc
-    x[order(BatchJobs:::names2(x))]
+    x[order(names2(x))]
   }
 
   hasNext = function() {
