@@ -25,7 +25,6 @@
 #' @export
 findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
   checkExperimentRegistry(reg, strict=TRUE)
-  BatchJobs:::syncRegistry(reg)
   if (!missing(prob.pattern))
     checkArg(prob.pattern, "character", len=1L, na.ok=FALSE)
   if (!missing(algo.pattern))
