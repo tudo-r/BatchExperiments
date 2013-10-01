@@ -33,6 +33,13 @@
 #' @param packages [\code{character}]\cr
 #'   Packages that will always be loaded on each node.
 #'   Default is \code{character(0)}.
+#' @param src.dirs [\code{character}]\cr
+#'   Directories relative to your \code{work.dir} containing R scripts 
+#'   to be sourced on registry load (both on slave and master).
+#'   Files not matching the pattern \dQuote{\\.[Rr]$} are ignored.
+#'   Useful if you have many helper functions that are needed during the execution of your jobs.
+#'   These files should only contain function definitions and no executable code.
+#'   Default is \code{character(0)}.
 #' @param skip [\code{logical(1)}]\cr
 #'   Skip creation of a new registry if a registry is found in \code{file.dir}.
 #'   Defaults to \code{TRUE}.
@@ -40,14 +47,14 @@
 #' @export
 #' @aliases ExperimentRegistry
 makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, sharding=TRUE, work.dir, multiple.result.files = FALSE,
-                                  seed, packages=character(0L), skip = TRUE) {
+                                  seed, packages=character(0L), src.dirs=character(0L), skip = TRUE) {
   if (missing(file.dir))
     file.dir = file.path(getwd(), paste(id, "files", sep="-"))
   checkArg(skip, "logical", len=1L, na.ok=FALSE)
   if (skip && BatchJobs:::isRegistryDir(file.dir))
     return(loadRegistry(file.dir = file.dir))
   reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding,
-    work.dir, multiple.result.files, seed, union(packages, "BatchExperiments"))
+    work.dir, multiple.result.files, seed, union(packages, "BatchExperiments"), src.dirs)
   class(reg) = c("ExperimentRegistry", "Registry")
   BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER, prob_seed INTEGER", constraints=", UNIQUE(job_def_id, repl)")
   BatchJobs:::dbCreateJobDefTable(reg)
