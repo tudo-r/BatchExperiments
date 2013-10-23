@@ -27,9 +27,9 @@ makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.p
 print.ExperimentJob = function(x, ...) {
   cat("Experiment:", "\n")
   cat("  Problem:", x$prob.id, "\n")
-  cat("  Problem parameters:", listToShortString(x$prob.pars), "\n")
+  cat("  Problem parameters:", convertToShortString(x$prob.pars), "\n")
   cat("  Algorithm:", x$algo.id, "\n")
-  cat("  Algorithm parameters:", listToShortString(x$algo.pars), "\n")
+  cat("  Algorithm parameters:", convertToShortString(x$algo.pars), "\n")
   cat("  Replication:", x$repl, "\n")
   cat("  Seed:", x$seed, "\n")
   cat("  Problem seed:", x$prob.seed, "\n")
