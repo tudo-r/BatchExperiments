@@ -6,7 +6,8 @@ Author: Bernd Bischl <bernd_bischl@gmx.net>,
     Michel Lang <michellang@gmail.com>,
     Olaf Mersmann <olafm@p-value.net>
 Maintainer: Michel Lang <michellang@gmail.com>
-URL: http://github.com/tudo-r/BatchExperiments
+URL: https://github.com/tudo-r/BatchExperiments
+BugReports: https://github.com/tudo-r/BatchExperiments/issues
 License: BSD_3_clause + file LICENSE
 Depends:
     R (>= 2.13.0),
@@ -22,7 +23,7 @@ Suggests:
     testthat
 LazyData: yes
 ByteCompile: yes
-Version: 1.0
+Version: 1.1
 Collate:
     'Algorithm.R'
     'Experiment.R'
