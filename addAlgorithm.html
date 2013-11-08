@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>addAlgorithm. BatchExperiments 1.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">BatchExperiments 1.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Add an algorithm to registry.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>addAlgorithm(reg, id, fun, overwrite = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>reg</dt>
+      <dd>[<code><a href='makeExperimentRegistry.html'>ExperimentRegistry</a></code>]
+  Registry.</dd>
+      <dt>id</dt>
+      <dd>[<code>character(1)</code>] Name of algorithm.</dd>
+      <dt>fun</dt>
+      <dd>[<code>function(job, static, dynamic,
+  ...)</code>] Function which applies the algorithm to a
+  problem instance.  Takes a <code><a href='http://www.inside-r.org/r-doc/BatchJobs/makeJob'>Job</a></code>
+  object, the <code>static</code> problem part and the evaluated
+  <code>dynamic</code> problem part as arguments.  You may omit
+  any of <code>job</code>, <code>static</code> or <code>dynamic</code>.  In
+  this case, the respective arguments will not get passed
+  to <code>fun</code>.  Further parameters from <a href='makeDesign.html'>Design</a> are
+  passed to ... argument.  If you are using multiple result
+  files this function must return a named list.
+
+  To retrieve job informations from the <code>job</code> object
+  see the documentation on <a href='ExperimentJob.html'>ExperimentJob</a>.</dd>
+      <dt>overwrite</dt>
+      <dd>[<code>logical(1)</code>] Overwrite the
+  algorithm file if it already exists?  Default is
+  <code>FALSE</code>.</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>[<code>character(1)</code>]. Invisibly returns the id.</p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Add an algorithm to registry and stores it on disk.</p>
+  
+    </div>
+      </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>Algorithm</li><li>addAlgorithm</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>reduceResultsExperiments. BatchExperiments 1.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">BatchExperiments 1.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Reduce results into a data.frame with all relevant information.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>reduceResultsExperiments(reg, ids, part = NA_character_, fun, ..., strings.as.factors = default.stringsAsFactors(), 
+  block.size)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>reg</dt>
+      <dd>[<code><a href='makeExperimentRegistry.html'>ExperimentRegistry</a></code>]
+  Registry.</dd>
+      <dt>ids</dt>
+      <dd>[<code>integer</code>] Ids of selected
+  experiments.  Default is all jobs for which results are
+  available.</dd>
+      <dt>part</dt>
+      <dd>[<code>character</code>] Only useful for multiple
+  result files, then defines which result file part(s)
+  should be loaded.  <code>NA</code> means all parts are loaded,
+  which is the default.</dd>
+      <dt>fun</dt>
+      <dd>[<code>function(job, res, ...)</code>] Function
+  to collect values from <code>job</code> and result <code>res</code>
+  object, the latter from stored result file.  Must return
+  an object which can be coerced to a <code>data.frame</code>
+  (e.g. a <code>list</code>).  Default is a function that simply
+  returns <code>res</code> which may or may not work, depending
+  on the type of <code>res</code>.</dd>
+      <dt>...</dt>
+      <dd>[any] Additional arguments to <code>fun</code>.</dd>
+      <dt>strings.as.factors</dt>
+      <dd>[<code>logical(1)</code>] Should all
+  character columns in result be converted to factors?
+  Default is <code>default.stringsAsFactors()</code>.</dd>
+      <dt>block.size</dt>
+      <dd>[<code>integer(1)</code>] Results will be
+  fetched in blocks of this size.  Default is max(100, 5
+  percent of ids).</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>[<code>data.frame</code>]. Aggregated results, containing
+  problem and algorithm paramaters and collected values.</p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Generates a <code>data.frame</code> with one row per job id.
+  The columns are: ids of problem and algorithm (named
+  &#147;prob&#148; and &#147;algo&#148;), one column per
+  parameter of problem or algorithm (named by the parameter
+  name), the replication number (named &#147;repl&#148;) and
+  all columns defined in the function to collect the
+  values. Note that you cannot rely on the order of the
+  columns. If a paramater does not have a setting for a
+  certain job / experiment it is set to <code>NA</code>. Have a
+  look at <code><a href='getResultVars.html'>getResultVars</a></code> if you want to use
+  somethink like <code><a href='http://www.inside-r.org/r-doc/plyr/ddply'>ddply</a></code> on the results.</p>
+  
+    </div>
+      </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>ReducedResultsExperiments</li><li>reduceResultsExperiments</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

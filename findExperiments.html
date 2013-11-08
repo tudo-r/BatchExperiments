@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>findExperiments. BatchExperiments 1.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">BatchExperiments 1.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Find ids of experiments that match a query.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>findExperiments(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, 
+  match.substring = TRUE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>reg</dt>
+      <dd>[<code><a href='makeExperimentRegistry.html'>ExperimentRegistry</a></code>]
+  Registry.</dd>
+      <dt>ids</dt>
+      <dd>[<code>integer</code>] Ids of selected
+  experiments to restrict to.  Default is all experiments.</dd>
+      <dt>prob.pattern</dt>
+      <dd>[<code>character(1)</code>] If not
+  missing, all problem ids that match this string are
+  selected.</dd>
+      <dt>prob.pars</dt>
+      <dd>[R expression] If not missing, all
+  problems whose parameters match the given expression are
+  selected.</dd>
+      <dt>algo.pattern</dt>
+      <dd>[<code>character(1)</code>] If not
+  missing, all algorithm ids that match this string are
+  selected.</dd>
+      <dt>algo.pars</dt>
+      <dd>[R expression] If not missing, all
+  algorithms whose parameters match the given expression
+  are selected.</dd>
+      <dt>repls</dt>
+      <dd>[<code>integer</code>] If not missing, restrict
+  to jobs with given replication numbers.</dd>
+      <dt>match.substring</dt>
+      <dd>[<code>logical(1)</code>] Is a match
+  in <code>prob.pattern</code> and <code>algo.pattern</code> if the id
+  contains the pattern as substring or must the id exactly
+  match?  Default is <code>TRUE</code>.</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>[<code>integer</code>]. Ids for experiments which match the
+  query.</p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Find ids of experiments that match a query.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>library(BatchExperiments)
+reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
+</div>
+<strong class='message'>Creating dir: /tmp/RtmpGVVi8N/file71e972b1b751</strong>
+<strong class='message'>Saving registry: /tmp/RtmpGVVi8N/file71e972b1b751/registry.RData</strong>
+<div class='input'>p1 <- addProblem(reg, "one", 1)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e972b1b751/problems/one_static.RData, /tmp/RtmpGVVi8N/file71e972b1b751/problems/one_dynamic.RData</strong>
+<div class='input'>p2 <- addProblem(reg, "two", 2)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e972b1b751/problems/two_static.RData, /tmp/RtmpGVVi8N/file71e972b1b751/problems/two_dynamic.RData</strong>
+<div class='input'>a = addAlgorithm(reg, "A", fun=function(static, n) static + n)
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e972b1b751/algorithms/@A.RData</strong>
+<div class='input'>addExperiments(reg, algo.design=makeDesign(a, exhaustive = list(n = 1:4)))
+</div>
+<strong class='message'>Adding 8 experiments / 8 jobs to DB.</strong>
+<div class='input'>findExperiments(reg, prob.pattern="one")
+</div>
+<div class='output'>[1] 1 2 3 4
+</div>
+<div class='input'>findExperiments(reg, prob.pattern="o")
+</div>
+<div class='output'>[1] 1 2 3 4 5 6 7 8
+</div>
+<div class='input'>findExperiments(reg, algo.pars = (n > 2))
+</div>
+<div class='output'>[1] 3 4 7 8
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>findExperiments</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

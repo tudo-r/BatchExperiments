@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>summarizeExperiments. BatchExperiments 1.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">BatchExperiments 1.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Summarize selected experiments.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>summarizeExperiments(reg, ids, show = c("prob", "algo"))</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>reg</dt>
+      <dd>[<code><a href='makeExperimentRegistry.html'>ExperimentRegistry</a></code>]
+  Registry.</dd>
+      <dt>ids</dt>
+      <dd>[<code>integer</code>] Selected experiments.
+  Default is all experiments.</dd>
+      <dt>show</dt>
+      <dd>[<code>character</code>] Should detailed
+  information for each single experiment be printed?
+  Default is <code>c("prob", "algo")</code>.</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>[<code>data.frame</code>].</p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>A data.frame is returned that contains summary
+  information about the selected experiments. The
+  data.frame is constructed by building the columns
+  &#147;prob, <prob.pars>, algo, <algo.pars>, repl&#148;,
+  <code><a href='http://www.inside-r.org/r-doc/plyr/rbind.fill'>rbind.fill</a></code> is used to connect the rows, so
+  if some parameters do not appear in some experiments,
+  they will be set to <code>NA</code>. Now only the columns in
+  <code>show</code> will be selected, how many of such
+  experiments exist will be counted in a new column
+  &#147;.count&#148;.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>reg <- makeExperimentRegistry("summarizeExperiments", seed=123, file.dir=tempfile())
+</div>
+<strong class='message'>Creating dir: /tmp/RtmpGVVi8N/file71e958e83a0f</strong>
+<strong class='message'>Saving registry: /tmp/RtmpGVVi8N/file71e958e83a0f/registry.RData</strong>
+<div class='input'>p1 <- addProblem(reg, "p1", static=1)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e958e83a0f/problems/p1_static.RData, /tmp/RtmpGVVi8N/file71e958e83a0f/problems/p1_dynamic.RData</strong>
+<div class='input'>a1 <- addAlgorithm(reg, id="a1", fun=function(static, dynamic, alpha, beta) 1)
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e958e83a0f/algorithms/a1.RData</strong>
+<div class='input'>a2 <- addAlgorithm(reg, id="a2", fun=function(static, dynamic, alpha, gamma) 2)
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e958e83a0f/algorithms/a2.RData</strong>
+<div class='input'>ad1 <- makeDesign(a1, exhaustive = list(alpha=1:2, beta=1:2))
+ad2 <- makeDesign(a2, exhaustive = list(alpha=1:2, gamma=7:8))
+addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
+</div>
+<strong class='message'>Adding 8 experiments / 16 jobs to DB.</strong>
+<div class='input'>print(summarizeExperiments(reg))
+</div>
+<div class='output'>  prob algo .count
+1   p1   a1      8
+2   p1   a2      8
+</div>
+<div class='input'>print(summarizeExperiments(reg, show=c("prob", "algo", "alpha", "gamma")))
+</div>
+<div class='output'>  prob algo alpha gamma V1
+1   p1   a1     1    NA  4
+2   p1   a1     2    NA  4
+3   p1   a2     1     7  2
+4   p1   a2     1     8  2
+5   p1   a2     2     7  2
+6   p1   a2     2     8  2
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>summarizeExperiments</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

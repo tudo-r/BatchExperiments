@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>addExperiments. BatchExperiments 1.0</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">BatchExperiments 1.0</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Add experiemts to the registry.</h1>
+
+<div class="row">
+  <div class="span8">
+    <h2>Usage</h2>
+    <pre>addExperiments(reg, prob.designs, algo.designs, repls = 1L, skip.defined = FALSE)</pre>
+    
+    <h2>Arguments</h2>
+    <dl>
+      <dt>reg</dt>
+      <dd>[<code><a href='makeExperimentRegistry.html'>ExperimentRegistry</a></code>]
+  Registry.</dd>
+      <dt>prob.designs</dt>
+      <dd>[<code>character</code> |
+  <code><a href='makeDesign.html'>Design</a></code> | list of <code><a href='makeDesign.html'>Design</a></code>]
+  Either problem ids, a single problem design or a list of
+  problem designs, the latter two created by
+  <code><a href='makeDesign.html'>makeDesign</a></code>.  If missing, all problems are
+  selected (without associating a design), and this is the
+  default.</dd>
+      <dt>algo.designs</dt>
+      <dd>[<code>character</code> |
+  <code><a href='makeDesign.html'>Design</a></code> | list of <code><a href='makeDesign.html'>Design</a></code>]
+  Either algorithm ids, a single algorithm design or a list
+  of algorithm designs, the latter two created by
+  <code><a href='makeDesign.html'>makeDesign</a></code>.  If missing, all algorithms are
+  selected (without associating a design), and this is the
+  default.</dd>
+      <dt>repls</dt>
+      <dd>[<code>integer(1)</code>] Number of
+  replications. Default is 1.</dd>
+      <dt>skip.defined</dt>
+      <dd>[<code>logical</code>] If set to
+  <code>TRUE</code>, already defined experiments get skipped.
+  Otherwise an error is thrown. Default is FALSE.</dd>
+    </dl>
+    
+    <div class="Value">
+      <h2>Value</h2>
+      
+      <p>Invisibly returns vector of ids of added experiments.</p>
+  
+    </div>
+
+    <div class="Description">
+      <h2>Description</h2>
+      
+      <p>Add experiments for running algorithms on problems to the
+  registry, so they can be executed later.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>### EXAMPLE 1 ###
+reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
+</div>
+<strong class='message'>Creating dir: /tmp/RtmpGVVi8N/file71e9c0a2fc6</strong>
+<strong class='message'>Saving registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<div class='input'>
+# Define a problem:
+# Subsampling from the iris dataset.
+data(iris)
+subsample <- function(static, ratio) {
+  n <- nrow(static)
+  train <- sample(n, floor(n * ratio))
+  test <- setdiff(seq(n), train)
+  list(test=test, train=train)
+}
+addProblem(reg, id="iris", static=iris,
+           dynamic=subsample, seed=123)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e9c0a2fc6/problems/iris_static.RData, /tmp/RtmpGVVi8N/file71e9c0a2fc6/problems/iris_dynamic.RData</strong>
+<div class='input'>
+# Define algorithm "tree":
+# Decision tree on the iris dataset, modeling Species.
+tree.wrapper <- function(static, dynamic, ...) {
+  library(rpart)
+  mod <- rpart(Species ~ ., data=static[dynamic$train, ], ...)
+  pred <- predict(mod, newdata=static[dynamic$test, ], type="class")
+  table(static$Species[dynamic$test], pred)
+}
+addAlgorithm(reg, id="tree", fun=tree.wrapper)
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/algorithms/tree.RData</strong>
+<div class='input'>
+# Define algorithm "forest":
+# Random forest on the iris dataset, modeling Species.
+forest.wrapper <- function(static, dynamic, ...) {
+  library(randomForest)
+  mod <- randomForest(Species ~ ., data=static, subset=dynamic$train, ...)
+  pred <- predict(mod, newdata=static[dynamic$test, ])
+  table(static$Species[dynamic$test], pred)
+}
+addAlgorithm(reg, id="forest", fun=forest.wrapper)
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/algorithms/forest.RData</strong>
+<div class='input'>
+# Define problem parameters:
+pars <- list(ratio=c(0.67, 0.9))
+iris.design <- makeDesign("iris", exhaustive=pars)
+
+# Define decision tree parameters:
+pars <- list(minsplit=c(5, 10, 20), cp=c(0.01, 0.1))
+tree.design <- makeDesign("tree", exhaustive=pars)
+
+# Define random forest parameters:
+pars <- list(ntree=c(100, 500, 1000))
+forest.design <- makeDesign("forest", exhaustive=pars)
+
+# Add experiments to the registry:
+# Use  previously defined experimental designs.
+addExperiments(reg, prob.designs=iris.design,
+               algo.designs=list(tree.design, forest.design),
+               repls=2) # usually you would set repls to 100 or more.
+</div>
+<strong class='message'>Adding 18 experiments / 36 jobs to DB.</strong>
+<div class='input'>
+# Optional: Short summary over problems and algorithms.
+summarizeExperiments(reg)
+</div>
+<div class='output'>  prob   algo .count
+1 iris forest     12
+2 iris   tree     24
+</div>
+<div class='input'>
+# Optional: Test one decision tree job and one expensive (ntree=1000)
+# random forest job. Use findExperiments to get the right job ids.
+do.tests <- FALSE
+if (do.tests) {
+  id1 <- findExperiments(reg, algo.pattern="tree")[1]
+  id2 <- findExperiments(reg, algo.pattern="forest",
+                         algo.pars=(ntree == 1000))[1]
+  testJob(reg, id1)
+  testJob(reg, id2)
+}
+
+# Submit the jobs to the batch system
+submitJobs(reg)
+</div>
+<strong class='message'>Saving conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Submitting 36 chunks / 36 jobs.</strong>
+<strong class='message'>Cluster functions: Interactive.</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Writing 36 R scripts...</strong>
+<strong class='message'>2013-11-08 16:40:41: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=1 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:41</strong>
+<strong class='message'>Setting seed: 45429416</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/01/1-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=2 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429417</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/02/2-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=3 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429418</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/03/3-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=4 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429419</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/04/4-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=5 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429420</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/05/5-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=6 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429421</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/06/6-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=7 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429422</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/07/7-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=8 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429423</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/08/8-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:42: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:42: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=9 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:42</strong>
+<strong class='message'>Setting seed: 45429424</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/09/9-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=10 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429425</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/10/10-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=11 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429426</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/11/11-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=12 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429427</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/12/12-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=13 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429428</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>randomForest 4.6-7</strong>
+<strong class='message'>Type rfNews() to see new features/changes/bug fixes.</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/13/13-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=14 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429429</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/14/14-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=15 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429430</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/15/15-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:43: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:43: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=16 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:43</strong>
+<strong class='message'>Setting seed: 45429431</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/16/16-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=17 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429432</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/17/17-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=18 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429433</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/18/18-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=19 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429434</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/19/19-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=20 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429435</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/20/20-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=21 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429436</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/21/21-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:44: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:44: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=22 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:44</strong>
+<strong class='message'>Setting seed: 45429437</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/22/22-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=23 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429438</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/23/23-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=24 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429439</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/24/24-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=25 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429440</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/25/25-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=26 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429441</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/26/26-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=27 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429442</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/27/27-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=28 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429443</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/28/28-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=29 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:45</strong>
+<strong class='message'>Setting seed: 45429444</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/29/29-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:45: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:45: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=30 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429445</strong>
+<strong class='message'>Applying Algorithm tree ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/30/30-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:46: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=31 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429446</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/31/31-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:46: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=32 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429447</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/32/32-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:46: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=33 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429448</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/33/33-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:46: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=34 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429449</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/34/34-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:46: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=35 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:46</strong>
+<strong class='message'>Setting seed: 45429450</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/35/35-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:46: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:47: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e9c0a2fc6/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e9c0a2fc6/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=36 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:47</strong>
+<strong class='message'>Setting seed: 45429451</strong>
+<strong class='message'>Applying Algorithm forest ...</strong>
+<strong class='message'>Generating problem iris ...</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e9c0a2fc6/jobs/36/36-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:47: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<div class='output'>SubmitJobs |+                                                                                                                                                              |   0% (00:00:00)SubmitJobs |++++                                                                                                                                                           |   3% (00:00:35)SubmitJobs |+++++++++                                                                                                                                                      |   6% (00:00:17)SubmitJobs |+++++++++++++                                                                                                                                                  |   8% (00:00:11)SubmitJobs |++++++++++++++++++                                                                                                                                             |  11% (00:00:08)SubmitJobs |++++++++++++++++++++++                                                                                                                                         |  14% (00:00:06)SubmitJobs |++++++++++++++++++++++++++                                                                                                                                     |  17% (00:00:05)SubmitJobs |+++++++++++++++++++++++++++++++                                                                                                                                |  19% (00:00:04)SubmitJobs |+++++++++++++++++++++++++++++++++++                                                                                                                            |  22% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++                                                                                                                       |  25% (00:00:06)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++                                                                                                                   |  28% (00:00:05)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                              |  31% (00:00:04)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                          |  33% (00:00:04)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                      |  36% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                 |  39% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                             |  42% (00:00:02)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                        |  44% (00:00:03)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                    |  47% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                               |  50% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                           |  53% (00:00:02)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                       |  56% (00:00:02)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                  |  58% (00:00:02)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                              |  61% (00:00:02)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                         |  64% (00:00:02)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                     |  67% (00:00:02)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                 |  69% (00:00:01)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                            |  72% (00:00:01)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                        |  75% (00:00:01)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                   |  78% (00:00:01)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                               |  81% (00:00:00)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                           |  83% (00:00:01)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                      |  86% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                  |  89% (00:00:00)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++             |  92% (00:00:00)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++         |  94% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++    |  97% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++| 100% (00:00:00)
+</div>
+<strong class='message'>Sending 36 submit messages...
+Might take some time, do not interrupt this!</strong>
+<div class='input'>
+# Calculate the misclassification rate for all (already done) jobs.
+reduce <- function(job, res) {
+  n <- sum(res)
+  list(mcr=(n-sum(diag(res)))/n)
+}
+res <- reduceResultsExperiments(reg, fun=reduce)
+</div>
+<strong class='message'>Reducing 36 results...</strong>
+<div class='output'>reduceResultsExperiments |+                                                                                                                                                |   0% (00:00:00)reduceResultsExperiments |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++| 100% (00:00:00)
+</div>
+<div class='input'>print(res)
+</div>
+<div class='output'>   id prob ratio   algo   cp minsplit repl        mcr ntree
+1   1 iris  0.67   tree 0.01        5    1 0.08000000    NA
+2   2 iris  0.67   tree 0.01        5    2 0.06000000    NA
+3   3 iris  0.67   tree 0.01       10    1 0.08000000    NA
+4   4 iris  0.67   tree 0.01       10    2 0.06000000    NA
+5   5 iris  0.67   tree 0.01       20    1 0.08000000    NA
+6   6 iris  0.67   tree 0.01       20    2 0.06000000    NA
+7   7 iris  0.67   tree 0.10        5    1 0.08000000    NA
+8   8 iris  0.67   tree 0.10        5    2 0.06000000    NA
+9   9 iris  0.67   tree 0.10       10    1 0.08000000    NA
+10 10 iris  0.67   tree 0.10       10    2 0.06000000    NA
+11 11 iris  0.67   tree 0.10       20    1 0.08000000    NA
+12 12 iris  0.67   tree 0.10       20    2 0.06000000    NA
+13 13 iris  0.67 forest   NA       NA    1 0.08000000   100
+14 14 iris  0.67 forest   NA       NA    2 0.06000000   100
+15 15 iris  0.67 forest   NA       NA    1 0.06000000   500
+16 16 iris  0.67 forest   NA       NA    2 0.06000000   500
+17 17 iris  0.67 forest   NA       NA    1 0.06000000  1000
+18 18 iris  0.67 forest   NA       NA    2 0.06000000  1000
+19 19 iris  0.90   tree 0.01        5    1 0.00000000    NA
+20 20 iris  0.90   tree 0.01        5    2 0.06666667    NA
+21 21 iris  0.90   tree 0.01       10    1 0.00000000    NA
+22 22 iris  0.90   tree 0.01       10    2 0.06666667    NA
+23 23 iris  0.90   tree 0.01       20    1 0.00000000    NA
+24 24 iris  0.90   tree 0.01       20    2 0.06666667    NA
+25 25 iris  0.90   tree 0.10        5    1 0.00000000    NA
+26 26 iris  0.90   tree 0.10        5    2 0.00000000    NA
+27 27 iris  0.90   tree 0.10       10    1 0.00000000    NA
+28 28 iris  0.90   tree 0.10       10    2 0.00000000    NA
+29 29 iris  0.90   tree 0.10       20    1 0.00000000    NA
+30 30 iris  0.90   tree 0.10       20    2 0.00000000    NA
+31 31 iris  0.90 forest   NA       NA    1 0.00000000   100
+32 32 iris  0.90 forest   NA       NA    2 0.06666667   100
+33 33 iris  0.90 forest   NA       NA    1 0.00000000   500
+34 34 iris  0.90 forest   NA       NA    2 0.06666667   500
+35 35 iris  0.90 forest   NA       NA    1 0.00000000  1000
+36 36 iris  0.90 forest   NA       NA    2 0.06666667  1000
+</div>
+<div class='input'>
+# Aggregate results using 'ddply' from package 'plyr':
+# Calculate the mean over all replications of identical experiments
+# (same problem, same algorithm and same parameters)
+library(plyr)
+vars <- setdiff(names(res), c("repl", "mcr"))
+aggr <- ddply(res, vars, summarise, mean.mcr=mean(mcr))
+print(aggr)
+</div>
+<div class='output'>   id prob ratio   algo   cp minsplit ntree   mean.mcr
+1   1 iris  0.67   tree 0.01        5    NA 0.08000000
+2   2 iris  0.67   tree 0.01        5    NA 0.06000000
+3   3 iris  0.67   tree 0.01       10    NA 0.08000000
+4   4 iris  0.67   tree 0.01       10    NA 0.06000000
+5   5 iris  0.67   tree 0.01       20    NA 0.08000000
+6   6 iris  0.67   tree 0.01       20    NA 0.06000000
+7   7 iris  0.67   tree 0.10        5    NA 0.08000000
+8   8 iris  0.67   tree 0.10        5    NA 0.06000000
+9   9 iris  0.67   tree 0.10       10    NA 0.08000000
+10 10 iris  0.67   tree 0.10       10    NA 0.06000000
+11 11 iris  0.67   tree 0.10       20    NA 0.08000000
+12 12 iris  0.67   tree 0.10       20    NA 0.06000000
+13 13 iris  0.67 forest   NA       NA   100 0.08000000
+14 14 iris  0.67 forest   NA       NA   100 0.06000000
+15 15 iris  0.67 forest   NA       NA   500 0.06000000
+16 16 iris  0.67 forest   NA       NA   500 0.06000000
+17 17 iris  0.67 forest   NA       NA  1000 0.06000000
+18 18 iris  0.67 forest   NA       NA  1000 0.06000000
+19 19 iris  0.90   tree 0.01        5    NA 0.00000000
+20 20 iris  0.90   tree 0.01        5    NA 0.06666667
+21 21 iris  0.90   tree 0.01       10    NA 0.00000000
+22 22 iris  0.90   tree 0.01       10    NA 0.06666667
+23 23 iris  0.90   tree 0.01       20    NA 0.00000000
+24 24 iris  0.90   tree 0.01       20    NA 0.06666667
+25 25 iris  0.90   tree 0.10        5    NA 0.00000000
+26 26 iris  0.90   tree 0.10        5    NA 0.00000000
+27 27 iris  0.90   tree 0.10       10    NA 0.00000000
+28 28 iris  0.90   tree 0.10       10    NA 0.00000000
+29 29 iris  0.90   tree 0.10       20    NA 0.00000000
+30 30 iris  0.90   tree 0.10       20    NA 0.00000000
+31 31 iris  0.90 forest   NA       NA   100 0.00000000
+32 32 iris  0.90 forest   NA       NA   100 0.06666667
+33 33 iris  0.90 forest   NA       NA   500 0.00000000
+34 34 iris  0.90 forest   NA       NA   500 0.06666667
+35 35 iris  0.90 forest   NA       NA  1000 0.00000000
+36 36 iris  0.90 forest   NA       NA  1000 0.06666667
+</div>
+<div class='input'>
+
+
+### EXAMPLE 2 ###
+# define two simple test functions
+testfun1 = function(x) sum(x^2)
+testfun2 = function(x) -exp(-sum(abs(x)))
+
+# Define ExperimentRegistry:
+reg = makeExperimentRegistry("example02", seed=123, file.dir=tempfile())
+</div>
+<strong class='message'>Creating dir: /tmp/RtmpGVVi8N/file71e92cfa35c3</strong>
+<strong class='message'>Saving registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<div class='input'>
+# Add the testfunctions to the registry:
+addProblem(reg, "testfun1", static=testfun1)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e92cfa35c3/problems/testfun1_static.RData, /tmp/RtmpGVVi8N/file71e92cfa35c3/problems/testfun1_dynamic.RData</strong>
+<div class='input'>addProblem(reg, "testfun2", static=testfun2)
+</div>
+<strong class='message'>Writing problem files: /tmp/RtmpGVVi8N/file71e92cfa35c3/problems/testfun2_static.RData, /tmp/RtmpGVVi8N/file71e92cfa35c3/problems/testfun2_dynamic.RData</strong>
+<div class='input'>
+# Use SimulatedAnnealing on the test functions:
+addAlgorithm(reg, "sann", fun=function(static, dynamic) {
+  upp = rep(10, 2)
+  low = -upp
+  start = sample(c(-10, 10), 2)
+  res = optim(start, fn=static, lower=low, upper=upp, method="SANN")
+  res = res[c("par", "value", "counts", "convergence")]
+  res$start = start
+  return(res)
+})
+</div>
+<strong class='message'>Writing algorithm file: /tmp/RtmpGVVi8N/file71e92cfa35c3/algorithms/sann.RData</strong>
+<div class='input'>
+# add experiments and submit
+addExperiments(reg, repls=10)
+</div>
+<strong class='message'>Adding 2 experiments / 20 jobs to DB.</strong>
+<div class='input'>submitJobs(reg)
+</div>
+<strong class='message'>Saving conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Submitting 20 chunks / 20 jobs.</strong>
+<strong class='message'>Cluster functions: Interactive.</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Writing 20 R scripts...</strong>
+<strong class='message'>2013-11-08 16:40:47: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=1 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:47</strong>
+<strong class='message'>Setting seed: 123</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/01/1-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:47: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:47: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=2 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:47</strong>
+<strong class='message'>Setting seed: 124</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/02/2-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:47: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:47: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=3 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:47</strong>
+<strong class='message'>Setting seed: 125</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/03/3-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:47: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:47: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=4 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:47</strong>
+<strong class='message'>Setting seed: 126</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/04/4-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:47: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=5 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 127</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/05/5-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=6 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 128</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/06/6-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=7 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 129</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/07/7-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=8 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 130</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/08/8-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=9 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 131</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/09/9-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=10 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 132</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/10/10-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=11 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 133</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/11/11-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=12 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 134</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/12/12-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:48: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:48: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=13 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:48</strong>
+<strong class='message'>Setting seed: 135</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/13/13-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=14 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 136</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/14/14-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=15 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 137</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/15/15-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=16 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 138</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/16/16-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=17 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 139</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/17/17-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=18 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 140</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/18/18-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=19 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 141</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/19/19-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<strong class='message'>2013-11-08 16:40:49: Starting job on node lang.</strong>
+<strong class='message'>Loading registry: /tmp/RtmpGVVi8N/file71e92cfa35c3/registry.RData</strong>
+<strong class='message'>Loading conf: /tmp/RtmpGVVi8N/file71e92cfa35c3/conf.RData</strong>
+<strong class='message'>Auto-mailer settings: start=none, done=none, error=none.</strong>
+<strong class='message'>Setting work dir: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>########## Executing jid=20 ##########</strong>
+<strong class='message'>Timestamp: 2013-11-08 16:40:49</strong>
+<strong class='message'>Setting seed: 142</strong>
+<strong class='message'>Applying Algorithm sann ...</strong>
+<strong class='warning'>Warning message:
+bounds can only be used with method L-BFGS-B (or Brent)</strong>
+<strong class='message'>Writing result file: /tmp/RtmpGVVi8N/file71e92cfa35c3/jobs/20/20-result.RData</strong>
+<strong class='message'>2013-11-08 16:40:49: Job on slave is finished.</strong>
+<strong class='message'>Setting work back to: /home/lang/vcs/tudo-r/BatchExperiments</strong>
+<strong class='message'>Memory usage according to gc:</strong>
+<div class='output'>SubmitJobs |+                                                                                                                                                              |   0% (00:00:00)SubmitJobs |++++++++                                                                                                                                                       |   5% (00:00:00)SubmitJobs |++++++++++++++++                                                                                                                                               |  10% (00:00:00)SubmitJobs |++++++++++++++++++++++++                                                                                                                                       |  15% (00:00:00)SubmitJobs |++++++++++++++++++++++++++++++++                                                                                                                               |  20% (00:00:04)SubmitJobs |++++++++++++++++++++++++++++++++++++++++                                                                                                                       |  25% (00:00:03)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                               |  30% (00:00:02)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                                       |  35% (00:00:01)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                               |  40% (00:00:01)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                                       |  45% (00:00:01)SubmitJobs |++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                               |  50% (00:00:01)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                        |  55% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                                |  60% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                        |  65% (00:00:01)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                                |  70% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                        |  75% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                                |  80% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                        |  85% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++                |  90% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++        |  95% (00:00:00)SubmitJobs |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++| 100% (00:00:00)
+</div>
+<strong class='message'>Sending 20 submit messages...
+Might take some time, do not interrupt this!</strong>
+<div class='input'>
+# Gather informations from the experiments, in this case function value and if the algorithm convergenced:
+reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
+</div>
+<strong class='message'>Reducing 20 results...</strong>
+<div class='output'>reduceResultsExperiments |+                                                                                                                                                |   0% (00:00:00)reduceResultsExperiments |+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++| 100% (00:00:00)
+</div>
+<div class='output'>   id     prob algo repl         value convergence
+1   1 testfun1 sann    1  1.582010e-40           0
+2   2 testfun1 sann    2  1.582010e-40           0
+3   3 testfun1 sann    3  1.582010e-40           0
+4   4 testfun1 sann    4  1.582010e-40           0
+5   5 testfun1 sann    5  1.582010e-40           0
+6   6 testfun1 sann    6  1.582010e-40           0
+7   7 testfun1 sann    7  1.582010e-40           0
+8   8 testfun1 sann    8  1.582010e-40           0
+9   9 testfun1 sann    9  1.582010e-40           0
+10 10 testfun1 sann   10  1.582010e-40           0
+11 11 testfun2 sann    1 -2.061154e-09           0
+12 12 testfun2 sann    2 -2.061154e-09           0
+13 13 testfun2 sann    3 -2.061154e-09           0
+14 14 testfun2 sann    4 -2.061154e-09           0
+15 15 testfun2 sann    5 -2.061154e-09           0
+16 16 testfun2 sann    6 -2.061154e-09           0
+17 17 testfun2 sann    7 -2.061154e-09           0
+18 18 testfun2 sann    8 -2.061154e-09           0
+19 19 testfun2 sann    9 -2.061154e-09           0
+20 20 testfun2 sann   10 -2.061154e-09           0
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>Experiment</li><li>addExperiments</li>
+    </ul>
+    <ul>
+      
+    </ul> -->
+      
+        
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="http://twitter.github.com/bootstrap">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
