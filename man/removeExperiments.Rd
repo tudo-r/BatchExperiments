@@ -1,0 +1,27 @@
+\name{removeExperiments}
+\alias{removeExperiments}
+\title{Remove jobs from registry.}
+\usage{
+  removeExperiments(reg, ids, force = FALSE)
+}
+\arguments{
+  \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
+  Registry.}
+
+  \item{ids}{[\code{integer}]\cr Ids of jobs you want to
+  remove.  Default is none.}
+
+  \item{force}{[\code{logical(1)}]\cr Also remove jobs
+  which seem to be still running.  Default is
+  \code{FALSE}.}
+}
+\value{
+  Vector of type \code{integer} of removed job ids.
+}
+\description{
+  THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING
+  RESULTS! If you really know what you are doing, you may
+  set \code{force} to \code{TRUE} to omit sanity checks on
+  running jobs.
+}
+

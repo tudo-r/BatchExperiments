@@ -1,0 +1,70 @@
+\name{getIndex}
+\alias{getIndex}
+\title{Group experiments.}
+\usage{
+  getIndex(reg, ids, by.prob = FALSE, by.algo = FALSE,
+    by.repl = FALSE, by.prob.pars, by.algo.pars,
+    enclos = parent.frame())
+}
+\arguments{
+  \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
+  Registry.}
+
+  \item{ids}{[\code{integer}]\cr If not missing, restict
+  grouping to this subset of experiment ids.}
+
+  \item{by.prob}{[\code{logical}]\cr Group experiments by
+  problem. Default is \code{FALSE}.}
+
+  \item{by.algo}{[\code{logical}]\cr Group experiments by
+  algorithm. Default is \code{FALSE}.}
+
+  \item{by.repl}{[\code{logical}]\cr Group experiments by
+  replication. Default is \code{FALSE}.}
+
+  \item{by.prob.pars}{[R expression]\cr If not missing,
+  group experiments by this R expression.  The expression
+  is evaluated in the environment of problem parameters and
+  converted to a factor using \code{as.factor}.}
+
+  \item{by.algo.pars}{[R expression]\cr If not missing,
+  group experiments by this R expression.  The expression
+  is evaluated in the environment of algorithm parameters
+  and converted to a factor using \code{\link{as.factor}}.}
+
+  \item{enclos}{[\code{environment}]\cr Enclosing frame for
+  evaluation of parameters used by \code{by.prob.pars} and
+  \code{by.algo.pars}, see \code{\link[base]{eval}}.
+  Defaults to the parent frame.}
+}
+\value{
+  [\code{list}]. List of factors.
+}
+\description{
+  Creates a list of \code{\link{factor}} to use in
+  functions like \code{\link{tapply}}, \code{\link{by}} or
+  \code{\link{aggregate}}.
+}
+\examples{
+# create a registry and add problems and algorithms
+reg = makeExperimentRegistry("getIndex", file.dir=tempfile(""))
+addProblem(reg, "prob", static = 1)
+addAlgorithm(reg, "f0", function(static, dynamic) static)
+addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
+ad = list(makeDesign("f0"), makeDesign("f1", exhaustive=list(i=1:10, k=1:3)))
+addExperiments(reg, algo.designs=ad)
+submitJobs(reg)
+
+# get grouped job ids
+ids = getJobIds(reg)
+by(ids, getIndex(reg, by.prob=TRUE, by.algo=TRUE), identity)
+ids.f1 = findExperiments(reg, algo.pattern="f1")
+by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=(k == 1)), identity)
+
+# groupwise reduction
+ids.f1 = findExperiments(reg, algo.pattern="f1")
+f = function(aggr, job, res) aggr + res
+by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=k), reduceResults, reg=reg, fun=f)
+by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
+}
+

@@ -1,0 +1,24 @@
+\name{removeAlgorithm}
+\alias{removeAlgorithm}
+\title{Remove algorithm from registry.}
+\usage{
+  removeAlgorithm(reg, id, force = FALSE)
+}
+\arguments{
+  \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
+  Registry.}
+
+  \item{id}{[\code{character(1)}]\cr Id of algorithm.}
+
+  \item{force}{[\code{logical(1)}]\cr Also remove jobs
+  which seem to be still running.  Default is
+  \code{FALSE}.}
+}
+\value{
+  Nothing.
+}
+\description{
+  THIS DELETES ALL FILES REGARDING THIS ALGORITHM,
+  INCLUDING ALL JOBS AND RESULTS!
+}
+

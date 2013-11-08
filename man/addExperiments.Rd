@@ -1,0 +1,162 @@
+\name{addExperiments}
+\alias{Experiment}
+\alias{addExperiments}
+\title{Add experiemts to the registry.}
+\usage{
+  addExperiments(reg, prob.designs, algo.designs,
+    repls = 1L, skip.defined = FALSE)
+}
+\arguments{
+  \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
+  Registry.}
+
+  \item{prob.designs}{[\code{character} |
+  \code{\link{Design}} | list of \code{\link{Design}}]\cr
+  Either problem ids, a single problem design or a list of
+  problem designs, the latter two created by
+  \code{\link{makeDesign}}.  If missing, all problems are
+  selected (without associating a design), and this is the
+  default.}
+
+  \item{algo.designs}{[\code{character} |
+  \code{\link{Design}} | list of \code{\link{Design}}]\cr
+  Either algorithm ids, a single algorithm design or a list
+  of algorithm designs, the latter two created by
+  \code{\link{makeDesign}}.  If missing, all algorithms are
+  selected (without associating a design), and this is the
+  default.}
+
+  \item{repls}{[\code{integer(1)}]\cr Number of
+  replications.\cr Default is 1.}
+
+  \item{skip.defined}{[\code{logical}]\cr If set to
+  \code{TRUE}, already defined experiments get skipped.
+  Otherwise an error is thrown.\cr Default is FALSE.}
+}
+\value{
+  Invisibly returns vector of ids of added experiments.
+}
+\description{
+  Add experiments for running algorithms on problems to the
+  registry, so they can be executed later.
+}
+\examples{
+### EXAMPLE 1 ###
+reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
+
+# Define a problem:
+# Subsampling from the iris dataset.
+data(iris)
+subsample <- function(static, ratio) {
+  n <- nrow(static)
+  train <- sample(n, floor(n * ratio))
+  test <- setdiff(seq(n), train)
+  list(test=test, train=train)
+}
+addProblem(reg, id="iris", static=iris,
+           dynamic=subsample, seed=123)
+
+# Define algorithm "tree":
+# Decision tree on the iris dataset, modeling Species.
+tree.wrapper <- function(static, dynamic, ...) {
+  library(rpart)
+  mod <- rpart(Species ~ ., data=static[dynamic$train, ], ...)
+  pred <- predict(mod, newdata=static[dynamic$test, ], type="class")
+  table(static$Species[dynamic$test], pred)
+}
+addAlgorithm(reg, id="tree", fun=tree.wrapper)
+
+# Define algorithm "forest":
+# Random forest on the iris dataset, modeling Species.
+forest.wrapper <- function(static, dynamic, ...) {
+  library(randomForest)
+  mod <- randomForest(Species ~ ., data=static, subset=dynamic$train, ...)
+  pred <- predict(mod, newdata=static[dynamic$test, ])
+  table(static$Species[dynamic$test], pred)
+}
+addAlgorithm(reg, id="forest", fun=forest.wrapper)
+
+# Define problem parameters:
+pars <- list(ratio=c(0.67, 0.9))
+iris.design <- makeDesign("iris", exhaustive=pars)
+
+# Define decision tree parameters:
+pars <- list(minsplit=c(5, 10, 20), cp=c(0.01, 0.1))
+tree.design <- makeDesign("tree", exhaustive=pars)
+
+# Define random forest parameters:
+pars <- list(ntree=c(100, 500, 1000))
+forest.design <- makeDesign("forest", exhaustive=pars)
+
+# Add experiments to the registry:
+# Use  previously defined experimental designs.
+addExperiments(reg, prob.designs=iris.design,
+               algo.designs=list(tree.design, forest.design),
+               repls=2) # usually you would set repls to 100 or more.
+
+# Optional: Short summary over problems and algorithms.
+summarizeExperiments(reg)
+
+# Optional: Test one decision tree job and one expensive (ntree=1000)
+# random forest job. Use findExperiments to get the right job ids.
+do.tests <- FALSE
+if (do.tests) {
+  id1 <- findExperiments(reg, algo.pattern="tree")[1]
+  id2 <- findExperiments(reg, algo.pattern="forest",
+                         algo.pars=(ntree == 1000))[1]
+  testJob(reg, id1)
+  testJob(reg, id2)
+}
+
+# Submit the jobs to the batch system
+submitJobs(reg)
+
+# Calculate the misclassification rate for all (already done) jobs.
+reduce <- function(job, res) {
+  n <- sum(res)
+  list(mcr=(n-sum(diag(res)))/n)
+}
+res <- reduceResultsExperiments(reg, fun=reduce)
+print(res)
+
+# Aggregate results using 'ddply' from package 'plyr':
+# Calculate the mean over all replications of identical experiments
+# (same problem, same algorithm and same parameters)
+library(plyr)
+vars <- setdiff(names(res), c("repl", "mcr"))
+aggr <- ddply(res, vars, summarise, mean.mcr=mean(mcr))
+print(aggr)
+
+
+
+### EXAMPLE 2 ###
+# define two simple test functions
+testfun1 = function(x) sum(x^2)
+testfun2 = function(x) -exp(-sum(abs(x)))
+
+# Define ExperimentRegistry:
+reg = makeExperimentRegistry("example02", seed=123, file.dir=tempfile())
+
+# Add the testfunctions to the registry:
+addProblem(reg, "testfun1", static=testfun1)
+addProblem(reg, "testfun2", static=testfun2)
+
+# Use SimulatedAnnealing on the test functions:
+addAlgorithm(reg, "sann", fun=function(static, dynamic) {
+  upp = rep(10, 2)
+  low = -upp
+  start = sample(c(-10, 10), 2)
+  res = optim(start, fn=static, lower=low, upper=upp, method="SANN")
+  res = res[c("par", "value", "counts", "convergence")]
+  res$start = start
+  return(res)
+})
+
+# add experiments and submit
+addExperiments(reg, repls=10)
+submitJobs(reg)
+
+# Gather informations from the experiments, in this case function value and if the algorithm convergenced:
+reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
+}
+

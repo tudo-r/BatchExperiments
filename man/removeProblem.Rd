@@ -1,0 +1,24 @@
+\name{removeProblem}
+\alias{removeProblem}
+\title{Remove problem from registry.}
+\usage{
+  removeProblem(reg, id, force = FALSE)
+}
+\arguments{
+  \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
+  Registry.}
+
+  \item{id}{[\code{character(1)}]\cr Id of problem.}
+
+  \item{force}{[\code{logical(1)}]\cr Also remove jobs
+  which seem to be still running.  Default is
+  \code{FALSE}.}
+}
+\value{
+  Nothing.
+}
+\description{
+  THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING
+  ALL JOBS AND RESULTS!
+}
+
