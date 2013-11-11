@@ -16,9 +16,11 @@ To install the latest stable release from CRAN:
 ```splus
 install.packages("BatchExperiments")
 ```
-You can install the development version using the [devtools](http://cran.r-project.org/web/packages/devtools) package by executing
+You can install the development version using the [devtools](http://cran.r-project.org/web/packages/devtools) package:
 ```splus
-library(devtools); install_github("BatchExperiments", username="tudo-r")
+library(devtools);
+install_github("BatchJobs", username="tudo-r")
+install_github("BatchExperiments", username="tudo-r")
 ```
 Please see the documentation of [BatchJobs](https://github.com/tudo-r/BatchJobs) to set up your cluster.
 Currently the best introduction to the package is our [technical report](http://sfb876.tu-dortmund.de/PublicPublicationFiles/bischl_etal_2012a.pdf).
