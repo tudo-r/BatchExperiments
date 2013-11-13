@@ -7,9 +7,9 @@
 * Support for statistical replications of experiments
 * Collect parameters and results into a clearly represented data frame with one simple function call
 * Extend your study later with further problems, algorithms, parameters or replications
-* Clear separation between all stages: your methods under consideration, experiment defintions and execution layer
-* Reproducibility due to internal seeding mechanisms
-* Supports in write readable and succint code for your experiments
+* Clear separation between all stages: your methods under consideration, experiment defintions and execution layer.
+* Readable and succint code for your experiments
+* Internally handled seeds guarantee reproducibility
 
 
 ## Quickstart and Documentation
@@ -17,7 +17,7 @@ To install the latest stable release from CRAN:
 ```splus
 install.packages("BatchExperiments")
 ```
-You can install the development version using the [devtools](http://cran.r-project.org/web/packages/devtools) package:
+To install the development version use [devtools](http://cran.r-project.org/web/packages/devtools):
 ```splus
 library(devtools);
 install_github("BatchJobs", username="tudo-r")
