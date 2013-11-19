@@ -30,32 +30,41 @@
 #' @param block.size [\code{integer(1)}]
 #'   Results will be fetched in blocks of this size.
 #'   Default is max(100, 5 percent of ids).
+#' @param impute.val [\code{named list}]\cr
+#'   If not missing, the value of \code{impute.val} is used as a replacement for the
+#'   return value of function \code{fun} on missing results. An empty list is allowed.
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
-  strings.as.factors=default.stringsAsFactors(), block.size) {
+  strings.as.factors=default.stringsAsFactors(), block.size, impute.val) {
 
   checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids)) {
-    ids = BatchJobs:::dbFindDone(reg)
+    ids = done = BatchJobs:::dbFindDone(reg)
+    with.impute = FALSE
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    ndone = BatchJobs:::dbFindDone(reg, ids, negate=TRUE)
-    if (length(ndone) > 0L)
-      stopf("No results available for experiments with ids: %s", collapse(ndone))
+    done = BatchJobs:::dbFindDone(reg, ids)
+    with.impute = !missing(impute.val)
+    if (with.impute) {
+      if (!is.list(impute.val) || !isProperlyNamed(impute.val))
+        stop("Argument 'impute.val' must be a properly named list")
+    } else {
+      if (length(ids) > length(done))
+        stopf("No results available for jobs with ids: %s", collapse(setdiff(ids, done)))
+    }
   }
   BatchJobs:::checkPart(reg, part)
-  if (missing(fun)){
+  if (missing(fun))
     fun = function(job, res) res
-  } else {
-    force(fun)
+  else
     checkArg(fun, formals=c("job", "res"))
-  }
+
   checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
   if (missing(block.size)) {
-    block.size = max(100, as.integer(0.05 * length(ids)))
+    block.size = max(100L, as.integer(0.05 * length(ids)))
   } else {
     block.size = convertInteger(block.size)
     checkArg(block.size, "integer", len=1L, na.ok=FALSE)
@@ -64,14 +73,11 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   n = length(ids)
   messagef("Reducing %i results...", n)
 
- getRow = function(j, reg, part, ...) {
-    c(list(prob = j$prob.id),
-      j$prob.pars,
-      list(algo = j$algo.id),
-      j$algo.pars,
-      list(repl = j$repl),
-      fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
-  }
+  impute = function(job, res, ...)
+    impute.val
+  getRow = function(j, reg, part, .fun, ...)
+    c(list(prob=j$prob.id), j$prob.pars, list(algo=j$algo.id), j$algo.pars, list(repl=j$repl),
+      .fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
 
   aggr = data.frame()
   ids2 = chunk(ids, chunk.size=block.size, shuffle=FALSE)
@@ -79,7 +85,6 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   bar$set()
   prob.pars = character(0L)
   algo.pars = character(0L)
-
 
   tryCatch({
     for(id.chunk in ids2) {
@@ -91,14 +96,16 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
       # FIXME m/b use list2df instead of rbind.fill
       # -> major problem: how to deal with missing names in return value of fun?
       #    rbind.fill might not do the right thing here, also.
-      results = lapply(jobs, getRow, reg = reg, part = part, ...)
+      id.chunk.done = id.chunk %in% done
+      results = c(lapply(jobs[ id.chunk.done], getRow, reg=reg, part=part, .fun=fun, ...),
+                  lapply(jobs[!id.chunk.done], getRow, reg=reg, part=part, .fun=impute, ...))
       aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
       bar$inc(1L)
     }
   }, error=bar$error)
 
   aggr = convertDfCols(aggr, chars.as.factor=strings.as.factors)
-  if (nrow(aggr) > 0)
+  if (nrow(aggr))
     aggr = setRowNames(cbind(id=ids, aggr), ids)
   aggr = addClasses(aggr, "ReducedResultsExperiments")
   attr(aggr, "prob.pars.names") = prob.pars
