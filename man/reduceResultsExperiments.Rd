@@ -6,7 +6,7 @@
   reduceResultsExperiments(reg, ids, part = NA_character_,
     fun, ...,
     strings.as.factors = default.stringsAsFactors(),
-    block.size)
+    block.size, impute.val)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -38,6 +38,11 @@
   \item{block.size}{[\code{integer(1)}] Results will be
   fetched in blocks of this size.  Default is max(100, 5
   percent of ids).}
+
+  \item{impute.val}{[\code{named list}]\cr If not missing,
+  the value of \code{impute.val} is used as a replacement
+  for the return value of function \code{fun} on missing
+  results. An empty list is allowed.}
 }
 \value{
   [\code{data.frame}]. Aggregated results, containing
