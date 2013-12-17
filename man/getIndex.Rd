@@ -2,9 +2,8 @@
 \alias{getIndex}
 \title{Group experiments.}
 \usage{
-  getIndex(reg, ids, by.prob = FALSE, by.algo = FALSE,
-    by.repl = FALSE, by.prob.pars, by.algo.pars,
-    enclos = parent.frame())
+getIndex(reg, ids, by.prob = FALSE, by.algo = FALSE, by.repl = FALSE,
+  by.prob.pars, by.algo.pars, enclos = parent.frame())
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -38,12 +37,12 @@
   Defaults to the parent frame.}
 }
 \value{
-  [\code{list}]. List of factors.
+[\code{list}]. List of factors.
 }
 \description{
-  Creates a list of \code{\link{factor}} to use in
-  functions like \code{\link{tapply}}, \code{\link{by}} or
-  \code{\link{aggregate}}.
+Creates a list of \code{\link{factor}} to use in functions
+like \code{\link{tapply}}, \code{\link{by}} or
+\code{\link{aggregate}}.
 }
 \examples{
 # create a registry and add problems and algorithms

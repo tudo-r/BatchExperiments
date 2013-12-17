@@ -3,7 +3,7 @@
 \alias{addAlgorithm}
 \title{Add an algorithm to registry.}
 \usage{
-  addAlgorithm(reg, id, fun, overwrite = FALSE)
+addAlgorithm(reg, id, fun, overwrite = FALSE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -30,9 +30,9 @@
   \code{FALSE}.}
 }
 \value{
-  [\code{character(1)}]. Invisibly returns the id.
+[\code{character(1)}]. Invisibly returns the id.
 }
 \description{
-  Add an algorithm to registry and stores it on disk.
+Add an algorithm to registry and stores it on disk.
 }
 

@@ -2,7 +2,7 @@
 \alias{removeProblem}
 \title{Remove problem from registry.}
 \usage{
-  removeProblem(reg, id, force = FALSE)
+removeProblem(reg, id, force = FALSE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -15,10 +15,10 @@
   \code{FALSE}.}
 }
 \value{
-  Nothing.
+Nothing.
 }
 \description{
-  THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING
-  ALL JOBS AND RESULTS!
+THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING
+ALL JOBS AND RESULTS!
 }
 

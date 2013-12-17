@@ -3,8 +3,7 @@
 \alias{makeDesign}
 \title{Create parameter designs for problems and algorithms.}
 \usage{
-  makeDesign(id, design = data.frame(),
-    exhaustive = list())
+makeDesign(id, design = data.frame(), exhaustive = list())
 }
 \arguments{
   \item{id}{[\code{character(1)}]\cr Id of algorithm or
@@ -20,21 +19,21 @@
   list.}
 }
 \value{
-  [\code{\link{Design}}].
+[\code{\link{Design}}].
 }
 \description{
-  Create a parameter design for either a problem or an
-  algorithm that you can use in
-  \code{\link{addExperiments}}. All parameters in
-  \code{design} and \code{exhaustive} be \dQuote{primitive}
-  in the sense that either \code{is.atomic} is \code{TRUE}
-  or \code{is.factor} is \code{TRUE}.
+Create a parameter design for either a problem or an
+algorithm that you can use in \code{\link{addExperiments}}.
+All parameters in \code{design} and \code{exhaustive} be
+\dQuote{primitive} in the sense that either
+\code{is.atomic} is \code{TRUE} or \code{is.factor} is
+\code{TRUE}.
 }
 \details{
-  Be aware of R's default behaviour of converting strings
-  into factors if you use the \code{design} parameter. See
-  option \code{stringsAsFactors} in
-  \code{\link{data.frame}} to turn this off.
+Be aware of R's default behaviour of converting strings
+into factors if you use the \code{design} parameter. See
+option \code{stringsAsFactors} in \code{\link{data.frame}}
+to turn this off.
 }
 \examples{
 \dontrun{

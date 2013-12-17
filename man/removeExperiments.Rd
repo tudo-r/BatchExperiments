@@ -2,7 +2,7 @@
 \alias{removeExperiments}
 \title{Remove jobs from registry.}
 \usage{
-  removeExperiments(reg, ids, force = FALSE)
+removeExperiments(reg, ids, force = FALSE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -16,12 +16,12 @@
   \code{FALSE}.}
 }
 \value{
-  Vector of type \code{integer} of removed job ids.
+Vector of type \code{integer} of removed job ids.
 }
 \description{
-  THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING
-  RESULTS! If you really know what you are doing, you may
-  set \code{force} to \code{TRUE} to omit sanity checks on
-  running jobs.
+THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING
+RESULTS! If you really know what you are doing, you may set
+\code{force} to \code{TRUE} to omit sanity checks on
+running jobs.
 }
 

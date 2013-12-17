@@ -2,9 +2,8 @@
 \alias{reduceResultsExperimentsParallel}
 \title{Reduce very many results in parallel.}
 \usage{
-  reduceResultsExperimentsParallel(reg, ids,
-    part = as.character(NA), fun, ..., njobs = 20L,
-    strings.as.factors = default.stringsAsFactors())
+reduceResultsExperimentsParallel(reg, ids, part = as.character(NA), fun, ...,
+  njobs = 20L, strings.as.factors = default.stringsAsFactors())
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -37,16 +36,16 @@
   Default is \code{default.stringsAsFactors()}.}
 }
 \value{
-  [\code{data.frame}]. Aggregated results, containing
-  problem and algorithm paramaters and collected values.
+[\code{data.frame}]. Aggregated results, containing problem
+and algorithm paramaters and collected values.
 }
 \description{
-  Basically the same as
-  \code{\link{reduceResultsExperiments}} but creates a few
-  (hopefully short) jobs to reduce the results in parallel.
-  The function internally calls
-  \code{\link{batchMapQuick}}, does \dQuote{busy-waiting}
-  till all jobs are done and cleans all temporary files up.
-  Useful when you have very results and reducing is slow.
+Basically the same as
+\code{\link{reduceResultsExperiments}} but creates a few
+(hopefully short) jobs to reduce the results in parallel.
+The function internally calls \code{\link{batchMapQuick}},
+does \dQuote{busy-waiting} till all jobs are done and
+cleans all temporary files up. Useful when you have very
+results and reducing is slow.
 }
 

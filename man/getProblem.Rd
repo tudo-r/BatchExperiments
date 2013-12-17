@@ -2,7 +2,7 @@
 \alias{getProblem}
 \title{Get problem from registry by id.}
 \usage{
-  getProblem(reg, id)
+getProblem(reg, id)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -11,9 +11,9 @@
   \item{id}{[\code{character(1)}]\cr Id of problem.}
 }
 \value{
-  [\code{\link{Problem}}].
+[\code{\link{Problem}}].
 }
 \description{
-  The object is loaded from disk.
+The object is loaded from disk.
 }
 

@@ -3,10 +3,8 @@
 \alias{reduceResultsExperiments}
 \title{Reduce results into a data.frame with all relevant information.}
 \usage{
-  reduceResultsExperiments(reg, ids, part = NA_character_,
-    fun, ...,
-    strings.as.factors = default.stringsAsFactors(),
-    block.size, impute.val)
+reduceResultsExperiments(reg, ids, part = NA_character_, fun, ...,
+  strings.as.factors = default.stringsAsFactors(), block.size, impute.val)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -45,20 +43,20 @@
   results. An empty list is allowed.}
 }
 \value{
-  [\code{data.frame}]. Aggregated results, containing
-  problem and algorithm paramaters and collected values.
+[\code{data.frame}]. Aggregated results, containing problem
+and algorithm paramaters and collected values.
 }
 \description{
-  Generates a \code{data.frame} with one row per job id.
-  The columns are: ids of problem and algorithm (named
-  \dQuote{prob} and \dQuote{algo}), one column per
-  parameter of problem or algorithm (named by the parameter
-  name), the replication number (named \dQuote{repl}) and
-  all columns defined in the function to collect the
-  values. Note that you cannot rely on the order of the
-  columns. If a paramater does not have a setting for a
-  certain job / experiment it is set to \code{NA}. Have a
-  look at \code{\link{getResultVars}} if you want to use
-  somethink like \code{\link{ddply}} on the results.
+Generates a \code{data.frame} with one row per job id. The
+columns are: ids of problem and algorithm (named
+\dQuote{prob} and \dQuote{algo}), one column per parameter
+of problem or algorithm (named by the parameter name), the
+replication number (named \dQuote{repl}) and all columns
+defined in the function to collect the values. Note that
+you cannot rely on the order of the columns. If a paramater
+does not have a setting for a certain job / experiment it
+is set to \code{NA}. Have a look at
+\code{\link{getResultVars}} if you want to use somethink
+like \code{\link{ddply}} on the results.
 }
 

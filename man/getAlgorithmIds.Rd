@@ -2,7 +2,7 @@
 \alias{getAlgorithmIds}
 \title{Get ids of algorithms in registry.}
 \usage{
-  getAlgorithmIds(reg, ids)
+getAlgorithmIds(reg, ids)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -12,9 +12,9 @@
   returned algorithm ids to.}
 }
 \value{
-  [\code{character}].
+[\code{character}].
 }
 \description{
-  Get ids of algorithms in registry.
+Get ids of algorithms in registry.
 }
 

@@ -3,8 +3,8 @@
 \alias{addExperiments}
 \title{Add experiemts to the registry.}
 \usage{
-  addExperiments(reg, prob.designs, algo.designs,
-    repls = 1L, skip.defined = FALSE)
+addExperiments(reg, prob.designs, algo.designs, repls = 1L,
+  skip.defined = FALSE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -34,11 +34,11 @@
   Otherwise an error is thrown.\cr Default is FALSE.}
 }
 \value{
-  Invisibly returns vector of ids of added experiments.
+Invisibly returns vector of ids of added experiments.
 }
 \description{
-  Add experiments for running algorithms on problems to the
-  registry, so they can be executed later.
+Add experiments for running algorithms on problems to the
+registry, so they can be executed later.
 }
 \examples{
 ### EXAMPLE 1 ###

@@ -3,11 +3,10 @@
 \alias{makeExperimentRegistry}
 \title{Construct a registry object for experiments.}
 \usage{
-  makeExperimentRegistry(id = "BatchExperimentRegistry",
-    file.dir, sharding = TRUE, work.dir,
-    multiple.result.files = FALSE, seed,
-    packages = character(0L), src.dirs = character(0L),
-    skip = TRUE)
+makeExperimentRegistry(id = "BatchExperimentRegistry", file.dir,
+  sharding = TRUE, work.dir, multiple.result.files = FALSE, seed,
+  packages = character(0L), src.dirs = character(0L),
+  src.files = character(0L), skip = TRUE)
 }
 \arguments{
   \item{id}{[\code{character(1)}]\cr Name of registry.
@@ -57,22 +56,29 @@
   files should only contain function definitions and no
   executable code.  Default is \code{character(0)}.}
 
+  \item{src.files}{[\code{character}]\cr R scripts files
+  relative to your \code{work.dir} to be sourced on
+  registry load (both on slave and master).  Useful if you
+  have many helper functions that are needed during the
+  execution of your jobs.  These files should only contain
+  function definitions and no executable code.  Default is
+  \code{character(0)}.}
+
   \item{skip}{[\code{logical(1)}]\cr Skip creation of a new
   registry if a registry is found in \code{file.dir}.
   Defaults to \code{TRUE}.}
 }
 \value{
-  [\code{\link{ExperimentRegistry}}]
+[\code{\link{ExperimentRegistry}}]
 }
 \description{
-  Note that if you don't want links in your paths
-  (\code{file.dir}, \code{work.dir}) to get resolved and
-  have complete control over the way the path is used
-  internally, pass an absolute path which begins with
-  \dQuote{/}.
+Note that if you don't want links in your paths
+(\code{file.dir}, \code{work.dir}) to get resolved and have
+complete control over the way the path is used internally,
+pass an absolute path which begins with \dQuote{/}.
 }
 \details{
-  Every object is a list that contains the passed arguments
-  of the constructor.
+Every object is a list that contains the passed arguments
+of the constructor.
 }
 

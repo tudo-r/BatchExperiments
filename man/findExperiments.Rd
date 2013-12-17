@@ -2,8 +2,8 @@
 \alias{findExperiments}
 \title{Find ids of experiments that match a query.}
 \usage{
-  findExperiments(reg, ids, prob.pattern, prob.pars,
-    algo.pattern, algo.pars, repls, match.substring = TRUE)
+findExperiments(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars,
+  repls, match.substring = TRUE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -37,11 +37,11 @@
   match?  Default is \code{TRUE}.}
 }
 \value{
-  [\code{integer}]. Ids for experiments which match the
-  query.
+[\code{integer}]. Ids for experiments which match the
+query.
 }
 \description{
-  Find ids of experiments that match a query.
+Find ids of experiments that match a query.
 }
 \examples{
 library(BatchExperiments)

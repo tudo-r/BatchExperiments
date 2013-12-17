@@ -2,7 +2,7 @@
 \alias{getResultVars}
 \title{Get variable groups of reduced results.}
 \usage{
-  getResultVars(data, type = "group")
+getResultVars(data, type = "group")
 }
 \arguments{
   \item{data}{[\code{\link{ReducedResultsExperiments}}]\cr
@@ -17,10 +17,10 @@
   Default is \dQuote{group}.}
 }
 \value{
-  [\code{character}]. Names of of columns.
+[\code{character}]. Names of of columns.
 }
 \description{
-  Useful helper for e.g. package plyr and such.
+Useful helper for e.g. package plyr and such.
 }
 \examples{
 reg <- makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())

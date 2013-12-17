@@ -2,7 +2,7 @@
 \alias{getProblemIds}
 \title{Get ids of problems in registry.}
 \usage{
-  getProblemIds(reg, ids)
+getProblemIds(reg, ids)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -12,9 +12,9 @@
   returned problem ids to.}
 }
 \value{
-  [\code{character}].
+[\code{character}].
 }
 \description{
-  Get ids of problems in registry.
+Get ids of problems in registry.
 }
 

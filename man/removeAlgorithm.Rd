@@ -2,7 +2,7 @@
 \alias{removeAlgorithm}
 \title{Remove algorithm from registry.}
 \usage{
-  removeAlgorithm(reg, id, force = FALSE)
+removeAlgorithm(reg, id, force = FALSE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -15,10 +15,10 @@
   \code{FALSE}.}
 }
 \value{
-  Nothing.
+Nothing.
 }
 \description{
-  THIS DELETES ALL FILES REGARDING THIS ALGORITHM,
-  INCLUDING ALL JOBS AND RESULTS!
+THIS DELETES ALL FILES REGARDING THIS ALGORITHM, INCLUDING
+ALL JOBS AND RESULTS!
 }
 

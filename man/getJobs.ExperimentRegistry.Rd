@@ -2,8 +2,8 @@
 \alias{getJobs.ExperimentRegistry}
 \title{Get jobs (here: experiments) from registry by id.}
 \usage{
-  \method{getJobs}{ExperimentRegistry} (reg, ids,
-    load.fun = FALSE, check.ids = TRUE)
+\method{getJobs}{ExperimentRegistry}(reg, ids, load.fun = FALSE,
+  check.ids = TRUE)
 }
 \arguments{
   \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -20,9 +20,9 @@
   ids?  Default is \code{TRUE}.}
 }
 \value{
-  [list of \code{Experiment}].
+[list of \code{Experiment}].
 }
 \description{
-  Get jobs (here: experiments) from registry by id.
+Get jobs (here: experiments) from registry by id.
 }
 
