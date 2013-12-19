@@ -3,3 +3,4 @@ inst/tests/unittests-files
 .travis.yml
 .git
 .gitignore
+.gitmodules
