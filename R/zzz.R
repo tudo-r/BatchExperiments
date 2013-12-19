@@ -2,7 +2,10 @@
 #'
 #' @section Additional information:
 #'
-#' Wiki, FAQ, examples and more on \url{https://github.com/tudo-r/BatchExperiments}.
+#' \describe{
+#'   \item{Homepage:}{\url{https://github.com/tudo-r/BatchExperiments}}
+#'   \item{Wiki:}{\url{https://github.com/tudo-r/BatchExperiments/wiki}}
+#' }
 #'
 #' @docType package
 #' @name BatchExperiments
