@@ -55,7 +55,7 @@
 makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, sharding=TRUE, work.dir, multiple.result.files = FALSE,
                                   seed, packages=character(0L), src.dirs=character(0L), src.files=character(0L), skip = TRUE) {
   if (missing(file.dir))
-    file.dir = file.path(getwd(), paste(id, "files", sep="-"))
+    file.dir = file.path(getwd(), paste0(id, "-files"))
   checkArg(skip, "logical", len=1L, na.ok=FALSE)
   if (skip && BatchJobs:::isRegistryDir(file.dir))
     return(loadRegistry(file.dir = file.dir))
@@ -83,7 +83,7 @@ print.ExperimentRegistry = function(x, ...) {
   cat("  Work dir:", x$work.dir, "\n")
   cat("  Multiple result files:", x$multiple.result.files, "\n")
   cat("  Seed:", x$seed, "\n")
-  cat("  Required packages:", paste(names(x$packages), collapse=", "), "\n")
+  cat("  Required packages:", collapse(names(x$packages), ", "), "\n")
 }
 
 checkExperimentRegistry = function(reg, strict = FALSE) {
