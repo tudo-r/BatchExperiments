@@ -64,7 +64,7 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
     src.dirs, src.files)
   class(reg) = c("ExperimentRegistry", "Registry")
   BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER, prob_seed INTEGER", constraints=", UNIQUE(job_def_id, repl)")
-  BatchJobs:::dbCreateJobDefTable(reg)
+  BatchJobs::dbCreateJobDefTable(reg)
   dbCreateExtraTables(reg)
   dbCreateExpandedJobsViewBE(reg)
   BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create=TRUE)
