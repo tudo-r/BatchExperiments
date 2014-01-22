@@ -104,7 +104,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
     }
   }, error=bar$error)
 
-  aggr = convertDfCols(aggr, chars.as.factor=strings.as.factors)
+  aggr = convertDataFrameCols(aggr, chars.as.factor=strings.as.factors)
   if (nrow(aggr))
     aggr = setRowNames(cbind(id=ids, aggr), ids)
   aggr = addClasses(aggr, "ReducedResultsExperiments")
