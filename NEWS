@@ -1,3 +1,8 @@
+BatchExperiments_1.1
+- New argument 'ids' (job ids) for getProblemIds and getAlgorithmIds 
+- New argument 'impute.val' for reduceResultsExperiments
+- Support for sourcing of files and directories
+
 BatchExperiments_1.0-967:
 - fixed a bug regarding addExperiments and reordering of parameters
 - print method for designs now contains parameter storage informations 
