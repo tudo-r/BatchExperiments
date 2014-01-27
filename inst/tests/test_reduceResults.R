@@ -8,6 +8,7 @@ test_that("reduceResults", {
   addAlgorithm(reg, id="a2", fun=function(static, dynamic) static*2)
   addExperiments(reg, c("p1", "p2"), c("a1", "a2"), 2)
   submitJobs(reg)
+  waitForJobs(reg)
   data = reduceResults(reg, fun=function(aggr, job, res)
     rbind(aggr, data.frame(id=job$id, prob=job$prob.id, algo=job$algo.id,
       repl=job$repl, y=res, stringsAsFactors = FALSE)),
@@ -36,6 +37,7 @@ test_that("reduceResults", {
   ad2 = makeDesign("a2", exhaustive=list(a=3, b=c("b1", "b2")))
   addExperiments(reg, "p1", list(ad1, ad2))
   submitJobs(reg)
+  waitForJobs(reg)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res), strings.as.factors=TRUE)
   data2 = data.frame(
     id = 1:4,
@@ -60,6 +62,7 @@ test_that("reduceResults", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic, a) 1*static)
   addExperiments(reg, "p1", ad1)
   submitJobs(reg)
+  waitForJobs(reg)
   data = reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
     strings.as.factors=FALSE)
   data2 = data.frame(
@@ -92,6 +95,7 @@ test_that("reduceResultsExperiments works on empty id sets", {
       strings.as.factors=FALSE),
     data2)
   submitJobs(reg)
+  waitForJobs(reg)
   expect_equal(
     reduceResultsExperiments(reg, fun=function(job, res) data.frame(y=res, seed=job$seed),
       strings.as.factors=FALSE, ids = integer(0)),
@@ -106,6 +110,7 @@ test_that("params are available in reduceResults", {
   ad1 = makeDesign("a1", exhaustive=list(beta=3:4))
   addExperiments(reg, pd1, ad1)
   submitJobs(reg)
+  waitForJobs(reg)
   data = reduceResults(reg, fun=function(aggr, job, res) {
     rbind(aggr, data.frame(alpha=job$prob.pars$alpha, beta=job$algo.pars$beta, y=res))
   }, init=data.frame())
@@ -124,6 +129,7 @@ test_that("getProblem is available in reduceResults", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) 2)
   addExperiments(reg, "p1", "a1", repls=2)
   submitJobs(reg)
+  waitForJobs(reg)
   z = reduceResults(reg, fun=function(aggr, job, res) {
     pid = job$prob.id
     p = getProblem(reg, pid)
@@ -141,6 +147,7 @@ test_that("reduceResultsExperiments works with default fun", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) list(y=1))
   addExperiments(reg, "p1", "a1", repls=2)
   submitJobs(reg)
+  waitForJobs(reg)
   z = reduceResultsExperiments(reg)
   expect_equal(z, data.frame(
     id = 1:2,
@@ -154,6 +161,7 @@ test_that("reduceResultsExperiments works with default fun", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) 1)
   addExperiments(reg, "p1", "a1", repls=2)
   submitJobs(reg)
+  waitForJobs(reg)
   z = reduceResultsExperiments(reg)
   expect_equal(z, data.frame(
     id = 1:2,
@@ -167,6 +175,7 @@ test_that("reduceResultsExperiments works with default fun", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) c(foo=1, bar=2))
   addExperiments(reg, "p1", "a1", repls=2)
   submitJobs(reg)
+  waitForJobs(reg)
   z = reduceResultsExperiments(reg, ids=2)
   data2 = setRowNames(data.frame(
     id = 2L,
@@ -189,6 +198,7 @@ test_that("reduceResultsExperiments works with imputation", {
   addAlgorithm(reg, id="a1", fun=function(static, dynamic) list(y=1))
   ids = addExperiments(reg, "p1", "a1", repls=3)
   submitJobs(reg, 1:2)
+  waitForJobs(reg)
   z = reduceResultsExperiments(reg, ids, impute.val=list())
   expect_equal(z, data.frame(
     id = 1:3,

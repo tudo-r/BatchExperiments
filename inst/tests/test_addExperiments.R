@@ -11,6 +11,7 @@ test_that("addExperiments", {
   ad1 = makeDesign(a1)
   addExperiments(reg, prob.designs=pd1, algo.designs=ad1)
   submitJobs(reg)
+  waitForJobs(reg)
   id = getJobIds(reg)[1]
   res = loadResult(reg, id)
   expect_equal(res, 1)
@@ -40,6 +41,7 @@ test_that("addExperiments", {
   pd2 = makeDesign(p2)
   addExperiments(reg, list(pd1, pd2), ad1)
   submitJobs(reg)
+  waitForJobs(reg)
   res = sapply(getJobIds(reg), loadResult, reg=reg)
   expect_equal(res, 1:2, check.attributes=FALSE)
 
@@ -50,6 +52,7 @@ test_that("addExperiments", {
   ad2 = makeDesign(a2, exhaustive=list(a=1:2))
   addExperiments(reg, pd1, ad2)
   submitJobs(reg)
+  waitForJobs(reg)
   res = sapply(getJobIds(reg), loadResult, reg=reg)
   expect_equal(res, (1:2)+1,, check.attributes=FALSE)
 
@@ -61,11 +64,13 @@ test_that("addExperiments", {
   ad3 = makeDesign(a3)
   addExperiments(reg, pd3, ad3)
   submitJobs(reg)
+  waitForJobs(reg)
   res = sapply(getJobIds(reg), loadResult, reg=reg)
   expect_equal(res, c(2*5+1, 2*5+2), check.attributes=FALSE)
 
   submitLoadAndCheck = function(reg, m) {
     submitJobs(reg)
+    waitForJobs(reg)
     res = sapply(getJobIds(reg), loadResult, reg=reg)
     res = unique(res)
     expect_true(length(res) == m && is.numeric(res) && res >= 0 && res <= 1)

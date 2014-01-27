@@ -7,7 +7,7 @@ test_that("getJobInfo", {
   a1 = addAlgorithm(r, "A", fun=function(static, dynamic) 1)
   a2 = addAlgorithm(r, "B", fun=function(static, dynamic) 1)
   addExperiments(r, list(makeDesign(p1), makeDesign(p2)), list(makeDesign(a1), makeDesign(a2)), repls=2)
-  
+
   mycheck = function(tab) {
     expect_true(is.data.frame(tab))
     expect_equal(tab$id, 1:8)
@@ -24,6 +24,7 @@ test_that("getJobInfo", {
   tab = getJobInfo(r)
   mycheck(tab)
   submitJobs(r)
+  waitForJobs(r)
   tab = getJobInfo(r)
   mycheck(tab)
 

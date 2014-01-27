@@ -8,6 +8,7 @@ test_that("remove", {
   a2 = addAlgorithm(reg, id="a2", fun=function(static, dynamic) static+2)
   addExperiments(reg, list(makeDesign(p1), makeDesign(p2)), list(makeDesign(a1), makeDesign(a2)))
   submitJobs(reg)
+  waitForJobs(reg)
   expect_equal(getProblemIds(reg), c("p1", "p2"))
   expect_equal(getAlgorithmIds(reg), c("a1", "a2"))
   removeAlgorithm(reg, "a1", force=TRUE)
