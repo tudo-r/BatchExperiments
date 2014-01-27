@@ -54,7 +54,7 @@ test_that("addExperiments", {
   submitJobs(reg)
   waitForJobs(reg)
   res = sapply(getJobIds(reg), loadResult, reg=reg)
-  expect_equal(res, (1:2)+1,, check.attributes=FALSE)
+  expect_equal(res, (1:2)+1, check.attributes=FALSE)
 
   # prob with pars
   reg = makeTestRegistry()
