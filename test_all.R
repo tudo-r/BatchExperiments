@@ -1,18 +1,19 @@
-library(methods)
 library(devtools)
 library(testthat)
-library(BatchJobs)
-source("inst/tests/helpers.R")
-options(BBmisc.ProgressBar.style = "off")
-conf = BatchJobs:::getBatchJobsConf()
-conf$cluster.functions = BatchJobs:::makeClusterFunctionsUnitTests()
-conf$mail.start = "none"
-conf$mail.done = "none"
-conf$mail.error = "none"
 
 if (interactive()) {
-  library("RSQLite")
-  library("plyr")
+  library(BBmisc)
+  library(fail)
+  library(DBI)
+  library(sendmailR)
+  library(brew)
+  library(fail)
+  library(RSQLite)
+  library(digest)
+  library(plyr)
+
+  library(BatchJobs)
+  library(plyr)
   load_all(".")
 } else {
   library("BatchExperiments")

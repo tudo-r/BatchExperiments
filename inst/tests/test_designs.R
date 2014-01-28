@@ -1,27 +1,25 @@
 context("designs")
 
-if (interactive()) {
-
 test_that("designs", {
   # one point, empty function call
-  d = designIterator(ex=list())
+  d = BatchExperiments:::designIterator(ex=list())
   expect_true(d$hasNext())
   expect_equal(d$n.states, 1)
   expect_equal(d$nextElem(), list())
 
-  d = designIterator(ex=list(), .design=data.frame(a=1:3))
+  d = BatchExperiments:::designIterator(ex=list(), .design=data.frame(a=1:3))
   expect_true(d$hasNext())
   expect_equal(d$n.states, 3L)
   xs = replicate(3, d$nextElem(), simplify=FALSE)
   expect_equal(xs, list(list(a=1L), list(a=2L), list(a=3L)))
 
-  d = designIterator(ex=list(), .design=data.frame(a=1:2, b=4:5))
+  d = BatchExperiments:::designIterator(ex=list(), .design=data.frame(a=1:2, b=4:5))
   expect_true(d$hasNext())
   expect_equal(d$n.states, 2L)
   xs = replicate(2, d$nextElem(), simplify=FALSE)
   expect_equal(xs, list(list(a=1L, b=4L), list(a=2L, b=5L)))
 
-  d = designIterator(ex=list(a=c("x", "y"), b=4:5), .design=data.frame(c=c(1,6), d=c(7,9)))
+  d = BatchExperiments:::designIterator(ex=list(a=c("x", "y"), b=4:5), .design=data.frame(c=c(1,6), d=c(7,9)))
   expect_true(d$hasNext())
   expect_equal(d$n.states, 8L)
   xs = replicate(8, as.data.frame(d$nextElem()), simplify=FALSE)
@@ -40,7 +38,7 @@ test_that("designs", {
   xs = do.call(rbind, xs)
   expect_equal(xs, data[names(xs)])
 
-  d = designIterator(ex=list(a=as.factor(c("u", "v"))), .design=data.frame(b=as.factor(c("a", "b")), c=c("x", "y"), stringsAsFactors=FALSE))
+  d = BatchExperiments:::designIterator(ex=list(a=as.factor(c("u", "v"))), .design=data.frame(b=as.factor(c("a", "b")), c=c("x", "y"), stringsAsFactors=FALSE))
   x  = d$nextElem()
   y = list(b=factor("a", levels=c("a", "b")), c="x", a=factor("u", levels=c("u", "v")))
   expect_equal(x, y[names(x)])
@@ -63,5 +61,3 @@ test_that("designs", {
 
   #d = check_error(makeDesign(a, exhaustive=list(x=iris)), "primitive")
 })
-
-}
