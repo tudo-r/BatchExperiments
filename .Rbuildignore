@@ -1,6 +1,8 @@
+BatchExperiments_*.tar.gz
 examples
 inst/tests/unittests-files
 .travis.yml
 .git
 .gitignore
 .gitmodules
+.test_all.R
