@@ -5,4 +5,5 @@ test_that("testJob", {
   a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic) static)
   addExperiments(reg, p1, a1)
   expect_equal(testJob(reg, 1L, external=FALSE), 1)
+  expect_equal(testJob(reg, 1L, external=TRUE), 1)
 })
