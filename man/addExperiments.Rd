@@ -81,11 +81,11 @@ pars <- list(ratio=c(0.67, 0.9))
 iris.design <- makeDesign("iris", exhaustive=pars)
 
 # Define decision tree parameters:
-pars <- list(minsplit=c(5, 10, 20), cp=c(0.01, 0.1))
+pars <- list(minsplit=c(10, 20), cp=c(0.01, 0.1))
 tree.design <- makeDesign("tree", exhaustive=pars)
 
 # Define random forest parameters:
-pars <- list(ntree=c(100, 500, 1000))
+pars <- list(ntree=c(100, 500))
 forest.design <- makeDesign("forest", exhaustive=pars)
 
 # Add experiments to the registry:
@@ -156,7 +156,8 @@ addAlgorithm(reg, "sann", fun=function(static, dynamic) {
 addExperiments(reg, repls=10)
 submitJobs(reg)
 
-# Gather informations from the experiments, in this case function value and if the algorithm convergenced:
+# Gather informations from the experiments, in this case function value
+# and whether the algorithm convergenced:
 reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
 }
 
