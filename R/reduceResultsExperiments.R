@@ -127,7 +127,6 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' @return [\code{character}]. Names of of columns.
 #' @export
 #' @examples
-#' \dontrun{
 #' reg <- makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())
 #' addProblem(reg, "p1", static=1)
 #' addProblem(reg, "p2", static=2)
@@ -139,11 +138,9 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' ad2 <- makeDesign("a2", exhaustive=list(alpha=1:2, beta=5:6))
 #' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
 #' submitJobs(reg)
-#' waitForJobs(reg)
 #' data <- reduceResultsExperiments(reg)
 #' library(plyr)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
-#' }
 getResultVars = function(data, type="group") {
   checkArg(data, "ReducedResultsExperiments")
   checkArg(type, choices=c("prob", "prob.pars", "algo", "algo.pars", "group", "result"))

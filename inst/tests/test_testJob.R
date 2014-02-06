@@ -8,6 +8,6 @@ test_that("testJob", {
   #FIXME: for some reason this test does not run in "make check"
   # is should also be tested as well in BJ, not only here,
   # with external = TRUE!
-  # if (isExpensiveExampleOk())
-    # expect_equal(testJob(reg, 1L, external=TRUE), 1)
+  if (isExpensiveExampleOk() && interactive())
+    expect_equal(testJob(reg, 1L, external=TRUE), 1)
 })

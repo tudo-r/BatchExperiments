@@ -45,7 +45,6 @@ like \code{\link{tapply}}, \code{\link{by}} or
 \code{\link{aggregate}}.
 }
 \examples{
-\dontrun{
 # create a registry and add problems and algorithms
 reg = makeExperimentRegistry("getIndex", file.dir=tempfile(""))
 addProblem(reg, "prob", static = 1)
@@ -54,7 +53,6 @@ addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
 ad = list(makeDesign("f0"), makeDesign("f1", exhaustive=list(i=1:10, k=1:3)))
 addExperiments(reg, algo.designs=ad)
 submitJobs(reg)
-waitForJobs(reg)
 
 # get grouped job ids
 ids = getJobIds(reg)
@@ -67,6 +65,5 @@ ids.f1 = findExperiments(reg, algo.pattern="f1")
 f = function(aggr, job, res) aggr + res
 by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=k), reduceResults, reg=reg, fun=f)
 by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
-}
 }
 
