@@ -23,6 +23,7 @@ getResultVars(data, type = "group")
 Useful helper for e.g. package plyr and such.
 }
 \examples{
+\dontrun{
 reg <- makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())
 addProblem(reg, "p1", static=1)
 addProblem(reg, "p2", static=2)
@@ -38,5 +39,6 @@ waitForJobs(reg)
 data <- reduceResultsExperiments(reg)
 library(plyr)
 ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
+}
 }
 

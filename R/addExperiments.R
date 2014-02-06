@@ -23,6 +23,7 @@
 #'   Default is FALSE.
 #' @return Invisibly returns vector of ids of added experiments.
 #' @examples
+#' \dontrun{
 #' ### EXAMPLE 1 ###
 #' reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
 #'
@@ -142,6 +143,7 @@
 #'
 #' # Gather informations from the experiments, in this case function value and if the algorithm convergenced:
 #' reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
+#' }
 #' @aliases Experiment
 #' @export
 addExperiments = function(reg, prob.designs, algo.designs, repls=1L, skip.defined=FALSE) {

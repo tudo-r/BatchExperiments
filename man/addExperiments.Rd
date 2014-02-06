@@ -41,6 +41,7 @@ Add experiments for running algorithms on problems to the
 registry, so they can be executed later.
 }
 \examples{
+\dontrun{
 ### EXAMPLE 1 ###
 reg <- makeExperimentRegistry(id="example1", file.dir=tempfile())
 
@@ -160,5 +161,6 @@ waitForJobs(reg)
 
 # Gather informations from the experiments, in this case function value and if the algorithm convergenced:
 reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
+}
 }
 
