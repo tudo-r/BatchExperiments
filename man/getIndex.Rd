@@ -53,6 +53,7 @@ addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
 ad = list(makeDesign("f0"), makeDesign("f1", exhaustive=list(i=1:10, k=1:3)))
 addExperiments(reg, algo.designs=ad)
 submitJobs(reg)
+waitForJobs(reg)
 
 # get grouped job ids
 ids = getJobIds(reg)

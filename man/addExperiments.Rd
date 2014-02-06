@@ -110,6 +110,7 @@ if (do.tests) {
 
 # Submit the jobs to the batch system
 submitJobs(reg)
+waitForJobs(reg)
 
 # Calculate the misclassification rate for all (already done) jobs.
 reduce <- function(job, res) {
@@ -155,6 +156,7 @@ addAlgorithm(reg, "sann", fun=function(static, dynamic) {
 # add experiments and submit
 addExperiments(reg, repls=10)
 submitJobs(reg)
+waitForJobs(reg)
 
 # Gather informations from the experiments, in this case function value and if the algorithm convergenced:
 reduceResultsExperiments(reg, fun=function(job, res) res[c("value", "convergence")])
