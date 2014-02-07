@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: ExperimentJob</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for ExperimentJob {BatchExperiments}"><tr><td>ExperimentJob {BatchExperiments}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>ExperimentJob</h2>
+
+<h3>Description</h3>
+
+<p>You can access job properties using the <code>job</code> object
+which is optionally passed to dynamic problem functions and
+algorithms. The object is a named list with the following
+elements: </p>
+ <dl>
+<dt><code>id</code>
+[<code>integer(1)</code>]:</dt><dd><p>Job ID.</p>
+</dd> <dt><code>prob.id</code>
+[<code>character(1)</code>]:</dt><dd><p>Problem ID.</p>
+</dd> <dt><code>prob.pars</code>
+[<code>list</code>]:</dt><dd><p>Problem parameters as named list.</p>
+</dd>
+<dt><code>algo.id</code>
+[<code>character(1)</code>]:</dt><dd><p>algo.id</p>
+</dd></dl>
+<p>Algorithm ID.
+</p>
+<dl>
+<dt><code>algo.pars</code> [<code>list</code>]:</dt><dd><p>Algorithm parameters
+as named list.</p>
+</dd> <dt><code>repl</code>
+[<code>integer(1)</code>]:</dt><dd><p>Replication number of this
+experiment.</p>
+</dd> <dt><code>seed</code> [<code>integer(1)</code>]:</dt><dd><p>Seed
+set right before algorithm execution.</p>
+</dd>
+<dt><code>prob.seed</code> [<code>integer(1)</code>]:</dt><dd><p>Seed set right
+before generation of problem instance.</p>
+</dd> </dl>
+
+
+<hr><div align="center">[Package <em>BatchExperiments</em> version 1.1 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Add an algorithm to registry.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+</head><body>
+
+<table width="100%" summary="page for addAlgorithm {BatchExperiments}"><tr><td>addAlgorithm {BatchExperiments}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Add an algorithm to registry.</h2>
+
+<h3>Description</h3>
+
+<p>Add an algorithm to registry and stores it on disk.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+addAlgorithm(reg, id, fun, overwrite = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>reg</code></td>
+<td>
+<p>[<code><a href="makeExperimentRegistry.html">ExperimentRegistry</a></code>]<br>
+Registry.</p>
+</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+<p>[<code>character(1)</code>]<br> Name of algorithm.</p>
+</td></tr>
+<tr valign="top"><td><code>fun</code></td>
+<td>
+<p>[<code>function(job, static, dynamic,
+  ...)</code>]<br> Function which applies the algorithm to a
+problem instance.  Takes a <code><a href="../../BatchJobs/html/Job.html">Job</a></code>
+object, the <code>static</code> problem part and the evaluated
+<code>dynamic</code> problem part as arguments.  You may omit
+any of <code>job</code>, <code>static</code> or <code>dynamic</code>.  In
+this case, the respective arguments will not get passed
+to <code>fun</code>.  Further parameters from <a href="makeDesign.html">Design</a> are
+passed to ... argument.  If you are using multiple result
+files this function must return a named list.
+</p>
+<p>To retrieve job informations from the <code>job</code> object
+see the documentation on <a href="ExperimentJob.html">ExperimentJob</a>.</p>
+</td></tr>
+<tr valign="top"><td><code>overwrite</code></td>
+<td>
+<p>[<code>logical(1)</code>]<br> Overwrite the
+algorithm file if it already exists?  Default is
+<code>FALSE</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>[<code>character(1)</code>]. Invisibly returns the id.
+</p>
+
+<hr><div align="center">[Package <em>BatchExperiments</em> version 1.1 <a href="00Index.html">Index</a>]</div>
+</body></html>

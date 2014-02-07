@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Summarize selected experiments.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="R.css">
+
+<link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/github.min.css">
+<script src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+<script src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</head><body>
+
+<table width="100%" summary="page for summarizeExperiments {BatchExperiments}"><tr><td>summarizeExperiments {BatchExperiments}</td><td align="right">R Documentation</td></tr></table>
+
+<h2>Summarize selected experiments.</h2>
+
+<h3>Description</h3>
+
+<p>A data.frame is returned that contains summary information
+about the selected experiments. The data.frame is
+constructed by building the columns &ldquo;prob,
+&lt;prob.pars&gt;, algo, &lt;algo.pars&gt;, repl&rdquo;,
+<code><a href="../../plyr/html/rbind.fill.html">rbind.fill</a></code> is used to connect the rows, so if
+some parameters do not appear in some experiments, they
+will be set to <code>NA</code>. Now only the columns in
+<code>show</code> will be selected, how many of such experiments
+exist will be counted in a new column &ldquo;.count&rdquo;.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+summarizeExperiments(reg, ids, show = c("prob", "algo"))
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>reg</code></td>
+<td>
+<p>[<code><a href="makeExperimentRegistry.html">ExperimentRegistry</a></code>]<br>
+Registry.</p>
+</td></tr>
+<tr valign="top"><td><code>ids</code></td>
+<td>
+<p>[<code>integer</code>]<br> Selected experiments.
+Default is all experiments.</p>
+</td></tr>
+<tr valign="top"><td><code>show</code></td>
+<td>
+<p>[<code>character</code>]<br> Should detailed
+information for each single experiment be printed?
+Default is <code>c("prob", "algo")</code>.</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+<p>[<code>data.frame</code>].
+</p>
+
+
+<h3>Examples</h3>
+
+<pre><code class="r">
+reg &lt;- makeExperimentRegistry(&quot;summarizeExperiments&quot;, seed=123, file.dir=tempfile())
+</code></pre>
+
+<pre><code>## Creating dir: /tmp/RtmpVeetNu/file576b45e5681d
+## Saving registry: /tmp/RtmpVeetNu/file576b45e5681d/registry.RData
+</code></pre>
+
+<pre><code class="r">p1 &lt;- addProblem(reg, &quot;p1&quot;, static=1)
+</code></pre>
+
+<pre><code>## Writing problem files: /tmp/RtmpVeetNu/file576b45e5681d/problems/p1_static.RData, /tmp/RtmpVeetNu/file576b45e5681d/problems/p1_dynamic.RData
+</code></pre>
+
+<pre><code class="r">a1 &lt;- addAlgorithm(reg, id=&quot;a1&quot;, fun=function(static, dynamic, alpha, beta) 1)
+</code></pre>
+
+<pre><code>## Writing algorithm file: /tmp/RtmpVeetNu/file576b45e5681d/algorithms/a1.RData
+</code></pre>
+
+<pre><code class="r">a2 &lt;- addAlgorithm(reg, id=&quot;a2&quot;, fun=function(static, dynamic, alpha, gamma) 2)
+</code></pre>
+
+<pre><code>## Writing algorithm file: /tmp/RtmpVeetNu/file576b45e5681d/algorithms/a2.RData
+</code></pre>
+
+<pre><code class="r">ad1 &lt;- makeDesign(a1, exhaustive = list(alpha=1:2, beta=1:2))
+ad2 &lt;- makeDesign(a2, exhaustive = list(alpha=1:2, gamma=7:8))
+addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
+</code></pre>
+
+<pre><code>## Adding 8 experiments / 16 jobs to DB.
+</code></pre>
+
+<pre><code class="r">print(summarizeExperiments(reg))
+</code></pre>
+
+<pre><code>##   prob algo .count
+## 1   p1   a1      8
+## 2   p1   a2      8
+</code></pre>
+
+<pre><code class="r">print(summarizeExperiments(reg, show=c(&quot;prob&quot;, &quot;algo&quot;, &quot;alpha&quot;, &quot;gamma&quot;)))
+</code></pre>
+
+<pre><code>##   prob algo alpha gamma V1
+## 1   p1   a1     1    NA  4
+## 2   p1   a1     2    NA  4
+## 3   p1   a2     1     7  2
+## 4   p1   a2     1     8  2
+## 5   p1   a2     2     7  2
+## 6   p1   a2     2     8  2
+</code></pre>
+
+<pre><code class="r">
+</code></pre>
+
+
+<hr><div align="center">[Package <em>BatchExperiments</em> version 1.1 <a href="00Index.html">Index</a>]</div>
+</body></html>
