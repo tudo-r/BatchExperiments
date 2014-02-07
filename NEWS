@@ -1,3 +1,6 @@
+BatchExperiments_1.2
+
+
 BatchExperiments_1.1
 - New argument 'ids' (job ids) for getProblemIds and getAlgorithmIds 
 - New argument 'impute.val' for reduceResultsExperiments
