@@ -1,8 +1,11 @@
 BatchExperiments_*.tar.gz
-examples
-inst/tests/unittests-files
+^test_all.R$
+^makeR
+^Makefile$
+^README.md$
+^examples
+^inst/tests/unittests-files
 .travis.yml
 .git
 .gitignore
 .gitmodules
-.test_all.R
