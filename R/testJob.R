@@ -4,11 +4,11 @@ copyRequiredJobFiles.ExperimentRegistry = function(reg1, reg2, id) {
 
   src = getProblemFilePaths(reg1$file.dir, job$prob.id)
   dest = getProblemFilePaths(reg2$file.dir, job$prob.id)
-  message("Copying problem files: ", collapse(src, sep=", "))
+  info("Copying problem files: %s", collapse(src, sep=", "))
   file.copy(src, dest)
 
   src = getAlgorithmFilePath(reg1$file.dir, job$algo.id)
   dest = getAlgorithmFilePath(reg2$file.dir, job$algo.id)
-  message("Copying algorithm file: ", src)
+  info("Copying algorithm file: %s", src)
   file.copy(src, dest)
 }

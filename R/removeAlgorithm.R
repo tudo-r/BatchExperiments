@@ -18,14 +18,14 @@ removeAlgorithm = function(reg, id, force=FALSE) {
   if (id %nin% dbGetAllAlgorithmIds(reg))
     stop("Algorithm not present in registry: ", id)
 
-  message("Removing Experiments from database")
+  info("Removing Experiments from database")
   ids = dbFindExperiments(reg, algo.pattern=id, like=FALSE)
   removeExperiments(reg, ids=ids, force=force)
-  message("Removing Algorithm from database")
+  info("Removing Algorithm from database")
   dbRemoveAlgorithm(reg, id)
 
   fn = getAlgorithmFilePath(reg$file.dir, id)
-  message("Deleting algorithm file: ", fn)
+  info("Deleting algorithm file: %s", fn)
   ok = file.remove(fn)
   if (!ok)
     warningf("Could not remove algorithm file: %s", fn)

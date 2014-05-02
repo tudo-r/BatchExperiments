@@ -39,7 +39,7 @@ addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
 
   algorithm = makeAlgorithm(id, fun)
   fn = getAlgorithmFilePath(reg$file.dir, id)
-  message("Writing algorithm file: ", fn)
+  info("Writing algorithm file: %s", fn)
   save(file=fn, algorithm)
   dbAddAlgorithm(reg, id)
   invisible(id)

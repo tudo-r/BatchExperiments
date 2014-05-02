@@ -18,14 +18,14 @@ removeProblem = function(reg, id, force=FALSE) {
   if (id %nin% dbGetAllProblemIds(reg))
     stop("Problem not present in registry: ", id)
 
-  message("Removing Experiments from database")
+  info("Removing Experiments from database")
   ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
   removeExperiments(reg, ids=ids, force=force)
-  message("Removing Problem from database")
+  info("Removing Problem from database")
   dbRemoveProblem(reg, id)
 
   fn = getProblemFilePaths(reg$file.dir, id)
-  message("Deleting problem files: ", collapse(fn, sep=", "))
+  info("Deleting problem files: ", collapse(fn, sep=", "))
   ok = file.remove(fn)
   if (!all(ok))
     warningf("Could not remove problem files: %s", collapse(fn[!ok], sep=", "))

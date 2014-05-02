@@ -71,7 +71,7 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   }
 
   n = length(ids)
-  messagef("Reducing %i results...", n)
+  info("Reducing %i results...", n)
 
   impute = function(job, res, ...)
     impute.val

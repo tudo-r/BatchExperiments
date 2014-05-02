@@ -59,7 +59,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
     return(addClasses(res, "ReducedResultsExperiments"))
   }
 
-  messagef("Reducing %i results...", n)
+  info("Reducing %i results...", n)
 
   ch = chunk(ids, n.chunks=njobs, shuffle=FALSE)
   more.args = c(list(reg=reg, part=part, fun=fun, strings.as.factors=strings.as.factors), list(...))

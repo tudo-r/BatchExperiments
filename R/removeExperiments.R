@@ -31,7 +31,7 @@ removeExperiments = function(reg, ids, force=FALSE) {
             collapse(running))
   }
 
-  messagef("Removing %i experiments ...", length(ids))
+  info("Removing %i experiments ...", length(ids))
   BatchJobs:::dbRemoveJobs(reg, ids)
 
   fmt = "^%i(\\.(R|out)|-result(-.+)*\\.RData)$"

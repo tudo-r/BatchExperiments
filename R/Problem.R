@@ -59,7 +59,7 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
     stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
 
   fn = getProblemFilePaths(reg$file.dir, id)
-  message("Writing problem files: ", collapse(fn, sep=", "))
+  info("Writing problem files: %s", collapse(fn, sep=", "))
   save(file=fn["static"], static)
   save(file=fn["dynamic"], dynamic)
   dbAddProblem(reg, id, seed)

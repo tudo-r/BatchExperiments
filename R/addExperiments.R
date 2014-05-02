@@ -235,7 +235,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
   f = function(xs) vapply(xs, function(x) x$designIter$n.states, integer(1L))
   n.exps = sum(outer(f(prob.designs), f(algo.designs)))
-  messagef("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
+  info("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
 
   # iterate to generate job definitions
