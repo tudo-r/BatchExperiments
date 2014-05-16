@@ -1,4 +1,2 @@
 library(testthat)
-library(BatchExperiments)
-
-test_package("BatchExperiments")
+test_check("BatchExperiments")

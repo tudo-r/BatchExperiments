@@ -19,4 +19,4 @@ if (interactive()) {
   library("BatchExperiments")
 }
 
-test_dir("inst/tests")
+test_dir("tests/testthat")
