@@ -1,4 +1,5 @@
 BatchExperiments_1.2
+- Reduced disk i/o in chunks
 
 
 BatchExperiments_1.1
