@@ -50,7 +50,6 @@ print.Algorithm = function(x, ...) {
   cat("Algorithm:", x$id, "\n")
 }
 
-loadAlgorithm = function(file.dir, id) {
-  fn = getAlgorithmFilePath(file.dir, id)
-  load2(fn, "algorithm")
+loadAlgorithm = function(reg, id) {
+  load2(getAlgorithmFilePath(reg$file.dir, id), "algorithm")
 }

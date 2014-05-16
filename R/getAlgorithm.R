@@ -12,5 +12,5 @@ getAlgorithm = function(reg, id) {
   aids = dbGetAllAlgorithmIds(reg)
   if (id %nin% aids)
     stop("Unknown algorithm id, possible candidates are: ", collapse(aids))
-  loadAlgorithm(reg$file.dir, id)
+  loadAlgorithm(reg, id)
 }

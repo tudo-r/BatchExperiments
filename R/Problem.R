@@ -1,6 +1,5 @@
 makeProblem = function(id, static, dynamic) {
-  setClasses(list(id=id, static=static, dynamic=dynamic),
-             "Problem")
+  setClasses(list(id=id, static=static, dynamic=dynamic), "Problem")
 }
 
 #FIXME the seed mechansim is described slighlty wrong! fix! random seed!
@@ -72,9 +71,10 @@ print.Problem = function(x, ...) {
 }
 
 loadProblem = function(reg, id, seed=TRUE) {
+  parts = getProblemFilePaths(reg$file.dir, id)
   prob = makeProblem(id = id,
-                     static = getProblemPart(reg$file.dir, id, "static"),
-                     dynamic = getProblemPart(reg$file.dir, id, "dynamic"))
+    static = load2(parts["static"], "static", impute = NULL),
+    dynamic = load2(parts["dynamic"], "dynamic", impute = NULL))
   if (seed) {
     query = sprintf("SELECT pseed FROM %s_prob_def WHERE prob_id = '%s'", reg$id, id)
     prob$seed = BatchJobs:::dbDoQuery(reg, query)$pseed
@@ -82,41 +82,20 @@ loadProblem = function(reg, id, seed=TRUE) {
   prob
 }
 
-getProblemPart = function(file.dir, id, part) {
-  fn = getProblemFilePaths(file.dir, id)[part]
-  if (!file.exists(fn))
-    return(NULL)
-  load2(fn, part)
-}
-
-# returns a functions which returns the static problem part
-getStaticLazy = function(reg, job) {
-  function() getProblemPart(reg$file.dir, job$prob.id, "static")
-}
-
-# returns a function which computes the dynamic problem part
-getDynamicLazy = function(reg, job) {
-  dynamic.fun = getProblemPart(reg$file.dir, job$prob.id, "dynamic")
+calcDynamic = function(reg, job, static, dynamic.fun) {
   if (is.null(dynamic.fun))
     return(function() NULL)
-
   prob.use = c("job", "static")
   prob.use = setNames(prob.use %in% names(formals(dynamic.fun)), prob.use)
-  if (prob.use["static"])
-    static = getStaticLazy(reg, job)
 
-  # we avoid copies and let lazy evaluation kick in if the specific parts are not
-  # needed. Seems a bit cumbersome, but worth it
   f = switch(sum(c(1L, 2L)[prob.use]) + 1L,
-             function(...) dynamic.fun(...),
-             function(...) dynamic.fun(job=job, ...),
-             function(...) dynamic.fun(static=static(), ...),
-             function(...) dynamic.fun(job=job, static=static(), ...))
+    function(...) dynamic.fun(...),
+    function(...) dynamic.fun(job=job, ...),
+    function(...) dynamic.fun(static=static, ...),
+    function(...) dynamic.fun(job=job, static=static, ...))
 
-  function() {
-    messagef("Generating problem %s ...", job$prob.id)
-    seed = BatchJobs:::seeder(reg, job$prob.seed)
-    on.exit(seed$reset())
-    do.call(f, job$prob.pars)
-  }
+  info("Generating problem %s ...", job$prob.id)
+  seed = BatchJobs:::seeder(reg, job$prob.seed)
+  on.exit(seed$reset())
+  do.call(f, job$prob.pars)
 }

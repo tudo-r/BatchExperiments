@@ -7,9 +7,7 @@
 #' @return Dynamic part of problem.
 #' @export
 generateProblemInstance = function(reg, id) {
-  checkExperimentRegistry(reg, strict=TRUE)
-  id = BatchJobs:::checkId(reg, id)
-
-  dynamic = getDynamicLazy(reg, getJob(reg, id, check.id=FALSE))
-  dynamic()
+  job = getJob(reg, id)
+  prob = getProblem(reg, job$prob.id)
+  calcDynamic(reg, job, prob$static, prob$dynamic)
 }
