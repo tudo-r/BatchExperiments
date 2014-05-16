@@ -9,7 +9,7 @@
 #'   Default is \code{TRUE}.
 #' @return [list of \code{Experiment}].
 #' @method getJobs ExperimentRegistry
-#' @S3method getJobs ExperimentRegistry
+#' @export
 #' @export
 getJobs.ExperimentRegistry = function(reg, ids, check.ids=TRUE) {
   if (!missing(ids) && check.ids)

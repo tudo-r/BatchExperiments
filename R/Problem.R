@@ -65,7 +65,7 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
   invisible(id)
 }
 
-#' @S3method print Problem
+#' @export
 print.Problem = function(x, ...) {
   cat("Problem:", x$id, "\n")
 }

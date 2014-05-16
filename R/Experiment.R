@@ -23,7 +23,7 @@ makeExperimentJob = function(id=NA_integer_, prob.id, prob.pars, algo.id, algo.p
              c("ExperimentJob", "Job"))
 }
 
-#' @S3method print ExperimentJob
+#' @export
 print.ExperimentJob = function(x, ...) {
   cat("Experiment:", "\n")
   cat("  Problem:", x$prob.id, "\n")

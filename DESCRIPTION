@@ -9,6 +9,7 @@ Maintainer: Michel Lang <michellang@gmail.com>
 URL: https://github.com/tudo-r/BatchExperiments
 BugReports: https://github.com/tudo-r/BatchExperiments/issues
 License: BSD_3_clause + file LICENSE
+Roxygen: list(wrap = FALSE)
 Depends:
     R (>= 2.15.0),
     BatchJobs (>= 1.2)

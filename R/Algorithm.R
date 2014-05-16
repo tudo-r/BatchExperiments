@@ -45,7 +45,7 @@ addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
   invisible(id)
 }
 
-#' @S3method print Algorithm
+#' @export
 print.Algorithm = function(x, ...) {
   cat("Algorithm:", x$id, "\n")
 }

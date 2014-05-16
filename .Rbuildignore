@@ -4,7 +4,7 @@ BatchExperiments_*.tar.gz
 ^Makefile$
 ^README.md$
 ^examples
-^inst/tests/unittests-files
+^tests/testthat/unittests-files
 .travis.yml
 .git
 .gitignore

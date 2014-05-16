@@ -116,7 +116,7 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
              "Design")
 }
 
-#' @S3method print Design
+#' @export
 print.Design = function(x, ...) {
   n = x$designIter$n.states
   storage = x$designIter$storage

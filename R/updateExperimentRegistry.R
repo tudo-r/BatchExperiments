@@ -1,5 +1,5 @@
 #' @method updateRegistry ExperimentRegistry
-#' @S3method updateRegistry ExperimentRegistry
+#' @export
 updateRegistry.ExperimentRegistry = function(reg) {
   # update the BatchJobs part first
   updated = NextMethod()

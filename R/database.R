@@ -1,4 +1,4 @@
-#' @S3method dbCreateJobDefTable ExperimentRegistry
+#' @export
 dbCreateJobDefTable.ExperimentRegistry = function(reg) {
   query = sprintf(paste("CREATE TABLE %s_job_def (job_def_id INTEGER PRIMARY KEY,",
                         "prob_id TEXT, prob_pars TEXT, algo_id TEXT, algo_pars TEXT,",
@@ -22,7 +22,7 @@ dbCreateExpandedJobsViewBE = function(reg) {
 }
 
 #' @method dbGetJobs ExperimentRegistry
-#' @S3method dbGetJobs ExperimentRegistry
+#' @export
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
   query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", reg$id)
   tab = BatchJobs:::dbSelectWithIds(reg, query, ids)

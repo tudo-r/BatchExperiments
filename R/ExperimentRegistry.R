@@ -73,7 +73,7 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
   return(reg)
 }
 
-#' @S3method print ExperimentRegistry
+#' @export
 print.ExperimentRegistry = function(x, ...) {
   cat("Experiment registry:",  x$id, "\n")
   cat("  Number of problems:", length(dbGetAllProblemIds(x)), "\n")

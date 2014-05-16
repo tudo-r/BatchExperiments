@@ -1,5 +1,5 @@
 #' @method getJobInfo ExperimentRegistry
-#' @S3method getJobInfo ExperimentRegistry
+#' @export
 getJobInfo.ExperimentRegistry = function(reg, ids, pars=FALSE, prefix.pars=FALSE, select, unit = "seconds") {
   BatchJobs:::syncRegistry(reg)
   checkArg(pars, "logical", len=1L, na.ok=FALSE)

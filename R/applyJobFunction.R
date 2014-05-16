@@ -1,5 +1,5 @@
 #' @method applyJobFunction ExperimentRegistry
-#' @S3method applyJobFunction ExperimentRegistry
+#' @export
 applyJobFunction.ExperimentRegistry = function(reg, job, cache) {
   algo = cache(getAlgorithmFilePath(reg$file.dir, job$algo.id),
     slot = "algo", parts = "algorithm")$fun

@@ -1,4 +1,4 @@
-#' @S3method copyRequiredJobFiles ExperimentRegistry
+#' @export
 copyRequiredJobFiles.ExperimentRegistry = function(reg1, reg2, id) {
   job = getJob(reg1, id, check.id=FALSE)
 
