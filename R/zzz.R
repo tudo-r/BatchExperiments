@@ -11,6 +11,7 @@
 #' @name BatchExperiments
 NULL
 
+#' @import checkmate
 #' @import BBmisc
 #' @import DBI
 #' @import RSQLite

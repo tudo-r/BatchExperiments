@@ -193,9 +193,8 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
             sum(!found), collapse(ids[!found]))
   }
 
-  repls = convertIntegers(repls)
-  checkArg(repls, "integer", len=1L, lower=1L, na.ok=FALSE)
-  checkArg(skip.defined, "logical", na.ok=FALSE)
+  repls = asCount(repls, positive = TRUE)
+  assertFlag(skip.defined)
 
   # internal helper functions
   mq = function(lines, ..., con, bind.data=NULL) {

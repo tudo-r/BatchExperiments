@@ -42,13 +42,10 @@ makeProblem = function(id, static, dynamic) {
 #' @export
 addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=FALSE)  {
   checkExperimentRegistry(reg, strict=TRUE)
-  checkArg(id, cl = "character", len=1L, na.ok = FALSE)
   BatchJobs:::checkIdValid(id)
-  if (!is.null(seed)) {
-    seed = convertInteger(seed)
-    checkArg(seed, "integer", len=1L, na.ok=FALSE)
-  }
-  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
+  if (!is.null(seed))
+    seed = asInt(seed)
+  assertFlag(overwrite)
 
   if (is.null(static) && is.null(dynamic))
     stop("One of args 'static' or 'dynamic' must not be NULL!")

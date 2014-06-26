@@ -28,9 +28,8 @@ makeAlgorithm = function(id, fun) {
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
   checkExperimentRegistry(reg, strict=TRUE)
-  checkArg(id, cl = "character", len=1L, na.ok=FALSE)
   BatchJobs:::checkIdValid(id)
-  checkArg(overwrite, "logical", len=1L, na.ok=FALSE)
+  assertFlag(overwrite)
 
   if (id %in% dbGetAllProblemIds(reg))
     stopf("Problem with same id as your algorithm already exists: %s", id)

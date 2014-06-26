@@ -14,6 +14,7 @@ Depends:
     R (>= 2.15.0),
     BatchJobs (>= 1.2)
 Imports:
+    checkmate (>= 1.1),
     BBmisc (>= 1.7),
     DBI,
     RSQLite,

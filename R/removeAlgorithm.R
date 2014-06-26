@@ -13,7 +13,7 @@
 removeAlgorithm = function(reg, id, force=FALSE) {
   checkExperimentRegistry(reg, strict=TRUE)
   BatchJobs:::syncRegistry(reg)
-  checkArg(id, "character", len=1L, na.ok=FALSE)
+  assertString(id)
 
   if (id %nin% dbGetAllAlgorithmIds(reg))
     stop("Algorithm not present in registry: ", id)

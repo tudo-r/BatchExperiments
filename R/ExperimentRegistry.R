@@ -56,7 +56,7 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
                                   seed, packages=character(0L), src.dirs=character(0L), src.files=character(0L), skip = TRUE) {
   if (missing(file.dir))
     file.dir = file.path(getwd(), paste0(id, "-files"))
-  checkArg(skip, "logical", len=1L, na.ok=FALSE)
+  assertFlag(skip)
   if (skip && BatchJobs:::isRegistryDir(file.dir))
     return(loadRegistry(file.dir = file.dir))
   reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding,

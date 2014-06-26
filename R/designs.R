@@ -95,25 +95,14 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
   # test if the storage mode of parameters matches the storage mode of those
   # in the database
   # if we push out a not backward compatible version, do this here.
-  checkArg(id, "character", len=1L, na.ok=FALSE)
-  checkArg(design, "data.frame")
-  checkArg(exhaustive, "list")
-  if (!isProperlyNamed(exhaustive))
-    stop("Argument exhaustive must be a properly named list!")
-  if (!all(vapply(exhaustive, is.atomic, logical(1L))))
-    stop("All elements of exhaustive must be an atomic vector type!")
-  if (! all(vapply(exhaustive, length, integer(1L)) >= 1L))
+  assertString(id)
+  assertDataFrame(design, types = "atomic")
+  assertList(exhaustive, types = "atomic", names = "named")
+  if (any(viapply(exhaustive, length) == 0L))
     stop("All elements of exhaustive must have at least have length 1!")
   if (anyDuplicated(c(names(design), names(exhaustive))) > 0L)
     stop("Duplicated design parameters found!")
-
-  if (ncol(design) > 0L) {
-    if (!all(vapply(design, function(x) is.atomic(x) | is.factor(x), logical(1L))))
-      stop("All columns of design must be either of atomic type or a factor!")
-  }
-
-  setClasses(list(id = id, designIter=designIterator(exhaustive, .design = design)),
-             "Design")
+  setClasses(list(id = id, designIter=designIterator(exhaustive, .design = design)), "Design")
 }
 
 #' @export

@@ -28,9 +28,9 @@
 #' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
 #' print(summarizeExperiments(reg))
 #' print(summarizeExperiments(reg, show=c("prob", "algo", "alpha", "gamma")))
-summarizeExperiments = function(reg, ids, show=c("prob", "algo")) {
-  checkExperimentRegistry(reg, strict=TRUE)
+summarizeExperiments = function(reg, ids, show = c("prob", "algo")) {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
-  checkArg(show, "character", min.len=1, na.ok=FALSE)
+  assertCharacter(show, min.len = 1, any.missing = FALSE)
   dbSummarizeExperiments(reg, ids, show)
 }

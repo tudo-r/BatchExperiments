@@ -60,14 +60,13 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   if (missing(fun))
     fun = function(job, res) res
   else
-    checkArg(fun, formals=c("job", "res"))
+    assertFunction(fun, c("job", "res"))
 
-  checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
+  assertFlag(strings.as.factors)
   if (missing(block.size)) {
     block.size = max(100L, as.integer(0.05 * length(ids)))
   } else {
-    block.size = convertInteger(block.size)
-    checkArg(block.size, "integer", len=1L, na.ok=FALSE)
+    block.size = asCount(block.size)
   }
 
   n = length(ids)
@@ -142,8 +141,8 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' library(plyr)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
 getResultVars = function(data, type="group") {
-  checkArg(data, "ReducedResultsExperiments")
-  checkArg(type, choices=c("prob", "prob.pars", "algo", "algo.pars", "group", "result"))
+  assertClass(data, "ReducedResultsExperiments")
+  assertChoice(type, c("prob", "prob.pars", "algo", "algo.pars", "group", "result"))
   switch(type,
     prob = c("prob", attr(data, "prob.pars.names")),
     prob.pars = attr(data, "prob.pars.names"),

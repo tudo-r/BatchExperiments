@@ -35,13 +35,11 @@
 findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
   checkExperimentRegistry(reg, strict=TRUE)
   if (!missing(prob.pattern))
-    checkArg(prob.pattern, "character", len=1L, na.ok=FALSE)
+    assertString(prob.pattern)
   if (!missing(algo.pattern))
-    checkArg(algo.pattern, "character", len=1L, na.ok=FALSE)
-  if (!missing(repls)) {
-    repls = convertIntegers(repls)
-    checkArg(repls, "integer", lower=1L, na.ok=FALSE)
-  }
+    assertString(algo.pattern)
+  if (!missing(repls))
+    repls = asCount(repls, positive = TRUE)
 
   ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like=match.substring)
 

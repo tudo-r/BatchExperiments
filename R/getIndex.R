@@ -50,12 +50,12 @@
 #' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
 getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
                     by.prob.pars, by.algo.pars, enclos = parent.frame()) {
-  checkArg(reg, "ExperimentRegistry")
+  checkExperimentRegistry(reg, TRUE)
   if (!missing(ids))
     ids = BatchJobs:::checkIds(reg, ids)
-  checkArg(by.prob, "logical", na.ok=FALSE, len=1L)
-  checkArg(by.algo, "logical", na.ok=FALSE, len=1L)
-  checkArg(by.repl, "logical", na.ok=FALSE, len=1L)
+  assertFlag(by.prob)
+  assertFlag(by.algo)
+  assertFlag(by.repl)
 
   if (missing(by.prob.pars) && missing(by.algo.pars)) {
     # if not dealing with parameters, we can get the groups directly

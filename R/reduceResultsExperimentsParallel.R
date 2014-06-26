@@ -45,11 +45,10 @@ reduceResultsExperimentsParallel = function(reg, ids, part=as.character(NA), fun
     fun = function(job, res) res
   } else {
     fun = match.fun(fun)
-    checkArg(fun, formals=c("job", "res"))
+    assertFunction(fun, c("job", "res"))
   }
-  njobs = convertInteger(njobs)
-  checkArg(njobs, "integer", len=1L, na.ok=FALSE)
-  checkArg(strings.as.factors, "logical", len=1L, na.ok=FALSE)
+  njobs = asCount(njobs, positive = TRUE)
+  assertFlag(strings.as.factors)
 
   n = length(ids)
   if (n == 0) {
