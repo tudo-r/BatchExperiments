@@ -52,8 +52,8 @@
 #' @return [\code{\link{ExperimentRegistry}}]
 #' @export
 #' @aliases ExperimentRegistry
-makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, sharding=TRUE, work.dir, multiple.result.files = FALSE,
-                                  seed, packages=character(0L), src.dirs=character(0L), src.files=character(0L), skip = TRUE) {
+makeExperimentRegistry = function(id = "BatchExperimentRegistry", file.dir, sharding = TRUE, work.dir, multiple.result.files = FALSE,
+                                  seed, packages = character(0L), src.dirs = character(0L), src.files = character(0L), skip = TRUE) {
   if (missing(file.dir))
     file.dir = file.path(getwd(), paste0(id, "-files"))
   assertFlag(skip)
@@ -63,12 +63,12 @@ makeExperimentRegistry = function(id="BatchExperimentRegistry", file.dir, shardi
     work.dir, multiple.result.files, seed, union(packages, "BatchExperiments"),
     src.dirs, src.files)
   class(reg) = c("ExperimentRegistry", "Registry")
-  BatchJobs:::dbCreateJobStatusTable(reg, extra.cols=", repl INTEGER, prob_seed INTEGER", constraints=", UNIQUE(job_def_id, repl)")
+  BatchJobs:::dbCreateJobStatusTable(reg, extra.cols = ", repl INTEGER, prob_seed INTEGER", constraints = ", UNIQUE(job_def_id, repl)")
   BatchJobs::dbCreateJobDefTable(reg)
   dbCreateExtraTables(reg)
   dbCreateExpandedJobsViewBE(reg)
-  BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create=TRUE)
-  BatchJobs:::checkDir(file.path(reg$file.dir, "algorithms"), create=TRUE)
+  BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create = TRUE)
+  BatchJobs:::checkDir(file.path(reg$file.dir, "algorithms"), create = TRUE)
   BatchJobs:::saveRegistry(reg)
   return(reg)
 }

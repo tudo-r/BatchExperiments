@@ -10,8 +10,8 @@
 #'   Default is \code{FALSE}.
 #' @return Nothing.
 #' @export
-removeAlgorithm = function(reg, id, force=FALSE) {
-  checkExperimentRegistry(reg, strict=TRUE)
+removeAlgorithm = function(reg, id, force = FALSE) {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
   assertString(id)
 
@@ -19,8 +19,8 @@ removeAlgorithm = function(reg, id, force=FALSE) {
     stop("Algorithm not present in registry: ", id)
 
   info("Removing Experiments from database")
-  ids = dbFindExperiments(reg, algo.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids, force=force)
+  ids = dbFindExperiments(reg, algo.pattern = id, like = FALSE)
+  removeExperiments(reg, ids = ids, force = force)
   info("Removing Algorithm from database")
   dbRemoveAlgorithm(reg, id)
 

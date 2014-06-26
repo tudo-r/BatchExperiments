@@ -1,5 +1,5 @@
 makeAlgorithm = function(id, fun) {
-  setClasses(list(id=id, fun=fun), "Algorithm")
+  setClasses(list(id = id, fun = fun), "Algorithm")
 }
 
 #' Add an algorithm to registry.
@@ -26,20 +26,20 @@ makeAlgorithm = function(id, fun) {
 #' @return [\code{character(1)}]. Invisibly returns the id.
 #' @aliases Algorithm
 #' @export
-addAlgorithm = function(reg, id, fun, overwrite=FALSE)  {
-  checkExperimentRegistry(reg, strict=TRUE)
+addAlgorithm = function(reg, id, fun, overwrite = FALSE)  {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::checkIdValid(id)
   assertFlag(overwrite)
 
   if (id %in% dbGetAllProblemIds(reg))
     stopf("Problem with same id as your algorithm already exists: %s", id)
   if (!overwrite && id %in% dbGetAllAlgorithmIds(reg))
-    stopf("Algorithm with same id already exists and overwrite=FALSE: %s", id)
+    stopf("Algorithm with same id already exists and overwrite = FALSE: %s", id)
 
   algorithm = makeAlgorithm(id, fun)
   fn = getAlgorithmFilePath(reg$file.dir, id)
   info("Writing algorithm file: %s", fn)
-  save(file=fn, algorithm)
+  save(file = fn, algorithm)
   dbAddAlgorithm(reg, id)
   invisible(id)
 }

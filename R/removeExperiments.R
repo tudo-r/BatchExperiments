@@ -13,8 +13,8 @@
 #'   Default is \code{FALSE}.
 #' @return Vector of type \code{integer} of removed job ids.
 #' @export
-removeExperiments = function(reg, ids, force=FALSE) {
-  checkExperimentRegistry(reg, strict=TRUE)
+removeExperiments = function(reg, ids, force = FALSE) {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))
@@ -23,7 +23,7 @@ removeExperiments = function(reg, ids, force=FALSE) {
   if (!force) {
     if(is.null(BatchJobs:::getListJobs()) || is.null(BatchJobs:::getKillJob())) {
       stop("Listing or killing of jobs not supported by your cluster functions\n",
-           "You need to set force=TRUE to remove jobs, but note the warning in ?removeExperiments")
+           "You need to set force = TRUE to remove jobs, but note the warning in ?removeExperiments")
     }
     running = BatchJobs:::dbFindRunning(reg, ids)
     if (length(running) > 0L)
@@ -36,7 +36,7 @@ removeExperiments = function(reg, ids, force=FALSE) {
 
   fmt = "^%i(\\.(R|out)|-result(-.+)*\\.RData)$"
   lapply(ids, function(id) {
-    fs = list.files(BatchJobs:::getJobDirs(reg, id), pattern=sprintf(fmt, id), full.names=TRUE)
+    fs = list.files(BatchJobs:::getJobDirs(reg, id), pattern = sprintf(fmt, id), full.names = TRUE)
     ok = file.remove(fs)
     if (!all(ok))
       warningf("Could not remove files for experiment with id=%i", id)

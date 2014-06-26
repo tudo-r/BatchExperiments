@@ -36,10 +36,10 @@
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
-reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
-  strings.as.factors=default.stringsAsFactors(), block.size, impute.val) {
+reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
+  strings.as.factors = default.stringsAsFactors(), block.size, impute.val) {
 
-  checkExperimentRegistry(reg, strict=TRUE)
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids)) {
     ids = done = BatchJobs:::dbFindDone(reg)
@@ -75,12 +75,12 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
   impute = function(job, res, ...)
     impute.val
   getRow = function(j, reg, part, .fun, ...)
-    c(list(prob=j$prob.id), j$prob.pars, list(algo=j$algo.id), j$algo.pars, list(repl=j$repl),
+    c(list(prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
       .fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
 
   aggr = data.frame()
-  ids2 = chunk(ids, chunk.size=block.size, shuffle=FALSE)
-  bar = makeProgressBar(max=length(ids2), label="reduceResultsExperiments")
+  ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)
+  bar = makeProgressBar(max = length(ids2), label = "reduceResultsExperiments")
   bar$set()
   prob.pars = character(0L)
   algo.pars = character(0L)
@@ -89,23 +89,23 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
     for(id.chunk in ids2) {
       # FIXME: getJobs is inefficient here, we just want a data.frame
       # FIXME: also check all other functions using getJobs / rbind.fill
-      jobs = getJobs(reg, id.chunk, check.ids=FALSE)
+      jobs = getJobs(reg, id.chunk, check.ids = FALSE)
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
       # FIXME m/b use list2df instead of rbind.fill
       # -> major problem: how to deal with missing names in return value of fun?
       #    rbind.fill might not do the right thing here, also.
       id.chunk.done = id.chunk %in% done
-      results = c(lapply(jobs[ id.chunk.done], getRow, reg=reg, part=part, .fun=fun, ...),
-                  lapply(jobs[!id.chunk.done], getRow, reg=reg, part=part, .fun=impute, ...))
-      aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors=FALSE)))
+      results = c(lapply(jobs[ id.chunk.done], getRow, reg = reg, part = part, .fun = fun, ...),
+                  lapply(jobs[!id.chunk.done], getRow, reg = reg, part = part, .fun = impute, ...))
+      aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors = FALSE)))
       bar$inc(1L)
     }
-  }, error=bar$error)
+  }, error = bar$error)
 
-  aggr = convertDataFrameCols(aggr, chars.as.factor=strings.as.factors)
+  aggr = convertDataFrameCols(aggr, chars.as.factor = strings.as.factors)
   if (nrow(aggr))
-    aggr = setRowNames(cbind(id=ids, aggr), ids)
+    aggr = setRowNames(cbind(id = ids, aggr), ids)
   aggr = addClasses(aggr, "ReducedResultsExperiments")
   attr(aggr, "prob.pars.names") = prob.pars
   attr(aggr, "algo.pars.names") = algo.pars
@@ -126,21 +126,21 @@ reduceResultsExperiments = function(reg, ids, part=NA_character_, fun, ...,
 #' @return [\code{character}]. Names of of columns.
 #' @export
 #' @examples
-#' reg <- makeExperimentRegistry("BatchExample", seed=123, file.dir=tempfile())
-#' addProblem(reg, "p1", static=1)
-#' addProblem(reg, "p2", static=2)
-#' addAlgorithm(reg, id="a1",
-#'   fun=function(static, dynamic, alpha) c(y=static*alpha))
-#' addAlgorithm(reg, id="a2",
-#'   fun=function(static, dynamic, alpha, beta) c(y=static*alpha+beta))
-#' ad1 <- makeDesign("a1", exhaustive=list(alpha=1:2))
-#' ad2 <- makeDesign("a2", exhaustive=list(alpha=1:2, beta=5:6))
-#' addExperiments(reg, algo.designs=list(ad1, ad2), repls=2)
+#' reg <- makeExperimentRegistry("BatchExample", seed = 123, file.dir = tempfile())
+#' addProblem(reg, "p1", static = 1)
+#' addProblem(reg, "p2", static = 2)
+#' addAlgorithm(reg, id = "a1",
+#'   fun = function(static, dynamic, alpha) c(y = static*alpha))
+#' addAlgorithm(reg, id = "a2",
+#'   fun = function(static, dynamic, alpha, beta) c(y = static*alpha+beta))
+#' ad1 <- makeDesign("a1", exhaustive = list(alpha = 1:2))
+#' ad2 <- makeDesign("a2", exhaustive = list(alpha = 1:2, beta = 5:6))
+#' addExperiments(reg, algo.designs = list(ad1, ad2), repls = 2)
 #' submitJobs(reg)
 #' data <- reduceResultsExperiments(reg)
 #' library(plyr)
 #' ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
-getResultVars = function(data, type="group") {
+getResultVars = function(data, type = "group") {
   assertClass(data, "ReducedResultsExperiments")
   assertChoice(type, c("prob", "prob.pars", "algo", "algo.pars", "group", "result"))
   switch(type,

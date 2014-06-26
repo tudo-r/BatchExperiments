@@ -90,7 +90,7 @@ designIterator = function(ex, .design = data.frame()) {
 #' designs <- lapply(c("a1", "a2", "a3"), makeDesign,
 #'                   exhaustive = list(alpha = 0:1, gamma = 1:10/10))
 #' }
-makeDesign = function(id, design=data.frame(), exhaustive=list()) {
+makeDesign = function(id, design = data.frame(), exhaustive = list()) {
   # ... if we had the registry here, we could do some sanity checks, e.g.
   # test if the storage mode of parameters matches the storage mode of those
   # in the database
@@ -102,7 +102,7 @@ makeDesign = function(id, design=data.frame(), exhaustive=list()) {
     stop("All elements of exhaustive must have at least have length 1!")
   if (anyDuplicated(c(names(design), names(exhaustive))) > 0L)
     stop("Duplicated design parameters found!")
-  setClasses(list(id = id, designIter=designIterator(exhaustive, .design = design)), "Design")
+  setClasses(list(id = id, designIter = designIterator(exhaustive, .design = design)), "Design")
 }
 
 #' @export

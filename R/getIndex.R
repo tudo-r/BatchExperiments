@@ -29,26 +29,26 @@
 #' @export
 #' @examples
 #' # create a registry and add problems and algorithms
-#' reg = makeExperimentRegistry("getIndex", file.dir=tempfile(""))
+#' reg = makeExperimentRegistry("getIndex", file.dir = tempfile(""))
 #' addProblem(reg, "prob", static = 1)
 #' addAlgorithm(reg, "f0", function(static, dynamic) static)
 #' addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
-#' ad = list(makeDesign("f0"), makeDesign("f1", exhaustive=list(i=1:10, k=1:3)))
-#' addExperiments(reg, algo.designs=ad)
+#' ad = list(makeDesign("f0"), makeDesign("f1", exhaustive = list(i = 1:10, k = 1:3)))
+#' addExperiments(reg, algo.designs = ad)
 #' submitJobs(reg)
 #'
 #' # get grouped job ids
 #' ids = getJobIds(reg)
-#' by(ids, getIndex(reg, by.prob=TRUE, by.algo=TRUE), identity)
-#' ids.f1 = findExperiments(reg, algo.pattern="f1")
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=(k == 1)), identity)
+#' by(ids, getIndex(reg, by.prob = TRUE, by.algo = TRUE), identity)
+#' ids.f1 = findExperiments(reg, algo.pattern = "f1")
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = (k == 1)), identity)
 #'
 #' # groupwise reduction
-#' ids.f1 = findExperiments(reg, algo.pattern="f1")
+#' ids.f1 = findExperiments(reg, algo.pattern = "f1")
 #' f = function(aggr, job, res) aggr + res
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=k), reduceResults, reg=reg, fun=f)
-#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars=i), reduceResults, reg=reg, fun=f)
-getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = k), reduceResults, reg = reg, fun = f)
+#' by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = i), reduceResults, reg = reg, fun = f)
+getIndex = function(reg, ids, by.prob = FALSE, by.algo = FALSE, by.repl = FALSE,
                     by.prob.pars, by.algo.pars, enclos = parent.frame()) {
   checkExperimentRegistry(reg, TRUE)
   if (!missing(ids))
@@ -62,13 +62,13 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
     # from the database
     cols = c("job_id", "prob_id", "algo_id", "repl")[c(TRUE, by.prob, by.algo, by.repl)]
     query = sprintf("SELECT %s FROM %s_expanded_jobs", collapse(cols), reg$id)
-    index = BatchJobs:::dbSelectWithIds(reg, query, ids)[, -1L, drop=FALSE]
+    index = BatchJobs:::dbSelectWithIds(reg, query, ids)[, -1L, drop = FALSE]
     names(index) = c("prob", "algo", "repl")[c(by.prob, by.algo, by.repl)]
   } else {
     # otherwise we have to get all jobs and calculate the groups on them
     exprToIndex = function(jobs, pars, enclos, name) {
       ind = try(lapply(jobs, function(job, pars, enclos, name) eval(pars, job[[name]], enclos),
-                       pars = pars, enclos = enclos, name=name), silent=TRUE)
+                       pars = pars, enclos = enclos, name = name), silent = TRUE)
       if (is.error(ind))
         stopf("Your %s expression resulted in an error:\n%s", name, as.character(ind))
       ind = try(as.factor(unlist(ind)))
@@ -78,7 +78,7 @@ getIndex = function(reg, ids, by.prob=FALSE, by.algo=FALSE, by.repl=FALSE,
       namedList(sprintf("%s: %s", name, str.expr), ind)
     }
 
-    jobs = getJobs(reg, ids, check.ids=FALSE)
+    jobs = getJobs(reg, ids, check.ids = FALSE)
     index = list()
     force(enclos)
 

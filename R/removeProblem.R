@@ -10,8 +10,8 @@
 #'   Default is \code{FALSE}.
 #' @return Nothing.
 #' @export
-removeProblem = function(reg, id, force=FALSE) {
-  checkExperimentRegistry(reg, strict=TRUE)
+removeProblem = function(reg, id, force = FALSE) {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
   assertString(id)
 
@@ -19,15 +19,15 @@ removeProblem = function(reg, id, force=FALSE) {
     stop("Problem not present in registry: ", id)
 
   info("Removing Experiments from database")
-  ids = dbFindExperiments(reg, prob.pattern=id, like=FALSE)
-  removeExperiments(reg, ids=ids, force=force)
+  ids = dbFindExperiments(reg, prob.pattern = id, like = FALSE)
+  removeExperiments(reg, ids = ids, force = force)
   info("Removing Problem from database")
   dbRemoveProblem(reg, id)
 
   fn = getProblemFilePaths(reg$file.dir, id)
-  info("Deleting problem files: ", collapse(fn, sep=", "))
+  info("Deleting problem files: ", collapse(fn, sep = ", "))
   ok = file.remove(fn)
   if (!all(ok))
-    warningf("Could not remove problem files: %s", collapse(fn[!ok], sep=", "))
+    warningf("Could not remove problem files: %s", collapse(fn[!ok], sep = ", "))
   invisible(NULL)
 }

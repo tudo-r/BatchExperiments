@@ -19,13 +19,13 @@ applyJobFunction.ExperimentRegistry = function(reg, job, cache) {
   # switch on algo formals and apply algorithm function
   f = switch(sum(c(1L, 2L, 4L)[algo.use]) + 1L,
     function(...) algo(...),
-    function(...) algo(job=job, ...),
-    function(...) algo(static=static(), ...),
-    function(...) algo(job=job, static=static(), ...),
-    function(...) algo(dynamic=dynamic(), ...),
-    function(...) algo(job=job, dynamic=dynamic(), ...),
-    function(...) algo(static=static(), dynamic=dynamic(), ...),
-    function(...) algo(job=job, static=static(), dynamic=dynamic(), ...))
+    function(...) algo(job = job, ...),
+    function(...) algo(static = static(), ...),
+    function(...) algo(job = job, static = static(), ...),
+    function(...) algo(dynamic = dynamic(), ...),
+    function(...) algo(job = job, dynamic = dynamic(), ...),
+    function(...) algo(static = static(), dynamic = dynamic(), ...),
+    function(...) algo(job = job, static = static(), dynamic = dynamic(), ...))
 
   messagef("Applying Algorithm %s ...", job$algo.id)
   do.call(f, job$algo.pars)

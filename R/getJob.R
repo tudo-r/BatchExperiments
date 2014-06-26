@@ -11,7 +11,7 @@
 #' @method getJobs ExperimentRegistry
 #' @export
 #' @export
-getJobs.ExperimentRegistry = function(reg, ids, check.ids=TRUE) {
+getJobs.ExperimentRegistry = function(reg, ids, check.ids = TRUE) {
   if (!missing(ids) && check.ids)
     ids = BatchJobs:::checkIds(reg, ids)
   dbGetJobs(reg, ids)

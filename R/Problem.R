@@ -1,5 +1,5 @@
 makeProblem = function(id, static, dynamic) {
-  setClasses(list(id=id, static=static, dynamic=dynamic), "Problem")
+  setClasses(list(id = id, static = static, dynamic = dynamic), "Problem")
 }
 
 #FIXME the seed mechansim is described slighlty wrong! fix! random seed!
@@ -40,8 +40,8 @@ makeProblem = function(id, static, dynamic) {
 #' @return [\code{character(1)}]. Invisibly returns the id.
 #' @aliases Problem
 #' @export
-addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=FALSE)  {
-  checkExperimentRegistry(reg, strict=TRUE)
+addProblem = function(reg, id, static = NULL, dynamic = NULL, seed = NULL, overwrite = FALSE)  {
+  checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::checkIdValid(id)
   if (!is.null(seed))
     seed = asInt(seed)
@@ -52,12 +52,12 @@ addProblem = function(reg, id, static=NULL, dynamic=NULL, seed=NULL, overwrite=F
   if (id %in% dbGetAllAlgorithmIds(reg))
     stopf("Algorithm with same id as your problem already exists: %s", id)
   if (!overwrite && id %in% dbGetAllProblemIds(reg))
-    stopf("Problem with same id already exists and overwrite=FALSE: %s", id)
+    stopf("Problem with same id already exists and overwrite = FALSE: %s", id)
 
   fn = getProblemFilePaths(reg$file.dir, id)
-  info("Writing problem files: %s", collapse(fn, sep=", "))
-  save(file=fn["static"], static)
-  save(file=fn["dynamic"], dynamic)
+  info("Writing problem files: %s", collapse(fn, sep = ", "))
+  save(file = fn["static"], static)
+  save(file = fn["dynamic"], dynamic)
   dbAddProblem(reg, id, seed)
   invisible(id)
 }
@@ -67,7 +67,7 @@ print.Problem = function(x, ...) {
   cat("Problem:", x$id, "\n")
 }
 
-loadProblem = function(reg, id, seed=TRUE) {
+loadProblem = function(reg, id, seed = TRUE) {
   parts = getProblemFilePaths(reg$file.dir, id)
   prob = makeProblem(id = id,
     static = load2(parts["static"], "static", impute = NULL),
@@ -87,9 +87,9 @@ calcDynamic = function(reg, job, static, dynamic.fun) {
 
   f = switch(sum(c(1L, 2L)[prob.use]) + 1L,
     function(...) dynamic.fun(...),
-    function(...) dynamic.fun(job=job, ...),
-    function(...) dynamic.fun(static=static, ...),
-    function(...) dynamic.fun(job=job, static=static, ...))
+    function(...) dynamic.fun(job = job, ...),
+    function(...) dynamic.fun(static = static, ...),
+    function(...) dynamic.fun(job = job, static = static, ...))
 
   info("Generating problem %s ...", job$prob.id)
   seed = BatchJobs:::seeder(reg, job$prob.seed)

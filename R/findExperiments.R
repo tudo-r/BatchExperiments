@@ -24,16 +24,16 @@
 #' @return [\code{integer}]. Ids for experiments which match the query.
 #' @export
 #' @examples
-#' reg = makeExperimentRegistry(id="example1", file.dir=tempfile())
+#' reg = makeExperimentRegistry(id = "example1", file.dir = tempfile())
 #' p1 = addProblem(reg, "one", 1)
 #' p2 = addProblem(reg, "two", 2)
-#' a = addAlgorithm(reg, "A", fun=function(static, n) static + n)
-#' addExperiments(reg, algo.design=makeDesign(a, exhaustive = list(n = 1:4)))
-#' findExperiments(reg, prob.pattern="one")
-#' findExperiments(reg, prob.pattern="o")
+#' a = addAlgorithm(reg, "A", fun = function(static, n) static + n)
+#' addExperiments(reg, algo.design = makeDesign(a, exhaustive = list(n = 1:4)))
+#' findExperiments(reg, prob.pattern = "one")
+#' findExperiments(reg, prob.pattern = "o")
 #' findExperiments(reg, algo.pars = (n > 2))
-findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring=TRUE) {
-  checkExperimentRegistry(reg, strict=TRUE)
+findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring = TRUE) {
+  checkExperimentRegistry(reg, strict = TRUE)
   if (!missing(prob.pattern))
     assertString(prob.pattern)
   if (!missing(algo.pattern))
@@ -41,23 +41,23 @@ findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo
   if (!missing(repls))
     repls = asCount(repls, positive = TRUE)
 
-  ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like=match.substring)
+  ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like = match.substring)
 
   # skip possible expensive calculations if possible
   if (length(ids) == 0L || (missing(prob.pars) && missing(algo.pars)))
     return(ids)
 
-  jobs = getJobs(reg, ids, check.ids=FALSE)
+  jobs = getJobs(reg, ids, check.ids = FALSE)
 
   if (!missing(prob.pars)) {
     ind = vapply(jobs, function(job, pars, ee) eval(pars, job$prob.pars, ee),
-                 logical(1L), pars=substitute(prob.pars), ee=parent.frame())
+                 logical(1L), pars = substitute(prob.pars), ee = parent.frame())
     jobs = jobs[!is.na(ind) & ind]
   }
   if (!missing(algo.pars)) {
     ind = vapply(jobs, function(job, pars, ee) eval(pars, job$algo.pars, ee),
-                 logical(1L), pars=substitute(algo.pars), ee=parent.frame())
+                 logical(1L), pars = substitute(algo.pars), ee = parent.frame())
     jobs = jobs[!is.na(ind) & ind]
   }
-  return(extractSubList(jobs, "id", element.value=integer(1L)))
+  return(extractSubList(jobs, "id", element.value = integer(1L)))
 }

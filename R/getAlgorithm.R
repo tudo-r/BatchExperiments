@@ -7,7 +7,7 @@
 #' @return [\code{\link{Algorithm}}].
 #' @export
 getAlgorithm = function(reg, id) {
-  checkExperimentRegistry(reg, strict=TRUE)
+  checkExperimentRegistry(reg, strict = TRUE)
   assertString(id, "character")
   aids = dbGetAllAlgorithmIds(reg)
   if (id %nin% aids)

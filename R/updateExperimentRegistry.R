@@ -21,13 +21,13 @@ updateRegistry.ExperimentRegistry = function(reg) {
   # do updates
   if (version.reg < package_version("1.0.767")) {
     path = file.path(reg$file.dir, "problems")
-    src = list.files(path, full.names = TRUE, pattern="_static\\.RData$")
+    src = list.files(path, full.names = TRUE, pattern = "_static\\.RData$")
     ids = sub("_static\\.RData$", "", basename(src))
     dest = vapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)["static"], character(1L))
     file.rename(src, dest)
 
     path = file.path(reg$file.dir, "problems")
-    src = list.files(path, full.names = TRUE, pattern="_dynamic\\.RData$")
+    src = list.files(path, full.names = TRUE, pattern = "_dynamic\\.RData$")
     ids = sub("_dynamic\\.RData$", "", basename(src))
     dest = vapply(ids, function(id) getProblemFilePaths(reg$file.dir, id)["dynamic"], character(1L))
     file.rename(src, dest)

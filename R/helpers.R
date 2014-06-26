@@ -1,4 +1,4 @@
 info = function(...) {
-  if (getOption("BatchJobs.verbose", default=TRUE))
+  if (getOption("BatchJobs.verbose", default = TRUE))
     message(sprintf(...))
 }
