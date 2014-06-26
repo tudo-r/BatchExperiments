@@ -35,14 +35,14 @@ parameter. See option \code{stringsAsFactors} in \code{\link{data.frame}} to tur
 \examples{
 \dontrun{
 # simple design for algorithm "a1" with no parameters:
-design <- makeDesign("a1")
+design = makeDesign("a1")
 
 # design for problem "p1" using predefined parameter combinations
-design <- makeDesign("p1", design = data.frame(alpha = 0:1, beta = c(0.1, 0.2)))
+design = makeDesign("p1", design = data.frame(alpha = 0:1, beta = c(0.1, 0.2)))
 
 # creating a list of designs for several algorithms at once, all using the same
 # exhaustive grid of parameters
-designs <- lapply(c("a1", "a2", "a3"), makeDesign,
+designs = lapply(c("a1", "a2", "a3"), makeDesign,
                   exhaustive = list(alpha = 0:1, gamma = 1:10/10))
 }
 }
