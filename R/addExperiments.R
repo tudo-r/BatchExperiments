@@ -196,6 +196,12 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   repls = asCount(repls, positive = TRUE)
   assertFlag(skip.defined)
 
+  f = function(xs) viapply(xs, function(x) x$designIter$n.states)
+  n.exps = sum(outer(f(prob.designs), f(algo.designs)))
+  info("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
+  if (n.exps == 0L)
+    return(invisible(integer(0L)))
+
   # internal helper functions
   mq = function(lines, ..., con, bind.data=NULL) {
     q = sprintf(collapse(lines, sep=" "), ...)
@@ -232,9 +238,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   mq(c("CREATE TEMP VIEW cp AS SELECT repls.repl, tmp.job_def_id FROM tmp",
        "CROSS JOIN repls"), con = con)
 
-  f = function(xs) vapply(xs, function(x) x$designIter$n.states, integer(1L))
-  n.exps = sum(outer(f(prob.designs), f(algo.designs)))
-  info("Adding %i experiments / %i jobs to DB.", n.exps, n.exps*repls)
 
 
   # iterate to generate job definitions
