@@ -48,8 +48,10 @@ Generates a \code{data.frame} with one row per job id. The columns are: ids of p
 (named \dQuote{prob} and \dQuote{algo}), one column per parameter of problem or algorithm (named by the parameter name),
 the replication number (named \dQuote{repl}) and all columns defined in the function to collect the values.
 Note that you cannot rely on the order of the columns.
-If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.
-Have a look at \code{\link{getResultVars}} if you want to use somethink like \code{\link{ddply}} on the
+If a parameter does not have a setting for a certain job / experiment it is set to \code{NA}.
+Have a look at \code{\link{getResultVars}} if you want to use something like \code{\link{ddply}} on the
 results.
+
+The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
 }
 
