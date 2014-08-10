@@ -141,4 +141,3 @@ test_that("reduceResultsExperimentsParallel works with default fun", {
     foo = 1,
     bar = 2), check.attributes=FALSE)
 })
-

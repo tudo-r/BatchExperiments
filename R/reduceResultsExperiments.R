@@ -90,8 +90,6 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
 
   tryCatch({
     for(id.chunk in ids2) {
-      # FIXME: getJobs is inefficient here, we just want a data.frame
-      # FIXME: also check all other functions using getJobs / rbind.fill
       jobs = getJobs(reg, id.chunk, check.ids = FALSE)
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))

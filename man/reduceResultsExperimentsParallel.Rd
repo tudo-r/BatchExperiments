@@ -3,8 +3,9 @@
 \alias{reduceResultsExperimentsParallel}
 \title{Reduce very many results in parallel.}
 \usage{
-reduceResultsExperimentsParallel(reg, ids, part = as.character(NA), fun, ...,
-  njobs = 20L, strings.as.factors = default.stringsAsFactors())
+reduceResultsExperimentsParallel(reg, ids, part = NA_character_, fun, ...,
+  timeout = 604800L, njobs = 20L,
+  strings.as.factors = default.stringsAsFactors(), impute.val)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -27,6 +28,10 @@ of \code{res}.}
 \item{...}{[any]\cr
 Additional arguments to \code{fun}.}
 
+\item{timeout}{[\code{integer(1)}]
+Seconds to wait for completion. Passed to \code{\link[BatchJobs]{waitForJobs}}.
+Default is 648400 (one week).}
+
 \item{njobs}{[\code{integer(1)}]
 Number of parallel jobs to create.
 Default is 20.}
@@ -34,6 +39,10 @@ Default is 20.}
 \item{strings.as.factors}{[\code{logical(1)}]
 Should all character columns in result be converted to factors?
 Default is \code{default.stringsAsFactors()}.}
+
+\item{impute.val}{[\code{named list}]\cr
+If not missing, the value of \code{impute.val} is used as a replacement for the
+return value of function \code{fun} on missing results. An empty list is allowed.}
 }
 \value{
 [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.

@@ -2,6 +2,7 @@ BatchExperiments_1.3
 - Fixed a bad bug in reduceResultsExperiments: This bug was only triggered when argument
   impute.val was used. It could have lead to wrong 'id' column in result data.frame, no
   other data in the result as corrupted.
+- Support impute.val in reduceResultsExperimentsParallel.
 
 BatchExperiments_1.2
 - Reduced disk i/o in chunks
