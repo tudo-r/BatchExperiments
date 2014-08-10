@@ -1,12 +1,15 @@
-#' Reduce results into a data.frame with all relevant information.
+#' @title Reduce results into a data.frame with all relevant information.
 #'
+#' @description
 #' Generates a \code{data.frame} with one row per job id. The columns are: ids of problem and algorithm
 #' (named \dQuote{prob} and \dQuote{algo}), one column per parameter of problem or algorithm (named by the parameter name),
 #' the replication number (named \dQuote{repl}) and all columns defined in the function to collect the values.
 #' Note that you cannot rely on the order of the columns.
-#' If a paramater does not have a setting for a certain job / experiment it is set to \code{NA}.
-#' Have a look at \code{\link{getResultVars}} if you want to use somethink like \code{\link{ddply}} on the
+#' If a parameter does not have a setting for a certain job / experiment it is set to \code{NA}.
+#' Have a look at \code{\link{getResultVars}} if you want to use something like \code{\link{ddply}} on the
 #' results.
+#'
+#' The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
 #'
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
@@ -75,7 +78,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   impute = function(job, res, ...)
     impute.val
   getRow = function(j, reg, part, .fun, ...)
-    c(list(prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
+    c(list(id = j$id, prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
       .fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
 
   aggr = data.frame()
@@ -92,7 +95,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
       jobs = getJobs(reg, id.chunk, check.ids = FALSE)
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
-      # FIXME m/b use list2df instead of rbind.fill
+      # FIXME: m/b use list2df instead of rbind.fill
       # -> major problem: how to deal with missing names in return value of fun?
       #    rbind.fill might not do the right thing here, also.
       id.chunk.done = id.chunk %in% done
@@ -104,8 +107,14 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   }, error = bar$error)
 
   aggr = convertDataFrameCols(aggr, chars.as.factor = strings.as.factors)
-  if (nrow(aggr))
-    aggr = setRowNames(cbind(id = ids, aggr), ids)
+  # name rows with ids so one can easily index
+  # THEN RESORT WRT TO IDS from call
+  # NB: in the for-loop above we potentially changed that order if we used imputing,
+  # see lines after id.chunk.done = ...
+  if (nrow(aggr) > 0L) {
+    aggr = setRowNames(aggr, aggr$id)
+    aggr = aggr[as.character(ids), ]
+  }
   aggr = addClasses(aggr, "ReducedResultsExperiments")
   attr(aggr, "prob.pars.names") = prob.pars
   attr(aggr, "algo.pars.names") = algo.pars
