@@ -55,8 +55,9 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))
         stop("Argument 'impute.val' must be a properly named list")
     } else {
-      if (length(ids) > length(done))
-        stopf("No results available for jobs with ids: %s", collapse(setdiff(ids, done)))
+      not.done = which(ids %nin% done)
+      if (length(not.done) > 0L)
+        stopf("No results available for jobs with ids: %s", collapse(not.done))
     }
   }
   BatchJobs:::checkPart(reg, part)
