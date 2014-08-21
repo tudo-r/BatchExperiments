@@ -48,9 +48,8 @@ dbSummarizeExperiments = function(reg, ids, show) {
     query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars FROM %s_expanded_jobs", reg$id)
     tab = BatchJobs:::dbSelectWithIds(reg, query, ids, reorder = FALSE)
     tab = cbind(subset(tab, select = c("job_id", "prob", "algo")),
-      BatchJobs:::list2df(lapply(tab$prob_pars, uc)),
-      BatchJobs:::list2df(lapply(tab$algo_pars, uc)))
-
+      convertListOfRowsToDataFrame(lapply(tab$prob_pars, uc), strings.as.factors = FALSE),
+      convertListOfRowsToDataFrame(lapply(tab$algo_pars, uc), strings.as.factors = FALSE))
     diff = setdiff(show, colnames(tab))
     if (length(diff) > 0L)
       stopf("Trying to select columns in arg 'show' which are not available: %s", collapse(diff))
