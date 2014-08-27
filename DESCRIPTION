@@ -12,9 +12,9 @@ License: BSD_3_clause + file LICENSE
 Roxygen: list(wrap = FALSE)
 Depends:
     R (>= 2.15.0),
-    BatchJobs (>= 1.3)
+    BatchJobs (>= 1.4)
 Imports:
-    checkmate (>= 1.1),
+    checkmate (>= 1.3),
     BBmisc (>= 1.7),
     DBI,
     RSQLite,
