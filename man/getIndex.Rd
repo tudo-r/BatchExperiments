@@ -57,13 +57,14 @@ submitJobs(reg)
 # get grouped job ids
 ids = getJobIds(reg)
 by(ids, getIndex(reg, by.prob = TRUE, by.algo = TRUE), identity)
-ids.f1 = findExperiments(reg, algo.pattern = "f1")
-by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = (k == 1)), identity)
+ids = findExperiments(reg, algo.pattern = "f1")
+by(ids, getIndex(reg, ids, by.algo.pars = (k == 1)), identity)
 
 # groupwise reduction
-ids.f1 = findExperiments(reg, algo.pattern = "f1")
+ids = findExperiments(reg, algo.pattern = "f1")
+showStatus(reg, ids)
 f = function(aggr, job, res) aggr + res
-by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = k), reduceResults, reg = reg, fun = f)
-by(ids.f1, getIndex(reg, ids.f1, by.algo.pars = i), reduceResults, reg = reg, fun = f)
+by(ids, getIndex(reg, ids, by.algo.pars = k), reduceResults, reg = reg, fun = f)
+by(ids, getIndex(reg, ids, by.algo.pars = i), reduceResults, reg = reg, fun = f)
 }
 
