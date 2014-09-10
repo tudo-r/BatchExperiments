@@ -9,7 +9,7 @@
 #'   Default is \code{TRUE}.
 #' @return [list of \code{Experiment}].
 #' @method getJobs ExperimentRegistry
-#' @export
+#' @family get
 #' @export
 getJobs.ExperimentRegistry = function(reg, ids, check.ids = TRUE) {
   if (!missing(ids) && check.ids)

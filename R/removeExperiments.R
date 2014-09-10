@@ -12,6 +12,7 @@
 #'   Also remove jobs which seem to be still running.
 #'   Default is \code{FALSE}.
 #' @return Vector of type \code{integer} of removed job ids.
+#' @family remove
 #' @export
 removeExperiments = function(reg, ids, force = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE)

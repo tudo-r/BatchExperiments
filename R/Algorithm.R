@@ -25,6 +25,7 @@ makeAlgorithm = function(id, fun) {
 #'   Default is \code{FALSE}.
 #' @return [\code{character(1)}]. Invisibly returns the id.
 #' @aliases Algorithm
+#' @family add
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite = FALSE)  {
   checkExperimentRegistry(reg, strict = TRUE)

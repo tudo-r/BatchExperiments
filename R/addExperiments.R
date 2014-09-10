@@ -21,6 +21,7 @@
 #' @param skip.defined [\code{logical}]\cr
 #'   If set to \code{TRUE}, already defined experiments get skipped. Otherwise an error is thrown.\cr
 #'   Default is FALSE.
+#' @family add
 #' @return Invisibly returns vector of ids of added experiments.
 #' @examples
 #' ### EXAMPLE 1 ###

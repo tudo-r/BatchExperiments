@@ -5,6 +5,7 @@
 #' @param id [\code{character(1)}]\cr
 #'   Id of algorithm.
 #' @return [\code{\link{Algorithm}}].
+#' @family get
 #' @export
 getAlgorithm = function(reg, id) {
   checkExperimentRegistry(reg, strict = TRUE)

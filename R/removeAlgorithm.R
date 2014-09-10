@@ -9,6 +9,7 @@
 #'   Also remove jobs which seem to be still running.
 #'   Default is \code{FALSE}.
 #' @return Nothing.
+#' @family remove
 #' @export
 removeAlgorithm = function(reg, id, force = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE)

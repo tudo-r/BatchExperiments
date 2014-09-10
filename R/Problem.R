@@ -39,6 +39,7 @@ makeProblem = function(id, static, dynamic) {
 #'   Default is \code{FALSE}.
 #' @return [\code{character(1)}]. Invisibly returns the id.
 #' @aliases Problem
+#' @family add
 #' @export
 addProblem = function(reg, id, static = NULL, dynamic = NULL, seed = NULL, overwrite = FALSE)  {
   checkExperimentRegistry(reg, strict = TRUE)

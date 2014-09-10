@@ -6,6 +6,7 @@
 #' @param id [\code{character(1)}]\cr
 #'   Id of problem.
 #' @return [\code{\link{Problem}}].
+#' @family get
 #' @export
 getProblem = function(reg, id) {
   checkExperimentRegistry(reg, strict = TRUE)

@@ -4,6 +4,7 @@
 #' @param ids [code{integer}]\cr
 #'   Job ids to restrict returned algorithm ids to.
 #' @return [\code{character}].
+#' @family get
 #' @export
 getAlgorithmIds = function(reg, ids) {
   checkExperimentRegistry(reg, strict = TRUE)
