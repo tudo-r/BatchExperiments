@@ -1,8 +1,10 @@
-#' Remove jobs from registry.
+#' @title Remove jobs from registry.
 #'
+#' @description
 #' THIS DELETES ALL FILES REGARDING THE JOBS, INCLUDING RESULTS!
 #' If you really know what you are doing, you may set \code{force}
 #' to \code{TRUE} to omit sanity checks on running jobs.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr

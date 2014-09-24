@@ -1,5 +1,6 @@
-#' Summarize selected experiments.
+#' @title Summarize selected experiments.
 #'
+#' @description
 #' A data.frame is returned that contains summary information
 #' about the selected experiments. The data.frame is constructed
 #' by building the columns \dQuote{prob, <prob.pars>, algo, <algo.pars>, repl},

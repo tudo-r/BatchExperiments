@@ -8,7 +8,8 @@ makeDesign(id, design = data.frame(), exhaustive = list())
 }
 \arguments{
 \item{id}{[\code{character(1)}]\cr
-Id of algorithm or problem.}
+
+  Id of algorithm or problem.}
 
 \item{design}{[\code{data.frame}]\cr
 The design. Must have named columns corresponding to parameters.
@@ -27,8 +28,7 @@ Create a parameter design for either a problem or an algorithm that you
 can use in \code{\link{addExperiments}}.
 All parameters in \code{design} and \code{exhaustive} be \dQuote{primitive}
 in the sense that either \code{is.atomic} is \code{TRUE} or \code{is.factor} is \code{TRUE}.
-}
-\details{
+
 Be aware of R's default behaviour of converting strings into factors if you use the \code{design}
 parameter. See option \code{stringsAsFactors} in \code{\link{data.frame}} to turn this off.
 }

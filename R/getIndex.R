@@ -1,5 +1,6 @@
-#' Group experiments.
+#' @title Group experiments.
 #'
+#' @description
 #' Creates a list of \code{\link{factor}} to use in functions like \code{\link{tapply}}, \code{\link{by}}
 #' or \code{\link{aggregate}}.
 #'

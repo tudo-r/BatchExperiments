@@ -16,7 +16,7 @@ Id of problem.}
 [\code{\link{Problem}}].
 }
 \description{
-The object is loaded from disk.
+The requested object is loaded from disk.
 }
 \seealso{
 Other get: \code{\link{getAlgorithmIds}};

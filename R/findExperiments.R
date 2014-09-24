@@ -1,4 +1,4 @@
-#' Find ids of experiments that match a query.
+#' @title Find ids of experiments that match a query.
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.

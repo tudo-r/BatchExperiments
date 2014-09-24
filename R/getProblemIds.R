@@ -1,4 +1,5 @@
-#' Get ids of problems in registry.
+#' @title Get ids of problems in registry.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [code{integer}]\cr

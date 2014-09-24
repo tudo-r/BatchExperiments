@@ -70,8 +70,7 @@ Defaults to \code{TRUE}.}
 \description{
 Note that if you don't want links in your paths (\code{file.dir}, \code{work.dir}) to get resolved and have
 complete control over the way the path is used internally, pass an absolute path which begins with \dQuote{/}.
-}
-\details{
+
 Every object is a list that contains the passed arguments of the constructor.
 }
 
