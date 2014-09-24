@@ -125,8 +125,7 @@ vars = setdiff(names(res), c("repl", "mcr"))
 aggr = ddply(res, vars, summarise, mean.mcr = mean(mcr))
 print(aggr)
 
-
-
+\dontrun{
 ### EXAMPLE 2 ###
 # define two simple test functions
 testfun1 = function(x) sum(x^2)
@@ -157,6 +156,7 @@ submitJobs(reg)
 # Gather informations from the experiments, in this case function value
 # and whether the algorithm convergenced:
 reduceResultsExperiments(reg, fun = function(job, res) res[c("value", "convergence")])
+}
 }
 \seealso{
 Other add: \code{\link{Algorithm}},

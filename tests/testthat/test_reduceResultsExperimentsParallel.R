@@ -144,7 +144,7 @@ test_that("reduceResultsExperimentsParallel works with default fun", {
 
 # we had a bug here
 test_that("reduceResultsExperimentsParallel works with ids", {
-  reg = makeExperimentRegistry()
+  reg = makeTestRegistry()
   addProblem(reg, "p1", static = 1)
   addProblem(reg, "p2", static = 2)
   addAlgorithm(reg, id = "a1", fun = function(static, dynamic) static*1)

@@ -50,7 +50,7 @@ reg = makeExperimentRegistry("getIndex", file.dir = tempfile(""))
 addProblem(reg, "prob", static = 1)
 addAlgorithm(reg, "f0", function(static, dynamic) static)
 addAlgorithm(reg, "f1", function(static, dynamic, i, k) static * i^k)
-ad = list(makeDesign("f0"), makeDesign("f1", exhaustive = list(i = 1:10, k = 1:3)))
+ad = list(makeDesign("f0"), makeDesign("f1", exhaustive = list(i = 1:5, k = 1:3)))
 addExperiments(reg, algo.designs = ad)
 submitJobs(reg)
 

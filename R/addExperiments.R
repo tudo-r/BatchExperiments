@@ -111,8 +111,7 @@
 #' aggr = ddply(res, vars, summarise, mean.mcr = mean(mcr))
 #' print(aggr)
 #'
-#'
-#'
+#' \dontrun{
 #' ### EXAMPLE 2 ###
 #' # define two simple test functions
 #' testfun1 = function(x) sum(x^2)
@@ -143,6 +142,7 @@
 #' # Gather informations from the experiments, in this case function value
 #' # and whether the algorithm convergenced:
 #' reduceResultsExperiments(reg, fun = function(job, res) res[c("value", "convergence")])
+#' }
 #' @aliases Experiment
 #' @export
 addExperiments = function(reg, prob.designs, algo.designs, repls = 1L, skip.defined = FALSE) {
