@@ -1,5 +1,6 @@
-#' Add experiemts to the registry.
+#' @title Add experiemts to the registry.
 #'
+#' @description
 #' Add experiments for running algorithms on problems
 #' to the registry, so they can be executed later.
 #'

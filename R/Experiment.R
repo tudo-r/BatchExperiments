@@ -1,5 +1,6 @@
-#' ExperimentJob
+#' @title ExperimentJob
 #'
+#' @description
 #' You can access job properties using the \code{job} object which is optionally passed
 #' to dynamic problem functions and algorithms. The object is a named list with the following
 #' elements:

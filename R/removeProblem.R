@@ -1,6 +1,8 @@
-#' Remove problem from registry.
+#' @title Remove problem from registry.
 #'
+#' @description
 #' THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING ALL JOBS AND RESULTS!
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr

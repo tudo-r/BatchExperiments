@@ -9,7 +9,8 @@ addProblem(reg, id, static = NULL, dynamic = NULL, seed = NULL,
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
-Registry.}
+
+  Registry.}
 
 \item{id}{[\code{character(1)}]\cr
 Name of problem.}

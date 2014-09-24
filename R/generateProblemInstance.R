@@ -1,4 +1,4 @@
-#' Generate dynamic part of problem.
+#' @title Generate dynamic part of problem.
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.

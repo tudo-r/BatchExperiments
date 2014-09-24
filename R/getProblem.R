@@ -1,6 +1,8 @@
-#' Get problem from registry by id.
+#' @title Get problem from registry by id.
 #'
-#' The object is loaded from disk.
+#' @description
+#' The requested object is loaded from disk.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr

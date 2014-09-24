@@ -4,10 +4,12 @@ makeProblem = function(id, static, dynamic) {
 
 #FIXME the seed mechansim is described slighlty wrong! fix! random seed!
 
-#' Add a problem to registry.
+#' @title Add a problem to registry.
 #'
+#' @description
 #' Add a algorithm to problem and stores it on disk.
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
+#'
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
 #'   Name of problem.

@@ -1,5 +1,6 @@
-#' Construct a registry object for experiments.
+#' @title Construct a registry object for experiments.
 #'
+#' @description
 #' Note that if you don't want links in your paths (\code{file.dir}, \code{work.dir}) to get resolved and have
 #' complete control over the way the path is used internally, pass an absolute path which begins with \dQuote{/}.
 #'

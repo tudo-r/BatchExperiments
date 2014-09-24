@@ -1,6 +1,8 @@
-#' Remove algorithm from registry.
+#' @title Remove algorithm from registry.
 #'
+#' @description
 #' THIS DELETES ALL FILES REGARDING THIS ALGORITHM, INCLUDING ALL JOBS AND RESULTS!
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{character(1)}]\cr
