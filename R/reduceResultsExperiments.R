@@ -21,9 +21,9 @@
 #'   \code{NA} means all parts are loaded, which is the default.
 #' @param fun [\code{function(job, res, ...)}]\cr
 #'   Function to collect values from \code{job} and result \code{res} object, the latter from stored result file.
-#'   Must return an object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
+#'   Must return a named object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
 #'   Default is a function that simply returns \code{res} which may or may not work, depending on the type
-#'   of \code{res}.
+#'   of \code{res}. We recommend to always return a named list.
 #' @param ... [any]\cr
 #'   Additional arguments to \code{fun}.
 #' @param strings.as.factors [\code{logical(1)}]

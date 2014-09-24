@@ -21,9 +21,9 @@ Only useful for multiple result files, then defines which result file part(s) sh
 
 \item{fun}{[\code{function(job, res, ...)}]\cr
 Function to collect values from \code{job} and result \code{res} object, the latter from stored result file.
-Must return an object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
+Must return a named object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
 Default is a function that simply returns \code{res} which may or may not work, depending on the type
-of \code{res}.}
+of \code{res}. We recommend to always return a named list.}
 
 \item{...}{[any]\cr
 Additional arguments to \code{fun}.}
