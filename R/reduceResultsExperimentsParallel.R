@@ -5,6 +5,8 @@
 #' does \dQuote{busy-waiting} till
 #' all jobs are done and cleans all temporary files up.
 #'
+#' The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr
@@ -97,7 +99,8 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
     attr(d, "algo.pars.names") = union(attr(aggr, "algo.pars.names"), attr(res, "algo.pars.names"))
     return(d)
   }, init = data.frame())
-
   unlink(reg2$file.dir, recursive = TRUE)
-  return(addClasses(res[as.character(ids), ], "ReducedResultsExperiments"))
+
+  rownames(res) = res$id
+  return(addClasses(res[as.character(ids),, drop = FALSE], "ReducedResultsExperiments"))
 }

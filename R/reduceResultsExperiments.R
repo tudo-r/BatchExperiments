@@ -11,7 +11,6 @@
 #'
 #' The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
 #'
-#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr
