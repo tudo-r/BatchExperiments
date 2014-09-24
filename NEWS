@@ -8,13 +8,13 @@ BatchExperiments_1.2
 - Reduced disk i/o in chunks
 
 BatchExperiments_1.1
-- New argument 'ids' (job ids) for getProblemIds and getAlgorithmIds 
+- New argument 'ids' (job ids) for getProblemIds and getAlgorithmIds
 - New argument 'impute.val' for reduceResultsExperiments
 - Support for sourcing of files and directories
 
 BatchExperiments_1.0-967:
 - fixed a bug regarding addExperiments and reordering of parameters
-- print method for designs now contains parameter storage informations 
+- print method for designs now contains parameter storage informations
 
 BatchExperiments_1.0-916:
 - new helper: getJobInf, reduceResultsExperimentsParallel
@@ -22,16 +22,16 @@ BatchExperiments_1.0-916:
 - documentation fixes
 - various smaller fixes
 
-BatchExperiments_1.0-621: 
+BatchExperiments_1.0-621:
 - added missing import for R versions < 2.15.1
 
-BatchExperiments_1.0-607: 
+BatchExperiments_1.0-607:
 - reworked summarizeExperiments, the previous "details" options was basically unuseable
 - minor bug fixes
 
 
-BatchExperiments_1.0-528: 
+BatchExperiments_1.0-528:
 - very minor bug fixes
 
-BatchExperiments_1.0-486: 
+BatchExperiments_1.0-486:
 - First submit to CRAN.
