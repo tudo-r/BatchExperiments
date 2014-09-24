@@ -53,4 +53,7 @@ to reduce the results in parallel. The function internally calls \code{\link{bat
 does \dQuote{busy-waiting} till
 all jobs are done and cleans all temporary files up.
 }
+\details{
+The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
+}
 
