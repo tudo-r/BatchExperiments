@@ -4,7 +4,6 @@
 #' to reduce the results in parallel. The function internally calls \code{\link{batchMapQuick}},
 #' does \dQuote{busy-waiting} till
 #' all jobs are done and cleans all temporary files up.
-#' Useful when you have very results and reducing is slow.
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
@@ -77,15 +76,18 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   more.args = c(list(reg = reg, part = part, fun = fun, strings.as.factors = strings.as.factors), list(...))
   if (!missing(impute.val))
     more.args$impute.val = impute.val
+  prefix = "reduceExperimentsParallel"
+  file.dir.new = file.path(reg$file.dir, basename(tempfile(prefix)))
+  if (length(dir(reg$file.dir, pattern = sprintf("^%s", prefix))))
+    warningf("Found cruft directories from previous calls to reduceResultsExperimentsParallel in %s", reg$file.dir)
+
   # FIXME: Magic constant 10
-  # FIXME: file.dir of reg2 should point to subdir of reg$file.dir
-  #        m/b provide option
   reg2 = batchMapQuick(function(reg, ii, fun, part, strings.as.factors, impute.val, ...) {
     # FIXME this synchronizes the registry on the node!
     reduceResultsExperiments(reg, ii, part = part, fun = fun,
       block.size = ceiling(length(ii) / 10), strings.as.factors = strings.as.factors,
       impute.val = impute.val, ...)
-  }, ch, more.args = more.args)
+  }, ch, more.args = more.args, file.dir = file.dir.new)
 
   waitForJobs(reg2, timeout = timeout, stop.on.error = TRUE)
 

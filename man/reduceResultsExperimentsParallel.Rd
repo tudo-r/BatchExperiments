@@ -52,6 +52,5 @@ Basically the same as \code{\link{reduceResultsExperiments}} but creates a few (
 to reduce the results in parallel. The function internally calls \code{\link{batchMapQuick}},
 does \dQuote{busy-waiting} till
 all jobs are done and cleans all temporary files up.
-Useful when you have very results and reducing is slow.
 }
 
