@@ -35,11 +35,13 @@
 #' @param impute.val [\code{named list}]\cr
 #'   If not missing, the value of \code{impute.val} is used as a replacement for the
 #'   return value of function \code{fun} on missing results. An empty list is allowed.
+#' @template arg_progress_bar
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
-  strings.as.factors = default.stringsAsFactors(), block.size, impute.val) {
+  strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
+  progress.bar = TRUE) {
 
   checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
@@ -83,8 +85,12 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
 
   aggr = data.frame()
   ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)
-  bar = makeProgressBar(max = length(ids2), label = "reduceResultsExperiments")
-  bar$set()
+  if (progress.bar) {
+    bar = makeProgressBar(max = length(ids2), label = "reduceResultsExperiments")
+    bar$set()
+  } else {
+    bar = makeProgressBar(style = "off")
+  }
   prob.pars = character(0L)
   algo.pars = character(0L)
 

@@ -9,4 +9,5 @@ BatchExperiments_*.tar.gz
 .git
 .gitignore
 .gitmodules
+^man-roxygen
 ^.editorconfig$
