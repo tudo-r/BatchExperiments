@@ -10,6 +10,7 @@ install:
   - ./travis-tool.sh github_package hadley/testthat
   - ./travis-tool.sh github_package hadley/assertthat
   - ./travis-tool.sh github_package mllg/checkmate
+  - ./travis-tool.sh github_package berndbischl/BBmisc
   - ./travis-tool.sh github_package tudo-r/BatchJobs
   - ./travis-tool.sh install_deps
 branches:
