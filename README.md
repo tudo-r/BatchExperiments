@@ -20,8 +20,8 @@ install.packages("BatchExperiments")
 To install the development version use [devtools](http://cran.r-project.org/web/packages/devtools):
 ```splus
 library(devtools);
-install_github("BatchJobs", username="tudo-r")
-install_github("BatchExperiments", username="tudo-r")
+install_github("tudo-r/BatchJobs")
+install_github("tudo-r/BatchExperiments")
 ```
 Please see the documentation of [BatchJobs](https://github.com/tudo-r/BatchJobs) to set up your system for parallel execution.
 Currently the best introduction to the package is our [technical report](http://sfb876.tu-dortmund.de/PublicPublicationFiles/bischl_etal_2012a.pdf).
