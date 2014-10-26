@@ -1,4 +1,9 @@
 BatchExperiments_1.3
+- Updated to use RSQLite >=1.0.0
+- Argument 'progressbar' added to multiple functions to suppress displaying the
+  progress bars.
+
+BatchExperiments_1.3
 - Fixed a bad bug in reduceResultsExperiments: This bug was only triggered when argument
   impute.val was used. It could have lead to wrong 'id' column in result data.frame, no
   other data in the result as corrupted.

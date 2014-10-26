@@ -284,7 +284,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   }
 
   # we start the transaction here, everything above is temporary
-  dbBeginTransaction(con)
+  dbBegin(con)
   ok = try({
     # insert new job defs
     mq(c("INSERT INTO %s_job_def(prob_id, prob_pars, algo_id, algo_pars)",
