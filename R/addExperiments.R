@@ -325,7 +325,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     errmsg = as.character(ok)
     # not really clean to match the english message here...
     # lets hope there are not localized versions of (R)SQLite out there
-    if(grepl("prob_id, prob_pars, algo_id, algo_pars are not unique", errmsg, fixed = TRUE)) {
+    if(grepl("UNIQUE constraint failed", errmsg, fixed = TRUE)) {
       stop(paste("You have added identical experiments.",
                  "Either there are duplicated problem or algorithm ids or you have defined an experiment with the same parameters twice.",
                  "For the latter case use replications.",
