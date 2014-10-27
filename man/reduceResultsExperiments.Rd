@@ -5,7 +5,8 @@
 \title{Reduce results into a data.frame with all relevant information.}
 \usage{
 reduceResultsExperiments(reg, ids, part = NA_character_, fun, ...,
-  strings.as.factors = default.stringsAsFactors(), block.size, impute.val)
+  strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
+  progress.bar = TRUE)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -39,6 +40,10 @@ Default is max(100, 5 percent of ids).}
 \item{impute.val}{[\code{named list}]\cr
 If not missing, the value of \code{impute.val} is used as a replacement for the
 return value of function \code{fun} on missing results. An empty list is allowed.}
+
+\item{progress.bar}{[\code{logical(1)}]\cr
+Set to \code{FALSE} to disable the progress bar.
+To disable all progress bars, see \code{\link[BBmisc]{makeProgressBar}}.}
 }
 \value{
 [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
