@@ -1,5 +1,5 @@
 Package: BatchExperiments
-Title: Statistical experiments on batch computing clusters.
+Title: Statistical Experiments on Batch Computing Clusters
 Description: Extends the BatchJobs package to run statistical experiments on
     batch computing clusters. For further details see the project web page.
 Author: Bernd Bischl <bernd_bischl@gmx.net>,
