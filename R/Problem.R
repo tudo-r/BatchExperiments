@@ -45,7 +45,7 @@ makeProblem = function(id, static, dynamic) {
 #' @export
 addProblem = function(reg, id, static = NULL, dynamic = NULL, seed = NULL, overwrite = FALSE)  {
   checkExperimentRegistry(reg, strict = TRUE)
-  BatchJobs:::checkIdValid(id)
+  checkIdValid(id)
   if (!is.null(seed))
     seed = asInt(seed)
   assertFlag(overwrite)

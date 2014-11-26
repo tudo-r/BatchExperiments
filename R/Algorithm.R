@@ -31,7 +31,7 @@ makeAlgorithm = function(id, fun) {
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite = FALSE)  {
   checkExperimentRegistry(reg, strict = TRUE)
-  BatchJobs:::checkIdValid(id)
+  checkIdValid(id)
   assertFlag(overwrite)
 
   if (id %in% dbGetAllProblemIds(reg))
