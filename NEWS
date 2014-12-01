@@ -1,5 +1,7 @@
 BatchExperiments_x.x
 - Problem and algorithm ids may now contain the dot char (".").
+- Fixed a bug in summarizeExperiments where column "repl" was not correctly
+  handled in the output
 
 BatchExperiments_1.3
 - Updated to use RSQLite >=1.0.0

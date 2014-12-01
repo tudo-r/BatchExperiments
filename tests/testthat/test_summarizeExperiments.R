@@ -9,11 +9,15 @@ test_that("summarizeExperiments", {
   addExperiments(r, c("one", "two"), c("A", "B"))
   d = summarizeExperiments(r)
   expect_true(is.data.frame(d) && nrow(d) == 4 && ncol(d) == 3)
+  d = summarizeExperiments(r, show = c("prob", "algo", "repl"))
+  expect_true(is.data.frame(d) && nrow(d) == 4 && ncol(d) == 4)
+  expect_true(setequal(names(d), c("prob", "algo", "repl", ".count")))
+
   d = summarizeExperiments(r, ids=1)
   expect_true(is.data.frame(d) && nrow(d) == 1)
   d = summarizeExperiments(r, ids=integer(0L))
   expect_true(is.data.frame(d) && nrow(d) == 0)
-  
+
   r = makeTestRegistry()
   p1 = addProblem(r, "p1", static=1)
   a1 = addAlgorithm(r, id="a1", fun=function(static, dynamic, alpha, beta) 1)

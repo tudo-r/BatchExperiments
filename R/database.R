@@ -38,16 +38,17 @@ dbGetJobs.ExperimentRegistry = function(reg, ids) {
 
 
 dbSummarizeExperiments = function(reg, ids, show) {
-  if (all(show %in% c("prob", "algo"))) {
-    cols = sprintf("%s_id", show)
+  if (all(show %in% c("prob", "algo", "repl"))) {
+    cols = setNames(c("prob_id", "algo_id", "repl"), c("prob", "algo", "repl"))
+    cols = cols[match(show, names(cols))]
     query = sprintf("SELECT %s, COUNT(job_id) FROM %s_expanded_jobs", collapse(cols), reg$id)
     summary = setNames(BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder = FALSE),
                        c(show, ".count"))
   } else {
     uc = function(x) unserialize(charToRaw(x))
-    query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars FROM %s_expanded_jobs", reg$id)
+    query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars, repl FROM %s_expanded_jobs", reg$id)
     tab = BatchJobs:::dbSelectWithIds(reg, query, ids, reorder = FALSE)
-    tab = cbind(subset(tab, select = c("job_id", "prob", "algo")),
+    tab = cbind(tab[c("job_id", "prob", "algo")],
       convertListOfRowsToDataFrame(lapply(tab$prob_pars, uc), strings.as.factors = FALSE),
       convertListOfRowsToDataFrame(lapply(tab$algo_pars, uc), strings.as.factors = FALSE))
     diff = setdiff(show, colnames(tab))
