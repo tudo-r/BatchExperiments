@@ -20,6 +20,7 @@ Get ids of algorithms in registry.
 }
 \seealso{
 Other get: \code{\link{getAlgorithm}};
+  \code{\link{getExperimentParts}};
   \code{\link{getJobs.ExperimentRegistry}};
   \code{\link{getProblemIds}}; \code{\link{getProblem}}
 }

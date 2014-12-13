@@ -25,7 +25,8 @@ Get jobs (here: experiments) from registry by id.
 }
 \seealso{
 Other get: \code{\link{getAlgorithmIds}};
-  \code{\link{getAlgorithm}}; \code{\link{getProblemIds}};
-  \code{\link{getProblem}}
+  \code{\link{getAlgorithm}};
+  \code{\link{getExperimentParts}};
+  \code{\link{getProblemIds}}; \code{\link{getProblem}}
 }
 

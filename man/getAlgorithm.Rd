@@ -20,6 +20,7 @@ The requested object is loaded from disk.
 }
 \seealso{
 Other get: \code{\link{getAlgorithmIds}};
+  \code{\link{getExperimentParts}};
   \code{\link{getJobs.ExperimentRegistry}};
   \code{\link{getProblemIds}}; \code{\link{getProblem}}
 }

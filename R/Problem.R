@@ -84,7 +84,7 @@ loadProblem = function(reg, id, seed = TRUE) {
 
 calcDynamic = function(reg, job, static, dynamic.fun) {
   if (is.null(dynamic.fun))
-    return(function() NULL)
+    return(NULL)
   prob.use = c("job", "static")
   prob.use = setNames(prob.use %in% names(formals(dynamic.fun)), prob.use)
 
