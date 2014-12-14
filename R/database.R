@@ -60,10 +60,24 @@ dbSummarizeExperiments = function(reg, ids, show) {
 }
 
 
-dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like = TRUE) {
+dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like = TRUE, regexp = FALSE) {
   clause = character(0L)
   if (!missing(repls))
     clause = c(clause, sprintf("repl IN (%s)", collapse(repls)))
+
+  if (regexp) {
+    query = sprintf("SELECT job_id, prob_id, algo_id from %s_expanded_jobs", reg$id)
+    if (length(clause) > 0L)
+      query = paste(query, "WHERE", clause)
+    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, where = FALSE)
+    ss = rep(TRUE, nrow(tab))
+    if (!missing(prob.pattern))
+      ss = ss & grepl(prob.pattern, tab$prob_id)
+    if (!missing(algo.pattern))
+      ss = ss & grepl(algo.pattern, tab$algo_id)
+    return(tab$job_id[ss])
+  }
+
   if (!missing(prob.pattern)) {
     if (like)
       clause = c(clause, sprintf("prob_id LIKE '%%%s%%'", prob.pattern))

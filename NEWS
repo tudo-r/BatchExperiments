@@ -3,6 +3,7 @@ BatchExperiments_x.x
 - Fixed a bug in summarizeExperiments where column "repl" was not correctly
   handled in the output
 - Added convenience function getExperimentParts().
+- findExperiments now optionally supports regular expression matching
 
 BatchExperiments_1.3
 - Updated to use RSQLite >=1.0.0

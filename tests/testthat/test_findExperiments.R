@@ -48,3 +48,23 @@ test_that("findExperiments", {
   expect_equal(i, integer(0))
 })
 
+test_that("regexp works", {
+  r = makeTestRegistry()
+  p1 = addProblem(r, "one", 1)
+  p2 = addProblem(r, "two", 1)
+  a1 = addAlgorithm(r, "aab", fun=function(static, dynamic) 1)
+  a2 = addAlgorithm(r, "aba", fun=function(static, dynamic) 1)
+  a3 = addAlgorithm(r, "baa", fun=function(static, dynamic) 1)
+  addExperiments(r, lapply(c(p1, p2), makeDesign), lapply(c(a1, a2, a3), makeDesign))
+
+  ids = findExperiments(r, prob.pattern = "^o", regexp = TRUE)
+  expect_equal(ids, 1:3)
+  ids = findExperiments(r, prob.pattern = "o$", regexp = TRUE)
+  expect_equal(ids, 4:6)
+  ids = findExperiments(r, prob.pattern = "o$", algo.pattern = "aa", regexp = TRUE)
+  expect_equal(ids, c(4, 6))
+  ids = findExperiments(r, prob.pattern = "o$", algo.pattern = "ab", regexp = TRUE)
+  expect_equal(ids, c(4, 5))
+  ids = findExperiments(r, prob.pattern = "noooo", regexp = TRUE)
+  expect_equal(ids, integer(0))
+})

@@ -21,6 +21,11 @@
 #'   Is a match in \code{prob.pattern} and \code{algo.pattern} if the id contains
 #'   the pattern as substring or must the id exactly match?
 #'   Default is \code{TRUE}.
+#' @param regexp [\code{logical(1)}]\cr
+#'   Are \code{prob.pattern} and \code{algo.pattern} regular expressions?
+#'   Note that this is significantly slower than substring matching.
+#'   If set to \code{TRUE} the argument \code{match.substring} has no effect.
+#'   Default is \code{FALSE}.
 #' @return [\code{integer}]. Ids for experiments which match the query.
 #' @export
 #' @examples
@@ -32,7 +37,8 @@
 #' findExperiments(reg, prob.pattern = "one")
 #' findExperiments(reg, prob.pattern = "o")
 #' findExperiments(reg, algo.pars = (n > 2))
-findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars, repls, match.substring = TRUE) {
+findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars,
+  repls, match.substring = TRUE, regexp = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE)
   if (!missing(prob.pattern))
     assertString(prob.pattern)
@@ -40,8 +46,10 @@ findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo
     assertString(algo.pattern)
   if (!missing(repls))
     repls = asCount(repls, positive = TRUE)
+  assertFlag(match.substring)
+  assertFlag(regexp)
 
-  ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like = match.substring)
+  ids = dbFindExperiments(reg, ids, prob.pattern, algo.pattern, repls, like = match.substring, regexp = regexp)
 
   # skip possible expensive calculations if possible
   if (length(ids) == 0L || (missing(prob.pars) && missing(algo.pars)))
