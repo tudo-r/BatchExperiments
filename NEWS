@@ -4,6 +4,8 @@ BatchExperiments_x.x
   handled in the output
 - Added convenience function getExperimentParts().
 - findExperiments now optionally supports regular expression matching
+- reduceResultsExperiments can now apply a function on jobs with
+  missing results if explicitly requested.
 
 BatchExperiments_1.3
 - Updated to use RSQLite >=1.0.0
