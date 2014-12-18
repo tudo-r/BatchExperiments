@@ -35,16 +35,22 @@
 #' @param impute.val [\code{named list}]\cr
 #'   If not missing, the value of \code{impute.val} is used as a replacement for the
 #'   return value of function \code{fun} on missing results. An empty list is allowed.
+#' @param apply.on.missing [\code{logical(1)}]\cr
+#'   Apply the function on jobs with missing results? The argument \dQuote{res} will be \code{NULL}
+#'   and must be handled in the function.
+#'   This argument has no effect if \code{impute.val} is set.
+#'   Default ist \code{FALSE}.
 #' @template arg_progress_bar
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
-  progress.bar = TRUE) {
+  apply.on.missing = FALSE, progressbar = TRUE) {
 
   checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
+  assertFlag(apply.on.missing)
   if (missing(ids)) {
     ids = done = BatchJobs:::dbFindDone(reg)
     with.impute = FALSE
@@ -55,8 +61,8 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
     if (with.impute) {
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))
         stop("Argument 'impute.val' must be a properly named list")
-    } else {
-      not.done = which(ids %nin% done)
+    } else if (!apply.on.missing) {
+      not.done = setdiff(ids, done)
       if (length(not.done) > 0L)
         stopf("No results available for jobs with ids: %s", collapse(not.done))
     }
@@ -73,19 +79,20 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   } else {
     block.size = asCount(block.size)
   }
+  assertFlag(progressbar)
+
 
   n = length(ids)
   info("Reducing %i results...", n)
 
-  impute = function(job, res, ...)
-    impute.val
-  getRow = function(j, reg, part, .fun, ...)
+  impute = if (with.impute) function(job, res, ...) impute.val else fun
+  getRow = function(j, reg, part, .fun, missing.ok, ...)
     c(list(id = j$id, prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
-      .fun(j, BatchJobs:::getResult(reg, j$id, part), ...))
+      .fun(j, BatchJobs:::getResult(reg, j$id, part, missing.ok), ...))
 
   aggr = data.frame()
   ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)
-  if (progress.bar) {
+  if (progressbar) {
     bar = makeProgressBar(max = length(ids2), label = "reduceResultsExperiments")
     bar$set()
   } else {
@@ -103,8 +110,8 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
       # -> major problem: how to deal with missing names in return value of fun?
       #    rbind.fill might not do the right thing here, also.
       id.chunk.done = id.chunk %in% done
-      results = c(lapply(jobs[ id.chunk.done], getRow, reg = reg, part = part, .fun = fun, ...),
-                  lapply(jobs[!id.chunk.done], getRow, reg = reg, part = part, .fun = impute, ...))
+      results = c(lapply(jobs[ id.chunk.done], getRow, reg = reg, part = part, .fun = fun, missing.ok = apply.on.missing, ...),
+                  lapply(jobs[!id.chunk.done], getRow, reg = reg, part = part, .fun = impute, missing.ok = apply.on.missing, ...))
       aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors = FALSE)))
       bar$inc(1L)
     }

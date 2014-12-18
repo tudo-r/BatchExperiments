@@ -8,39 +8,22 @@
 #'
 #' The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
 #'
-#' @param reg [\code{\link{ExperimentRegistry}}]\cr
-#'   Registry.
-#' @param ids [\code{integer}]\cr
-#'   Ids of selected experiments.
-#'   Default is all jobs for which results are available.
-#' @param part [\code{character}]
-#'   Only useful for multiple result files, then defines which result file part(s) should be loaded.
-#'   \code{NA} means all parts are loaded, which is the default.
-#' @param fun [\code{function(job, res, ...)}]\cr
-#'   Function to collect values from \code{job} and result \code{res} object, the latter from stored result file.
-#'   Must return an object which can be coerced to a \code{data.frame} (e.g. a \code{list}).
-#'   Default is a function that simply returns \code{res} which may or may not work, depending on the type
-#'   of \code{res}.
-#' @param ... [any]\cr
-#'   Additional arguments to \code{fun}.
+#' @inheritParams reduceResultsExperiments
 #' @param timeout [\code{integer(1)}]
 #'   Seconds to wait for completion. Passed to \code{\link[BatchJobs]{waitForJobs}}.
 #'   Default is 648400 (one week).
 #' @param njobs [\code{integer(1)}]
 #'   Number of parallel jobs to create.
 #'   Default is 20.
-#' @param strings.as.factors [\code{logical(1)}]
-#'   Should all character columns in result be converted to factors?
-#'   Default is \code{default.stringsAsFactors()}.
-#' @param impute.val [\code{named list}]\cr
-#'   If not missing, the value of \code{impute.val} is used as a replacement for the
-#'   return value of function \code{fun} on missing results. An empty list is allowed.
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @export
 reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun, ...,
-  timeout = 604800L, njobs = 20L, strings.as.factors = default.stringsAsFactors(), impute.val) {
+  timeout = 604800L, njobs = 20L, strings.as.factors = default.stringsAsFactors(), impute.val,
+  apply.on.missing = FALSE, progressbar = TRUE) {
   checkExperimentRegistry(reg, strict = TRUE)
   BatchJobs:::syncRegistry(reg)
+
+  assertFlag(apply.on.missing)
   if (missing(ids)) {
     ids = done = BatchJobs:::dbFindDone(reg)
   } else {
@@ -49,7 +32,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
     if (!missing(impute.val)) {
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))
         stop("Argument 'impute.val' must be a properly named list")
-    } else {
+    } else if (!apply.on.missing) {
       not.done = which(ids %nin% done)
       if (length(not.done) > 0L)
         stopf("No results available for jobs with ids: %s", collapse(not.done))
@@ -64,6 +47,8 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   }
   njobs = asCount(njobs, positive = TRUE)
   assertFlag(strings.as.factors)
+  assertFlag(progressbar)
+
 
   n = length(ids)
   if (n == 0) {
@@ -72,7 +57,6 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
     attr(res, "algo.pars.names") = character(0L)
     return(addClasses(res, "ReducedResultsExperiments"))
   }
-
   info("Reducing %i results...", n)
 
   ch = chunk(ids, n.chunks = njobs, shuffle = FALSE)
@@ -89,17 +73,17 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
     # FIXME this synchronizes the registry on the node!
     reduceResultsExperiments(reg, ii, part = part, fun = fun,
       block.size = ceiling(length(ii) / 10), strings.as.factors = strings.as.factors,
-      impute.val = impute.val, ...)
+      impute.val = impute.val, apply.on.missing = apply.on.missing, progressbar = progressbar, ...)
   }, ch, more.args = more.args, file.dir = file.dir.new)
 
-  waitForJobs(reg2, timeout = timeout, stop.on.error = TRUE)
+  waitForJobs(reg2, timeout = timeout, stop.on.error = TRUE, progressbar = progressbar)
 
   res = reduceResults(reg2, fun = function(aggr, job, res) {
     d = rbind.fill(aggr, res)
     attr(d, "prob.pars.names") = union(attr(aggr, "prob.pars.names"), attr(res, "prob.pars.names"))
     attr(d, "algo.pars.names") = union(attr(aggr, "algo.pars.names"), attr(res, "algo.pars.names"))
     return(d)
-  }, init = data.frame())
+  }, init = data.frame(), progressbar = progressbar)
   unlink(reg2$file.dir, recursive = TRUE)
 
   rownames(res) = res$id

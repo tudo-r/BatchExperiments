@@ -239,3 +239,15 @@ test_that("reduceResultsExperiments works with imputation", {
     y = c(NA, 1, 1),
     missing = c(TRUE, NA, NA)), check.attributes = FALSE)
 })
+
+test_that("reduceResultsExperiments applies on missing results", {
+  reg = makeTestRegistry()
+  addProblem(reg, "p1", static = 1)
+  addAlgorithm(reg, id = "a1", fun = function(static, dynamic) list(y = 1))
+  ids = addExperiments(reg, "p1", "a1", repls = 3)
+  fun = function(job, res) list(jid = job$id)
+  expect_error(reduceResultsExperiments(reg, ids = 1:3, fun = fun, apply.on.missing = FALSE, "no results"))
+  res = reduceResultsExperiments(reg, ids = 1:3, fun = fun, apply.on.missing = TRUE)
+  expect_is(res, "data.frame")
+  expect_identical(res$jid, 1:3)
+})

@@ -158,3 +158,15 @@ test_that("reduceResultsExperimentsParallel works with ids", {
   expect_equal(data$prob, c("p2", "p2"))
   expect_equal(data$algo, c("a1", "a1"))
 })
+
+test_that("reduceResultsExperimentsParallel applies on missing results", {
+  reg = makeTestRegistry()
+  addProblem(reg, "p1", static = 1)
+  addAlgorithm(reg, id = "a1", fun = function(static, dynamic) list(y = 1))
+  ids = addExperiments(reg, "p1", "a1", repls = 3)
+  fun = function(job, res) list(jid = job$id)
+  expect_error(reduceResultsExperimentsParallel(reg, ids = 1:3, fun = fun, apply.on.missing = FALSE, "no results"))
+  res = reduceResultsExperimentsParallel(reg, ids = 1:3, fun = fun, apply.on.missing = TRUE)
+  expect_is(res, "data.frame")
+  expect_identical(res$jid, 1:3)
+})

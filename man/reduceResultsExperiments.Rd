@@ -7,7 +7,7 @@
 \usage{
 reduceResultsExperiments(reg, ids, part = NA_character_, fun, ...,
   strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
-  progress.bar = TRUE)
+  apply.on.missing = FALSE, progressbar = TRUE)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -42,7 +42,13 @@ Default is max(100, 5 percent of ids).}
 If not missing, the value of \code{impute.val} is used as a replacement for the
 return value of function \code{fun} on missing results. An empty list is allowed.}
 
-\item{progress.bar}{[\code{logical(1)}]\cr
+\item{apply.on.missing}{[\code{logical(1)}]\cr
+Apply the function on jobs with missing results? The argument \dQuote{res} will be \code{NULL}
+and must be handled in the function.
+This argument has no effect if \code{impute.val} is set.
+Default ist \code{FALSE}.}
+
+\item{progressbar}{[\code{logical(1)}]\cr
 Set to \code{FALSE} to disable the progress bar.
 To disable all progress bars, see \code{\link[BBmisc]{makeProgressBar}}.}
 }
