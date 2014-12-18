@@ -67,4 +67,7 @@ test_that("regexp works", {
   expect_equal(ids, c(4, 5))
   ids = findExperiments(r, prob.pattern = "noooo", regexp = TRUE)
   expect_equal(ids, integer(0))
+
+  ids = findExperiments(r, ids = 1:2, prob.pattern = "^o", regexp = TRUE)
+  expect_equal(ids, c(1:2))
 })

@@ -67,9 +67,7 @@ dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like =
 
   if (regexp) {
     query = sprintf("SELECT job_id, prob_id, algo_id from %s_expanded_jobs", reg$id)
-    if (length(clause) > 0L)
-      query = paste(query, "WHERE", clause)
-    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, where = FALSE)
+    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, where = TRUE)
     ss = rep(TRUE, nrow(tab))
     if (!missing(prob.pattern))
       ss = ss & grepl(prob.pattern, tab$prob_id)
@@ -92,11 +90,9 @@ dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like =
   }
 
   query = sprintf("SELECT job_id from %s_expanded_jobs", reg$id)
-  if (length(clause) == 0L)
-    return(BatchJobs:::dbSelectWithIds(reg, query, ids)$job_id)
-
-  query = paste(query, "WHERE", collapse(clause, sep = " AND "))
-  BatchJobs:::dbSelectWithIds(reg, query, ids, where = FALSE)$job_id
+  if (length(clause) > 0L)
+    query = paste(query, "WHERE", collapse(clause, sep = " AND "))
+  BatchJobs:::dbSelectWithIds(reg, query, ids, where = length(clause) == 0L)$job_id
 }
 
 dbAddProblem = function(reg, id, seed) {
