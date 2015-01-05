@@ -6,6 +6,8 @@ BatchExperiments_x.x
 - findExperiments now optionally supports regular expression matching
 - reduceResultsExperiments can now apply a function on jobs with
   missing results if explicitly requested.
+- fixed a minor bug in summarizeExperiments where a column was not named as
+  documented.
 
 BatchExperiments_1.3
 - Updated to use RSQLite >=1.0.0
