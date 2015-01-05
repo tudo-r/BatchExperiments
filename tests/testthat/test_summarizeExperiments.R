@@ -29,4 +29,5 @@ test_that("summarizeExperiments", {
   expect_true(is.data.frame(d) && nrow(d) == 2 && ncol(d) == 3)
   d = summarizeExperiments(r, show=c("algo", "alpha", "beta"))
   expect_true(is.data.frame(d) && nrow(d) == 4+2 && ncol(d) == 4)
+  expect_true(setequal(colnames(d), c("algo", "alpha", "beta", ".count")))
 })
