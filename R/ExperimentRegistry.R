@@ -61,7 +61,7 @@ makeExperimentRegistry = function(id = "BatchExperimentRegistry", file.dir, shar
   if (skip && BatchJobs:::isRegistryDir(file.dir))
     return(loadRegistry(file.dir = file.dir))
   reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding,
-    work.dir, multiple.result.files, seed, union(packages, "_BatchExperiments"),
+    work.dir, multiple.result.files, seed, union(packages, "BatchExperiments"),
     src.dirs, src.files)
   class(reg) = c("ExperimentRegistry", "Registry")
   BatchJobs:::dbCreateJobStatusTable(reg, extra.cols = ", repl INTEGER, prob_seed INTEGER", constraints = ", UNIQUE(job_def_id, repl)")
