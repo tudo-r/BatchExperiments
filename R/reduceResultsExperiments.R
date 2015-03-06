@@ -85,10 +85,15 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   n = length(ids)
   info("Reducing %i results...", n)
 
+  # setup cache (needed for .applyJobWrapper and loading of static/dynamic) 
+  cache = makeFileCache(use.cache = n > 1L)
+  
   impute = if (with.impute) function(job, res, ...) impute.val else fun
-  getRow = function(j, reg, part, .fun, missing.ok, ...)
+  getRow = function(j, reg, part, .fun, missing.ok, ...){
+    .fun <- .applyJobWrapper(reg, j, cache, .fun)
     c(list(id = j$id, prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
-      .fun(j, BatchJobs:::getResult(reg, j$id, part, missing.ok), ...))
+      .fun(BatchJobs:::getResult(reg, j$id, part, missing.ok), ...))
+  }
 
   aggr = data.frame()
   ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)
