@@ -1,5 +1,9 @@
 # BatchExperiments
 
+[![Build Status](https://travis-ci.org/tudo-r/BatchExperiments.png)](https://travis-ci.org/tudo-r/BatchExperiments)
+[![Build status](https://ci.appveyor.com/api/projects/status/f9052xe5y3njcudd/branch/master?svg=true)](https://ci.appveyor.com/project/mllg/batchexperiments/branch/master)
+[![Coverage Status](https://coveralls.io/repos/tudo-r/BatchExperiments/badge.svg)](https://coveralls.io/r/tudo-r/BatchExperiments)
+
 ## If you use the package, please cite it
   ```
 
@@ -52,4 +56,3 @@ You can also peek into some examples provided in the [wiki](../../wiki).
 
 We also have a [mailing list](http://groups.google.com/group/batchjobs).
 
-[![Build Status](https://travis-ci.org/tudo-r/BatchExperiments.png)](https://travis-ci.org/tudo-r/BatchExperiments)
