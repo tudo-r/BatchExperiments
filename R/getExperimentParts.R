@@ -2,7 +2,7 @@
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
-#' @param ids [\code{integer(1)}]\cr
+#' @param id [\code{integer(1)}]\cr
 #'   Id of a job.
 #' @return [named list]. Returns the \link{Job}, \link{Problem}, \link{Instance} and \link{Algorithm}.
 #' @family get

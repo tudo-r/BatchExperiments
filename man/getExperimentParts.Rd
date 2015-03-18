@@ -10,7 +10,7 @@ getExperimentParts(reg, id)
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
 Registry.}
 
-\item{ids}{[\code{integer(1)}]\cr
+\item{id}{[\code{integer(1)}]\cr
 Id of a job.}
 }
 \value{
