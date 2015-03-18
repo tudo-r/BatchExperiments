@@ -1,15 +1,16 @@
-BatchExperiments_x.x
+BatchExperiments_1.4.1
 - Problem and algorithm ids may now contain the dot char (".").
 - Fixed a bug in summarizeExperiments where column "repl" was not correctly
   handled in the output
-- Added convenience function getExperimentParts().
+- Added convenience function getExperimentParts()
 - findExperiments now optionally supports regular expression matching
 - reduceResultsExperiments can now apply a function on jobs with
-  missing results if explicitly requested.
+  missing results if explicitly requested
 - fixed a minor bug in summarizeExperiments where a column was not named as
-  documented.
+  documented
+- updated citation information
 
-BatchExperiments_1.3
+BatchExperiments_1.4
 - Updated to use RSQLite >=1.0.0
 - Argument 'progressbar' added to multiple functions to suppress displaying the
   progress bars.
