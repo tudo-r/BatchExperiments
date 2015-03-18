@@ -9,3 +9,4 @@ BatchExperiments_*.tar.gz
 .gitmodules
 ^man-roxygen
 ^.editorconfig$
+^appveyor\.yml$
