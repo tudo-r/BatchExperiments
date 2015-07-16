@@ -5,11 +5,6 @@ r_github_packages:
     - tudo-r/BatchJobs
     - jimhester/covr
 
-r_binary_packages:
-    - BatchJobs
-    - randomForest
-    - testthat
-
 before_script:
     - curl -L https://raw.githubusercontent.com/rdatsci/travis-r-tools/master/update-packages.r -o /tmp/update-packages.r
     - Rscript /tmp/update-packages.r
