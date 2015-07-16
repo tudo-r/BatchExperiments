@@ -152,7 +152,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls = 1L, skip.defi
 #' @method addExperiments ExperimentRegistry
 #' @export
 addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls = 1L, skip.defined = FALSE) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
   BatchJobs:::syncRegistry(reg)
 
   # check prob.designs

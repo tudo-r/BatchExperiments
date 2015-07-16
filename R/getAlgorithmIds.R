@@ -8,7 +8,7 @@
 #' @family get
 #' @export
 getAlgorithmIds = function(reg, ids) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   if (missing(ids))
     return(dbGetAllAlgorithmIds(reg))
   BatchJobs:::checkIds(reg, ids)

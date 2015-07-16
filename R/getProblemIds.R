@@ -8,7 +8,7 @@
 #' @family get
 #' @export
 getProblemIds = function(reg, ids) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   if (missing(ids))
     return(dbGetAllProblemIds(reg))
   BatchJobs:::checkIds(reg, ids)

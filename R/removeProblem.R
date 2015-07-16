@@ -14,7 +14,7 @@
 #' @family remove
 #' @export
 removeProblem = function(reg, id, force = FALSE) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
   BatchJobs:::syncRegistry(reg)
   assertString(id)
 

@@ -13,7 +13,7 @@
 #' @aliases Instance
 #' @export
 generateProblemInstance = function(reg, id) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   job = getJob(reg, id, check.id = TRUE)
   prob = getProblem(reg, job$prob.id)
   calcDynamic(reg, job, prob$static, prob$dynamic)

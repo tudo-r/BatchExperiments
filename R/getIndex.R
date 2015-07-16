@@ -52,7 +52,7 @@
 #' by(ids, getIndex(reg, ids, by.algo.pars = i), reduceResults, reg = reg, fun = f)
 getIndex = function(reg, ids, by.prob = FALSE, by.algo = FALSE, by.repl = FALSE,
                     by.prob.pars, by.algo.pars, enclos = parent.frame()) {
-  checkExperimentRegistry(reg, TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   if (!missing(ids))
     ids = BatchJobs:::checkIds(reg, ids)
   assertFlag(by.prob)

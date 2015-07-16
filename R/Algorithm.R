@@ -30,7 +30,7 @@ makeAlgorithm = function(id, fun) {
 #' @family add
 #' @export
 addAlgorithm = function(reg, id, fun, overwrite = FALSE)  {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
   checkIdValid(id)
   assertFlag(overwrite)
 

@@ -11,7 +11,7 @@
 #' @family get
 #' @export
 getProblem = function(reg, id) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   assertString(id)
   pids = dbGetAllProblemIds(reg)
   if (id %nin% pids)

@@ -87,7 +87,7 @@ print.ExperimentRegistry = function(x, ...) {
   cat("  Required packages:", collapse(names(x$packages), ", "), "\n")
 }
 
-checkExperimentRegistry = function(reg, strict = FALSE) {
+checkExperimentRegistry = function(reg, strict = FALSE, writeable = TRUE) {
   cl = class(reg)
   expected = "ExperimentRegistry"
   if (strict) {
@@ -97,5 +97,7 @@ checkExperimentRegistry = function(reg, strict = FALSE) {
     if (expected %nin% cl)
       stopf("Registry class mismatch: Expected argument of class '%s'", expected)
   }
+  if (writeable && isTRUE(reg$read.only))
+    stop("Registry is read-only. Operation not permitted.")
   invisible(TRUE)
 }

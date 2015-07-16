@@ -39,7 +39,7 @@
 #' findExperiments(reg, algo.pars = (n > 2))
 findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars,
   repls, match.substring = TRUE, regexp = FALSE) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   if (!missing(prob.pattern))
     assertString(prob.pattern)
   if (!missing(algo.pattern))

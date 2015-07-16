@@ -44,7 +44,7 @@ makeProblem = function(id, static, dynamic) {
 #' @family add
 #' @export
 addProblem = function(reg, id, static = NULL, dynamic = NULL, seed = NULL, overwrite = FALSE)  {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
   checkIdValid(id)
   if (!is.null(seed))
     seed = asInt(seed)

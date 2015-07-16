@@ -1,0 +1,25 @@
+context("ExperimentRegisty")
+test_that("read only mode works", {
+  reg = makeTestRegistry()
+  p1 = addProblem(reg, "p1", 1)
+  a1 = addAlgorithm(reg, id="a1", fun=function(static, dynamic) static)
+  addExperiments(reg, p1, a1)
+  submitJobs(reg)
+  waitForJobs(reg)
+  reg$read.only = TRUE
+
+  expect_error(addProblem(reg, id="p2", 2), "read.only")
+  expect_error(addAlgorithm(reg, id="a2", fun=function(static, dynamic) static), "read.only")
+  expect_error(addExperiments(reg, "a2", "p2"), "read.only")
+  expect_error(removeExperiments(reg, 1), "read.only")
+
+  expect_character(getProblemIds(reg))
+  expect_character(getAlgorithmIds(reg))
+  expect_integer(findExperiments(reg))
+  expect_class(getProblem(reg, "p1"), "Problem")
+  expect_class(getAlgorithm(reg, "a1"), "Algorithm")
+  expect_data_frame(getJobInfo(reg, 1))
+  expect_data_frame(summarizeExperiments(reg, 1))
+  expect_null(generateProblemInstance(reg, 1))
+  expect_equal(loadResult(reg, 1), 1)
+})

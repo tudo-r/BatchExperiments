@@ -8,7 +8,7 @@
 #' @family get
 #' @export
 getExperimentParts = function(reg, id) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   id = BatchJobs:::checkId(reg, id)
 
   res = namedList(c("job", "prob", "instance", "algo"))

@@ -11,7 +11,7 @@
 #' @family get
 #' @export
 getAlgorithm = function(reg, id) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   assertString(id, "character")
   aids = dbGetAllAlgorithmIds(reg)
   if (id %nin% aids)

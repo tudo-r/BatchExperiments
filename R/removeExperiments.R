@@ -17,7 +17,7 @@
 #' @family remove
 #' @export
 removeExperiments = function(reg, ids, force = FALSE) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
   BatchJobs:::syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))

@@ -20,7 +20,7 @@
 reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun, ...,
   timeout = 604800L, njobs = 20L, strings.as.factors = default.stringsAsFactors(), impute.val,
   apply.on.missing = FALSE, progressbar = TRUE) {
-  checkExperimentRegistry(reg, strict = TRUE)
+  checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   BatchJobs:::syncRegistry(reg)
 
   assertFlag(apply.on.missing)
