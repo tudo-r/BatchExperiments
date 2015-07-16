@@ -1,3 +1,7 @@
+BatchExperiments_1.4.2
+- Added support for read-only mode of registries. See ?loadRegistry for more
+  information.
+
 BatchExperiments_1.4.1
 - Problem and algorithm ids may now contain the dot char (".").
 - Fixed a bug in summarizeExperiments where column "repl" was not correctly

@@ -1,5 +1,6 @@
 # BatchExperiments
 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BatchExperiments)](http://cran.r-project.org/web/packages/BatchExperiments)
 [![Build Status](https://travis-ci.org/tudo-r/BatchExperiments.png)](https://travis-ci.org/tudo-r/BatchExperiments)
 [![Build status](https://ci.appveyor.com/api/projects/status/f9052xe5y3njcudd/branch/master?svg=true)](https://ci.appveyor.com/project/mllg/batchexperiments/branch/master)
 [![Coverage Status](https://coveralls.io/repos/tudo-r/BatchExperiments/badge.svg)](https://coveralls.io/r/tudo-r/BatchExperiments)
