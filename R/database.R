@@ -47,14 +47,18 @@ dbSummarizeExperiments = function(reg, ids, show) {
   } else {
     uc = function(x) unserialize(charToRaw(x))
     query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars, repl FROM %s_expanded_jobs", reg$id)
-    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, reorder = FALSE)
-    tab = cbind(tab[c("job_id", "prob", "algo")],
-      convertListOfRowsToDataFrame(lapply(tab$prob_pars, uc), strings.as.factors = FALSE),
-      convertListOfRowsToDataFrame(lapply(tab$algo_pars, uc), strings.as.factors = FALSE))
+    tab = as.data.table(BatchJobs:::dbSelectWithIds(reg, query, ids, reorder = FALSE))
+    pars = rbindlist(lapply(tab$prob_pars, uc), fill = TRUE)
+    if (nrow(pars) > 0L)
+      tab = cbind(tab, pars)
+    pars = rbindlist(lapply(tab$algo_pars, uc), fill = TRUE)
+    if (nrow(pars) > 0L)
+      tab = cbind(tab, pars)
+
     diff = setdiff(show, colnames(tab))
     if (length(diff) > 0L)
       stopf("Trying to select columns in arg 'show' which are not available: %s", collapse(diff))
-    summary = ddply(tab, show, function(x) data.frame(.count = nrow(x)))
+    summary = as.data.frame(tab[, list(.count = .N), by = show])
   }
   summary
 }

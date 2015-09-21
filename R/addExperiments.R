@@ -217,7 +217,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   }
 
   writeJobDefs = function(job.defs) {
-    data = as.data.frame(do.call(rbind, lapply(job.defs, unlist)))
+    data = rbindlist(job.defs)[, c("prob_id", "prob_pars", "algo_id", "algo_pars"), with = FALSE]
     mq("INSERT INTO tmp(prob_id, prob_pars, algo_id, algo_pars) VALUES(?, ?, ?, ?)",
        con = con, bind.data = data)
   }

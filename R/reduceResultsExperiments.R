@@ -6,7 +6,7 @@
 #' the replication number (named \dQuote{repl}) and all columns defined in the function to collect the values.
 #' Note that you cannot rely on the order of the columns.
 #' If a parameter does not have a setting for a certain job / experiment it is set to \code{NA}.
-#' Have a look at \code{\link{getResultVars}} if you want to use something like \code{\link{ddply}} on the
+#' Have a look at \code{\link{getResultVars}} if you want to use something like \code{\link[plyr]{ddply}} on the
 #' results.
 #'
 #' The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
@@ -52,11 +52,11 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   BatchJobs:::syncRegistry(reg)
   assertFlag(apply.on.missing)
   if (missing(ids)) {
-    ids = done = BatchJobs:::dbFindDone(reg)
+    ids = done = findDone(reg)
     with.impute = FALSE
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    done = BatchJobs:::dbFindDone(reg, ids)
+    done = findDone(reg, ids)
     with.impute = !missing(impute.val)
     if (with.impute) {
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))
@@ -90,7 +90,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
     c(list(id = j$id, prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
       .fun(j, BatchJobs:::getResult(reg, j$id, part, missing.ok), ...))
 
-  aggr = data.frame()
+  aggr = data.table()
   ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)
   if (progressbar) {
     bar = makeProgressBar(max = length(ids2), label = "reduceResultsExperiments")
@@ -106,17 +106,15 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
       jobs = getJobs(reg, id.chunk, check.ids = FALSE)
       prob.pars = unique(c(prob.pars, unlist(lapply(jobs, function(j) names(j$prob.pars)))))
       algo.pars = unique(c(algo.pars, unlist(lapply(jobs, function(j) names(j$algo.pars)))))
-      # FIXME: m/b use convertListOfRowsToDataFrame instead of rbind.fill
-      # -> major problem: how to deal with missing names in return value of fun?
-      #    rbind.fill might not do the right thing here, also.
       id.chunk.done = id.chunk %in% done
       results = c(lapply(jobs[ id.chunk.done], getRow, reg = reg, part = part, .fun = fun, missing.ok = apply.on.missing, ...),
                   lapply(jobs[!id.chunk.done], getRow, reg = reg, part = part, .fun = impute, missing.ok = apply.on.missing, ...))
-      aggr = rbind.fill(c(list(aggr), lapply(results, as.data.frame, stringsAsFactors = FALSE)))
+      aggr = rbind(aggr, rbindlist(results, fill = TRUE), fill = TRUE)
       bar$inc(1L)
     }
   }, error = bar$error)
 
+  aggr = setDF(aggr)
   aggr = convertDataFrameCols(aggr, chars.as.factor = strings.as.factors)
   # name rows with ids so one can easily index
   # THEN RESORT WRT TO IDS from call

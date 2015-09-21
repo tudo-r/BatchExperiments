@@ -18,8 +18,9 @@ Imports:
     BBmisc (>= 1.8),
     DBI,
     RSQLite (>= 1.0.0),
-    plyr
+    data.table (>= 1.9.6)
 Suggests:
+    plyr,
     randomForest,
     rpart,
     testthat

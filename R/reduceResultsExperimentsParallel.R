@@ -25,10 +25,10 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
 
   assertFlag(apply.on.missing)
   if (missing(ids)) {
-    ids = done = BatchJobs:::dbFindDone(reg)
+    ids = done = findDone(reg)
   } else {
     ids = BatchJobs:::checkIds(reg, ids)
-    done = BatchJobs:::dbFindDone(reg, ids)
+    done = findDone(reg, ids)
     if (!missing(impute.val)) {
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))
         stop("Argument 'impute.val' must be a properly named list")
@@ -49,7 +49,6 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   assertFlag(strings.as.factors)
   assertFlag(progressbar)
 
-
   n = length(ids)
   if (n == 0) {
     res = data.frame()
@@ -60,7 +59,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   info("Reducing %i results...", n)
 
   ch = chunk(ids, n.chunks = njobs, shuffle = FALSE)
-  more.args = c(list(reg = reg, part = part, fun = fun, strings.as.factors = strings.as.factors), list(...))
+  more.args = c(list(reg = reg, part = part, fun = fun, strings.as.factors = strings.as.factors, apply.on.missing = apply.on.missing), list(...))
   if (!missing(impute.val))
     more.args$impute.val = impute.val
   prefix = "reduceExperimentsParallel"
@@ -68,24 +67,20 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   if (length(dir(reg$file.dir, pattern = sprintf("^%s", prefix))))
     warningf("Found cruft directories from previous calls to reduceResultsExperimentsParallel in %s", reg$file.dir)
 
-  # FIXME: Magic constant 10
-  reg2 = batchMapQuick(function(reg, ii, fun, part, strings.as.factors, impute.val, ...) {
+  reg2 = batchMapQuick(function(reg, ii, fun, part, strings.as.factors, impute.val, apply.on.missing, ...) {
     # FIXME this synchronizes the registry on the node!
     reduceResultsExperiments(reg, ii, part = part, fun = fun,
-      block.size = ceiling(length(ii) / 10), strings.as.factors = strings.as.factors,
+      strings.as.factors = strings.as.factors,
       impute.val = impute.val, apply.on.missing = apply.on.missing, progressbar = progressbar, ...)
   }, ch, more.args = more.args, file.dir = file.dir.new)
-
   waitForJobs(reg2, timeout = timeout, stop.on.error = TRUE, progressbar = progressbar)
 
-  res = reduceResults(reg2, fun = function(aggr, job, res) {
-    d = rbind.fill(aggr, res)
-    attr(d, "prob.pars.names") = union(attr(aggr, "prob.pars.names"), attr(res, "prob.pars.names"))
-    attr(d, "algo.pars.names") = union(attr(aggr, "algo.pars.names"), attr(res, "algo.pars.names"))
-    return(d)
-  }, init = data.frame(), progressbar = progressbar)
+  res = reduceResultsList(reg2, progressbar = progressbar)
   unlink(reg2$file.dir, recursive = TRUE)
-
-  rownames(res) = res$id
-  return(addClasses(res[as.character(ids),, drop = FALSE], "ReducedResultsExperiments"))
+  df = rbindlist(res, fill = TRUE)
+  setDF(df)
+  attr(df, "prob.pars.names") = unique(unlist(lapply(res, attr, "prob.pars.names")))
+  attr(df, "algo.pars.names") = unique(unlist(lapply(res, attr, "algo.pars.names")))
+  rownames(df) = df$id
+  return(addClasses(df[as.character(ids),, drop = FALSE], "ReducedResultsExperiments"))
 }

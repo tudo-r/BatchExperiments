@@ -16,5 +16,5 @@ NULL
 #' @import DBI
 #' @import RSQLite
 #' @import BatchJobs
-#' @import plyr
+#' @import data.table
 NULL
