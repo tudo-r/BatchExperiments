@@ -9,7 +9,7 @@
 #' @export
 getExperimentParts = function(reg, id) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
-  id = BatchJobs:::checkId(reg, id)
+  id = checkIds(reg, id, len = 1L)
 
   res = namedList(c("job", "prob", "instance", "algo"))
   res$job = dbGetJobs(reg, id)[[1L]]

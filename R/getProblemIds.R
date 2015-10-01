@@ -11,6 +11,6 @@ getProblemIds = function(reg, ids) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   if (missing(ids))
     return(dbGetAllProblemIds(reg))
-  BatchJobs:::checkIds(reg, ids)
+  checkIds(reg, ids)
   unique(dbGetProblemIds(reg, ids))
 }

@@ -27,7 +27,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
   if (missing(ids)) {
     ids = done = findDone(reg)
   } else {
-    ids = BatchJobs:::checkIds(reg, ids)
+    ids = checkIds(reg, ids)
     done = findDone(reg, ids)
     if (!missing(impute.val)) {
       if (!is.list(impute.val) || !isProperlyNamed(impute.val))

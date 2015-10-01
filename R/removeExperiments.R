@@ -21,7 +21,7 @@ removeExperiments = function(reg, ids, force = FALSE) {
   syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))
-  ids = BatchJobs:::checkIds(reg, ids)
+  ids = checkIds(reg, ids)
 
   if (!force) {
     if(is.null(BatchJobs:::getListJobs()) || is.null(BatchJobs:::getKillJob())) {

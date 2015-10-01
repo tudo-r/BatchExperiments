@@ -55,7 +55,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
     ids = done = findDone(reg)
     with.impute = FALSE
   } else {
-    ids = BatchJobs:::checkIds(reg, ids)
+    ids = checkIds(reg, ids)
     done = findDone(reg, ids)
     with.impute = !missing(impute.val)
     if (with.impute) {
