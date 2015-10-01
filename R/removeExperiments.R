@@ -18,7 +18,7 @@
 #' @export
 removeExperiments = function(reg, ids, force = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
-  BatchJobs:::syncRegistry(reg)
+  syncRegistry(reg)
   if (missing(ids))
     return(integer(0L))
   ids = BatchJobs:::checkIds(reg, ids)

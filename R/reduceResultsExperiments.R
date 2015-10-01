@@ -49,7 +49,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   apply.on.missing = FALSE, progressbar = TRUE) {
 
   checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
-  BatchJobs:::syncRegistry(reg)
+  syncRegistry(reg)
   assertFlag(apply.on.missing)
   if (missing(ids)) {
     ids = done = findDone(reg)

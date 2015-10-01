@@ -15,7 +15,7 @@
 #' @export
 removeProblem = function(reg, id, force = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
-  BatchJobs:::syncRegistry(reg)
+  syncRegistry(reg)
   assertString(id)
 
   if (id %nin% dbGetAllProblemIds(reg))

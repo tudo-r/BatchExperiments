@@ -1,7 +1,7 @@
 #' @method getJobInfo ExperimentRegistry
 #' @export
 getJobInfo.ExperimentRegistry = function(reg, ids, pars = FALSE, prefix.pars = FALSE, select, unit = "seconds") {
-  BatchJobs:::syncRegistry(reg)
+  syncRegistry(reg)
   assertFlag(pars)
   columns = c(id = "job_id", prob = "prob_id", algo = "algo_id", repl = "repl")
   if (pars)

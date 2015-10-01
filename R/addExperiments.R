@@ -153,7 +153,7 @@ addExperiments = function(reg, prob.designs, algo.designs, repls = 1L, skip.defi
 #' @export
 addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, repls = 1L, skip.defined = FALSE) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = TRUE)
-  BatchJobs:::syncRegistry(reg)
+  syncRegistry(reg)
 
   # check prob.designs
   if (missing(prob.designs)) {
