@@ -24,26 +24,27 @@ removeExperiments = function(reg, ids, force = FALSE) {
   ids = checkIds(reg, ids)
 
   if (!force) {
-    if(is.null(BatchJobs:::getListJobs()) || is.null(BatchJobs:::getKillJob())) {
+    cf = getConfig()$cluster.functions
+    if(is.null(cf$listJobs) || is.null(cf$killJobs)) {
       stop("Listing or killing of jobs not supported by your cluster functions\n",
            "You need to set force = TRUE to remove jobs, but note the warning in ?removeExperiments")
     }
-    running = BatchJobs:::dbFindRunning(reg, ids)
+    running = findRunning(reg, ids)
     if (length(running) > 0L)
       stopf("Can't remove jobs which are still running. You have to kill them first.\nRunning: %s",
             collapse(running))
   }
 
   info("Removing %i experiments ...", length(ids))
-  BatchJobs:::dbRemoveJobs(reg, ids)
+  dbRemoveJobs(reg, ids)
 
   fmt = "^%i(\\.(R|out)|-result(-.+)*\\.RData)$"
-  lapply(ids, function(id) {
-    fs = list.files(BatchJobs:::getJobDirs(reg, id), pattern = sprintf(fmt, id), full.names = TRUE)
+  for (id in ids) {
+    fs = list.files(getJobLocation(reg, id), pattern = sprintf(fmt, id), full.names = TRUE)
     ok = file.remove(fs)
     if (!all(ok))
       warningf("Could not remove files for experiment with id=%i", id)
-  })
+  }
 
   invisible(ids)
 }

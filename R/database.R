@@ -21,11 +21,24 @@ dbCreateExpandedJobsViewBE = function(reg) {
   batchQuery(reg, query, flags = "rw")
 }
 
+
+dbSelectWithIds = function(reg, query, ids, where = TRUE, group.by, reorder = TRUE) {
+  if(!missing(ids))
+    query = sprintf("%s %s job_id IN (%s)", query, ifelse(where, "WHERE", "AND"), collapse(ids))
+  if(!missing(group.by))
+    query = sprintf("%s GROUP BY %s", query, collapse(group.by))
+
+  res = batchQuery(reg, query)
+  if(missing(ids) || !reorder)
+    return(res)
+  return(res[na.omit(match(ids, res$job_id)),, drop = FALSE])
+}
+
 #' @method dbGetJobs ExperimentRegistry
 #' @export
 dbGetJobs.ExperimentRegistry = function(reg, ids) {
   query = sprintf("SELECT job_id, prob_id, prob_pars, algo_id, algo_pars, seed, prob_seed, repl FROM %s_expanded_jobs", reg$id)
-  tab = BatchJobs:::dbSelectWithIds(reg, query, ids)
+  tab = dbSelectWithIds(reg, query, ids)
 
   lapply(seq_row(tab), function(i) {
     x = tab[i,]
@@ -42,12 +55,12 @@ dbSummarizeExperiments = function(reg, ids, show) {
     cols = setNames(c("prob_id", "algo_id", "repl"), c("prob", "algo", "repl"))
     cols = cols[match(show, names(cols))]
     query = sprintf("SELECT %s, COUNT(job_id) FROM %s_expanded_jobs", collapse(cols), reg$id)
-    summary = setNames(BatchJobs:::dbSelectWithIds(reg, query, ids, group.by = cols, reorder = FALSE),
+    summary = setNames(dbSelectWithIds(reg, query, ids, group.by = cols, reorder = FALSE),
                        c(show, ".count"))
   } else {
     uc = function(x) unserialize(charToRaw(x))
     query = sprintf("SELECT job_id, prob_id AS prob, prob_pars, algo_id AS algo, algo_pars, repl FROM %s_expanded_jobs", reg$id)
-    tab = as.data.table(BatchJobs:::dbSelectWithIds(reg, query, ids, reorder = FALSE))
+    tab = as.data.table(dbSelectWithIds(reg, query, ids, reorder = FALSE))
     pars = rbindlist(lapply(tab$prob_pars, uc), fill = TRUE)
     if (nrow(pars) > 0L)
       tab = cbind(tab, pars)
@@ -71,7 +84,7 @@ dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like =
 
   if (regexp) {
     query = sprintf("SELECT job_id, prob_id, algo_id from %s_expanded_jobs", reg$id)
-    tab = BatchJobs:::dbSelectWithIds(reg, query, ids, where = TRUE)
+    tab = dbSelectWithIds(reg, query, ids, where = TRUE)
     ss = rep(TRUE, nrow(tab))
     if (!missing(prob.pattern))
       ss = ss & grepl(prob.pattern, tab$prob_id)
@@ -96,7 +109,7 @@ dbFindExperiments = function(reg, ids, prob.pattern, algo.pattern, repls, like =
   query = sprintf("SELECT job_id from %s_expanded_jobs", reg$id)
   if (length(clause) > 0L)
     query = paste(query, "WHERE", collapse(clause, sep = " AND "))
-  BatchJobs:::dbSelectWithIds(reg, query, ids, where = length(clause) == 0L)$job_id
+  dbSelectWithIds(reg, query, ids, where = length(clause) == 0L)$job_id
 }
 
 dbAddProblem = function(reg, id, seed) {
@@ -134,10 +147,18 @@ dbGetAllAlgorithmIds = function(reg) {
 
 dbGetProblemIds = function(reg, ids) {
   query = sprintf("SELECT job_id, prob_id FROM %s_expanded_jobs", reg$id)
-  BatchJobs:::dbSelectWithIds(reg, query, ids)$prob_id
+  dbSelectWithIds(reg, query, ids)$prob_id
 }
 
 dbGetAlgorithmIds = function(reg, ids) {
   query = sprintf("SELECT job_id, prob_id FROM %s_expanded_jobs", reg$id)
-  BatchJobs:::dbSelectWithIds(reg, query, ids)$algo_id
+  dbSelectWithIds(reg, query, ids)$algo_id
+}
+
+dbRemoveJobs = function(reg, ids) {
+  query = sprintf("DELETE FROM %s_job_status WHERE job_id IN (%s)", reg$id, collapse(ids))
+  batchQuery(reg, query, flags = "rw")
+  query = sprintf("DELETE FROM %1$s_job_def WHERE job_def_id NOT IN (SELECT DISTINCT job_def_id FROM %1$s_job_status)", reg$id)
+  batchQuery(reg, query, flags = "rw")
+  return(invisible(TRUE))
 }
