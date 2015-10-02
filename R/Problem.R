@@ -77,7 +77,7 @@ loadProblem = function(reg, id, seed = TRUE) {
     dynamic = load2(parts["dynamic"], "dynamic", impute = NULL))
   if (seed) {
     query = sprintf("SELECT pseed FROM %s_prob_def WHERE prob_id = '%s'", reg$id, id)
-    prob$seed = BatchJobs:::dbDoQuery(reg, query)$pseed
+    prob$seed = batchQuery(reg, query)$pseed
   }
   prob
 }

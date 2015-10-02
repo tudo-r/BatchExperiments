@@ -3,14 +3,14 @@ dbCreateJobDefTable.ExperimentRegistry = function(reg) {
   query = sprintf(paste("CREATE TABLE %s_job_def (job_def_id INTEGER PRIMARY KEY,",
                         "prob_id TEXT, prob_pars TEXT, algo_id TEXT, algo_pars TEXT,",
                         "UNIQUE(prob_id, prob_pars, algo_id, algo_pars))"), reg$id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rwc")
+  batchQuery(reg, query, flags = "rwc")
 }
 
 dbCreateExtraTables = function(reg) {
   query = sprintf("CREATE TABLE %s_prob_def (prob_id TEXT PRIMARY KEY, pseed INTEGER)", reg$id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rwc")
+  batchQuery(reg, query, flags = "rwc")
   query = sprintf("CREATE TABLE %s_algo_def (algo_id TEXT PRIMARY KEY)", reg$id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rwc")
+  batchQuery(reg, query, flags = "rwc")
 }
 
 dbCreateExpandedJobsViewBE = function(reg) {
@@ -18,7 +18,7 @@ dbCreateExpandedJobsViewBE = function(reg) {
                         "SELECT * FROM %1$s_job_status AS job_status",
                         "LEFT JOIN %1$s_job_def AS job_def USING(job_def_id)",
                         "LEFT JOIN %1$s_prob_def AS prob_def USING (prob_id)"), reg$id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rw")
+  batchQuery(reg, query, flags = "rw")
 }
 
 #' @method dbGetJobs ExperimentRegistry
@@ -103,33 +103,33 @@ dbAddProblem = function(reg, id, seed) {
   #FIXME: replace OR REPLACE with an option, this is not supported by all DBMS
   query = sprintf("INSERT OR REPLACE INTO %s_prob_def (prob_id, pseed) VALUES ('%s', %s)",
                   reg$id, id, ifelse(is.null(seed), "NULL", seed))
-  BatchJobs:::dbDoQuery(reg, query, flags = "rw")
+  batchQuery(reg, query, flags = "rw")
 }
 
 dbAddAlgorithm = function(reg, id) {
   #FIXME: replace OR REPLACE with an option, this is not supported by all DBMS
   query = sprintf("INSERT OR REPLACE INTO %s_algo_def (algo_id) VALUES ('%s')", reg$id, id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rw")
+  batchQuery(reg, query, flags = "rw")
 }
 
 dbRemoveProblem = function(reg, id) {
   query = sprintf("DELETE FROM %s_prob_def WHERE prob_id='%s'", reg$id, id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rw")
+  batchQuery(reg, query, flags = "rw")
 }
 
 dbRemoveAlgorithm = function(reg, id) {
   query = sprintf("DELETE FROM %s_algo_def WHERE algo_id='%s'", reg$id, id)
-  BatchJobs:::dbDoQuery(reg, query, flags = "rw")
+  batchQuery(reg, query, flags = "rw")
 }
 
 dbGetAllProblemIds = function(reg) {
   query = sprintf("SELECT prob_id FROM %s_prob_def", reg$id)
-  BatchJobs:::dbDoQuery(reg, query)$prob_id
+  batchQuery(reg, query)$prob_id
 }
 
 dbGetAllAlgorithmIds = function(reg) {
   query = sprintf("SELECT algo_id FROM %s_algo_def", reg$id)
-  BatchJobs:::dbDoQuery(reg, query)$algo_id
+  batchQuery(reg, query)$algo_id
 }
 
 dbGetProblemIds = function(reg, ids) {
