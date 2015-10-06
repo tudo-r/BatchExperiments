@@ -161,7 +161,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   } else {
     if (is.character(prob.designs)) {
       prob.designs = lapply(prob.designs, makeDesign)
-    } else if (is(prob.designs, "Design")) {
+    } else if (inherits(prob.designs, "Design")) {
       prob.designs = list(prob.designs)
     } else if (is.list(prob.designs)) {
       checkListElementClass(prob.designs, "Design")
@@ -181,7 +181,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   } else {
     if (is.character(algo.designs)) {
       algo.designs = lapply(algo.designs, makeDesign)
-    } else if (is(algo.designs, "Design")) {
+    } else if (inherits(algo.designs, "Design")) {
       algo.designs = list(algo.designs)
     } else if (is.list(algo.designs)) {
       checkListElementClass(algo.designs, "Design")

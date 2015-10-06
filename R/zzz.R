@@ -9,12 +9,12 @@
 #'
 #' @docType package
 #' @name BatchExperiments
-NULL
-
 #' @import checkmate
 #' @import BBmisc
 #' @import DBI
 #' @import RSQLite
 #' @import BatchJobs
 #' @import data.table
+#' @importFrom stats setNames na.omit
+#' @importFrom utils head capture.output packageVersion
 NULL
