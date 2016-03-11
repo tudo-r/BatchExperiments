@@ -1,5 +1,8 @@
 #' @title Get ids of algorithms in registry.
 #'
+#' @description
+#' Get algorithm ids for jobs.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [code{integer}]\cr

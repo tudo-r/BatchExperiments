@@ -1,5 +1,9 @@
 #' @title Find ids of experiments that match a query.
 #'
+#' @description
+#' Find job ids by querying problem/algorithm ids, problem/algorithm parameters or
+#' replication number.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr

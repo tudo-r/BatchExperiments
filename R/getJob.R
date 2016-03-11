@@ -1,5 +1,8 @@
 #' @title Get jobs (here: experiments) from registry by id.
 #'
+#' @description
+#' Constructs an \code{\link{Experiment}} for each job id provided.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param ids [\code{integer}]\cr

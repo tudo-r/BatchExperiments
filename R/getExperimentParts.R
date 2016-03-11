@@ -1,5 +1,8 @@
 #' @title Get all parts required to run a single job.
 #'
+#' @description
+#' Get all parts which define an \code{\link{Experiment}}.
+#'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
 #' @param id [\code{integer(1)}]\cr
