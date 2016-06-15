@@ -1,8 +1,6 @@
-#' @method applyJobFunction ExperimentRegistry
-#' @export
-applyJobFunction.ExperimentRegistry = function(reg, job, cache) {
-  algo = cache(getAlgorithmFilePath(reg$file.dir, job$algo.id),
-    slot = "algo", parts = "algorithm")$fun
+# internal function to define a wrappers for job/reduce functions 
+# that can have optional arguments job, static and dynamic
+.applyJobWrapper = function(reg, job, cache, algo) {
   algo.use = c("job", "static", "dynamic")
   algo.use = setNames(algo.use %in% names(formals(algo)), algo.use)
 
@@ -26,6 +24,17 @@ applyJobFunction.ExperimentRegistry = function(reg, job, cache) {
     function(...) algo(job = job, dynamic = dynamic(), ...),
     function(...) algo(static = static(), dynamic = dynamic(), ...),
     function(...) algo(job = job, static = static(), dynamic = dynamic(), ...))
+  f
+}
+
+#' @method applyJobFunction ExperimentRegistry
+#' @export
+applyJobFunction.ExperimentRegistry = function(reg, job, cache) {
+  algo = cache(getAlgorithmFilePath(reg$file.dir, job$algo.id),
+    slot = "algo", parts = "algorithm")$fun
+
+  # switch on algo formals and apply algorithm function
+  f = .applyJobWrapper(reg, job, cache, algo)
 
   messagef("Applying Algorithm %s ...", job$algo.id)
   do.call(f, job$algo.pars)
