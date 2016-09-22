@@ -9,9 +9,9 @@ r:
 
 r_github_packages:
     - mllg/checkmate
+    - rstats-db/RSQLite
     - tudo-r/BatchJobs
     - jimhester/covr
-    - rstats-db/RSQLite
 
 after_success:
     - Rscript -e 'library(covr); coveralls()'

@@ -20,8 +20,8 @@ environment:
 
 build_script:
   - travis-tool.sh install_deps
-  - travis-tool.sh install_github tudo-r/BatchJobs
   - travis-tool.sh install_github rstats-db/RSQLite
+  - travis-tool.sh install_github tudo-r/BatchJobs
 
 test_script:
   - travis-tool.sh run_tests
