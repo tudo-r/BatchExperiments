@@ -38,7 +38,7 @@ reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun,
         stopf("No results available for jobs with ids: %s", collapse(not.done))
     }
   }
-  BatchJobs:::checkPart(reg, part)
+  checkPart(reg, part)
   if (missing(fun)){
     fun = function(job, res) res
   } else {

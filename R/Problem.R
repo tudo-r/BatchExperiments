@@ -95,7 +95,7 @@ calcDynamic = function(reg, job, static, dynamic.fun) {
     function(...) dynamic.fun(job = job, static = static, ...))
 
   info("Generating problem %s ...", job$prob.id)
-  seed = BatchJobs:::seeder(reg, job$prob.seed)
+  seed = seeder(reg, job$prob.seed)
   on.exit(seed$reset())
   do.call(f, job$prob.pars)
 }

@@ -18,3 +18,21 @@
 #' @importFrom stats setNames na.omit
 #' @importFrom utils head capture.output packageVersion
 NULL
+
+
+addIntModulo = getFromNamespace("addIntModulo", "BatchJobs")
+buffer = getFromNamespace("buffer", "BatchJobs")
+checkDir = getFromNamespace("checkDir", "BatchJobs")
+checkPart = getFromNamespace("checkPart", "BatchJobs")
+createShardedDirs = getFromNamespace("createShardedDirs", "BatchJobs")
+dbConnectToJobsDB = getFromNamespace("dbConnectToJobsDB", "BatchJobs")
+dbCreateJobStatusTable = getFromNamespace("dbCreateJobStatusTable", "BatchJobs")
+dbConnectToJobsDB = getFromNamespace("dbConnectToJobsDB", "BatchJobs")
+dbCreateJobStatusTable = getFromNamespace("dbCreateJobStatusTable", "BatchJobs")
+getJobInfoInternal = getFromNamespace("getJobInfoInternal", "BatchJobs")
+getRandomSeed = getFromNamespace("getRandomSeed", "BatchJobs")
+getResult = getFromNamespace("getResult", "BatchJobs")
+isRegistryDir = getFromNamespace("isRegistryDir", "BatchJobs")
+makeRegistryInternal = getFromNamespace("makeRegistryInternal", "BatchJobs")
+saveRegistry = getFromNamespace("saveRegistry", "BatchJobs")
+seeder = getFromNamespace("seeder", "BatchJobs")

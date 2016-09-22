@@ -67,7 +67,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
         stopf("No results available for jobs with ids: %s", collapse(not.done))
     }
   }
-  BatchJobs:::checkPart(reg, part)
+  checkPart(reg, part)
   if (missing(fun))
     fun = function(job, res) res
   else
@@ -88,7 +88,7 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   impute = if (with.impute) function(job, res, ...) impute.val else fun
   getRow = function(j, reg, part, .fun, missing.ok, ...)
     c(list(id = j$id, prob = j$prob.id), j$prob.pars, list(algo = j$algo.id), j$algo.pars, list(repl = j$repl),
-      .fun(j, BatchJobs:::getResult(reg, j$id, part, missing.ok), ...))
+      .fun(j, getResult(reg, j$id, part, missing.ok), ...))
 
   aggr = data.table()
   ids2 = chunk(ids, chunk.size = block.size, shuffle = FALSE)

@@ -58,20 +58,20 @@ makeExperimentRegistry = function(id = "BatchExperimentRegistry", file.dir, shar
   if (missing(file.dir))
     file.dir = file.path(getwd(), paste0(id, "-files"))
   assertFlag(skip)
-  if (skip && BatchJobs:::isRegistryDir(file.dir))
+  if (skip && isRegistryDir(file.dir))
     return(loadRegistry(file.dir = file.dir))
-  reg = BatchJobs:::makeRegistryInternal(id, file.dir, sharding,
+  reg = makeRegistryInternal(id, file.dir, sharding,
     work.dir, multiple.result.files, seed, c("BatchExperiments", packages),
     src.dirs, src.files)
   reg$packages$BatchExperiments$mandatory = TRUE
   class(reg) = c("ExperimentRegistry", "Registry")
-  BatchJobs:::dbCreateJobStatusTable(reg, extra.cols = ", repl INTEGER, prob_seed INTEGER", constraints = ", UNIQUE(job_def_id, repl)")
+  dbCreateJobStatusTable(reg, extra.cols = ", repl INTEGER, prob_seed INTEGER", constraints = ", UNIQUE(job_def_id, repl)")
   BatchJobs::dbCreateJobDefTable(reg)
   dbCreateExtraTables(reg)
   dbCreateExpandedJobsViewBE(reg)
-  BatchJobs:::checkDir(file.path(reg$file.dir, "problems"), create = TRUE)
-  BatchJobs:::checkDir(file.path(reg$file.dir, "algorithms"), create = TRUE)
-  BatchJobs:::saveRegistry(reg)
+  checkDir(file.path(reg$file.dir, "problems"), create = TRUE)
+  checkDir(file.path(reg$file.dir, "algorithms"), create = TRUE)
+  saveRegistry(reg)
   return(reg)
 }
 

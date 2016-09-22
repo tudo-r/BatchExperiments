@@ -236,7 +236,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
   # establish persistent connection and create temporary table to fill
   # with job definitions
-  con = BatchJobs:::dbConnectToJobsDB(reg, "rw")
+  con = dbConnectToJobsDB(reg, "rw")
   on.exit(dbDisconnect(con))
 
   # create temporary table for job definitions
@@ -256,7 +256,7 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
 
   # iterate to generate job definitions
   # write to temporary table every x definitions
-  job.defs = BatchJobs:::buffer("list", 5000L, writeJobDefs)
+  job.defs = buffer("list", 5000L, writeJobDefs)
   for (pd in prob.designs) {
     pd$designIter$reset()
     while (pd$designIter$hasNext()) {
@@ -323,10 +323,10 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
             reg$id, max.job.id, con = con)
 
     if(nrow(df) > 0L) {
-      df$seed = BatchJobs:::addIntModulo(df$job_id, reg$seed - 1L)
+      df$seed = addIntModulo(df$job_id, reg$seed - 1L)
       na = is.na(df$pseed)
-      df$prob_seed[ na] = BatchJobs:::getRandomSeed(sum(na))
-      df$prob_seed[!na] = BatchJobs:::addIntModulo(df$pseed[!na], df$repl[!na] - 1L)
+      df$prob_seed[ na] = getRandomSeed(sum(na))
+      df$prob_seed[!na] = addIntModulo(df$pseed[!na], df$repl[!na] - 1L)
       mq("UPDATE %s_job_status SET seed = ?, prob_seed = ? WHERE job_id = ?",
          reg$id, con = con, bind.data = df[c("seed", "prob_seed", "job_id")])
     }
@@ -349,6 +349,6 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   }
 
   dbCommit(con)
-  BatchJobs:::createShardedDirs(reg, df$job_id)
+  createShardedDirs(reg, df$job_id)
   invisible(df$job_id)
 }
