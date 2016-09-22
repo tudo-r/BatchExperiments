@@ -209,7 +209,19 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
     q = sprintf(collapse(lines, sep = " "), ...)
     if(is.null(bind.data))
       return(dbGetQuery(con, q))
-    return(dbGetPreparedQuery(con, q, bind.data = bind.data))
+
+    res = dbSendQuery(con, q)
+    for (i in seq_row(bind.data)) {
+      row = unname(as.list(bind.data[i, ]))
+      dbBind(res, row)
+      ok = try(dbFetch(res))
+      if(is.error(ok)) {
+        dbClearResult(res)
+        dbRollback(con)
+        stopf("Error in dbAddData: %s", as.character(ok))
+      }
+    }
+    dbClearResult(res)
   }
 
   seripars = function(x) {

@@ -19,7 +19,7 @@ Imports:
     checkmate (>= 1.6.1),
     BBmisc (>= 1.8),
     DBI,
-    RSQLite (>= 1.0.0),
+    RSQLite (>= 1.0.9011),
     data.table (>= 1.9.6)
 Suggests:
     plyr,
