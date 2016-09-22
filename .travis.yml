@@ -1,13 +1,17 @@
 language: r
+sudo: false
+cache: packages
+
+r:
+  - oldrel
+  - release
+  - devel
 
 r_github_packages:
     - mllg/checkmate
     - tudo-r/BatchJobs
     - jimhester/covr
-
-before_script:
-    - curl -L https://raw.githubusercontent.com/rdatsci/travis-r-tools/master/update-packages.r -o /tmp/update-packages.r
-    - Rscript /tmp/update-packages.r
+    - rstats-db/RSQLite
 
 after_success:
     - Rscript -e 'library(covr); coveralls()'
