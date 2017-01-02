@@ -5,6 +5,9 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/f9052xe5y3njcudd/branch/master?svg=true)](https://ci.appveyor.com/project/mllg/batchexperiments/branch/master)
 [![Coverage Status](https://coveralls.io/repos/tudo-r/BatchExperiments/badge.svg)](https://coveralls.io/r/tudo-r/BatchExperiments)
 
+**NOTE: Development continues in the new package [batchtools](https://github.com/mllg/batchtools)**
+
+
 ## If you use the package, please cite it
   ```
 
@@ -35,7 +38,7 @@ A BibTeX entry for LaTeX users is
 * Collect parameters and results into a clearly represented data frame with one simple function call
 * Extend your study later with further problems, algorithms, parameters or replications
 * Clear separation between all stages: your methods under consideration, experiment defintions and execution layer.
-* Readable and succint code for your experiments
+* Readable and succinct code for your experiments
 * Internally handled seeds guarantee reproducibility
 
 
