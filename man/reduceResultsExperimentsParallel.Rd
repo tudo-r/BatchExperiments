@@ -67,4 +67,3 @@ all jobs are done and cleans all temporary files up.
 
 The rows are ordered as \code{ids} and named with \code{ids}, so one can easily index them.
 }
-

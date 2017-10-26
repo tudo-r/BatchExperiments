@@ -39,4 +39,3 @@ addExperiments(reg, algo.designs = list(ad1, ad2), repls = 2)
 print(summarizeExperiments(reg))
 print(summarizeExperiments(reg, show = c("prob", "algo", "alpha", "gamma")))
 }
-

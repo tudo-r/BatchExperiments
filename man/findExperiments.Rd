@@ -60,4 +60,3 @@ findExperiments(reg, prob.pattern = "one")
 findExperiments(reg, prob.pattern = "o")
 findExperiments(reg, algo.pars = (n > 2))
 }
-

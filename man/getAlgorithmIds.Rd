@@ -25,4 +25,3 @@ Other get: \code{\link{getAlgorithm}},
   \code{\link{getJobs.ExperimentRegistry}},
   \code{\link{getProblemIds}}, \code{\link{getProblem}}
 }
-

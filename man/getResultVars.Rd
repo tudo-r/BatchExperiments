@@ -38,4 +38,3 @@ data = reduceResultsExperiments(reg)
 library(plyr)
 ddply(data, getResultVars(data, "group"), summarise, mean_y = mean(y))
 }
-

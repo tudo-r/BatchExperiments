@@ -30,4 +30,3 @@ Other get: \code{\link{getAlgorithmIds}},
   \code{\link{getExperimentParts}},
   \code{\link{getProblemIds}}, \code{\link{getProblem}}
 }
-

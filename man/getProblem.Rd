@@ -26,4 +26,3 @@ Other get: \code{\link{getAlgorithmIds}},
   \code{\link{getJobs.ExperimentRegistry}},
   \code{\link{getProblemIds}}
 }
-

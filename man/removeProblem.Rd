@@ -27,4 +27,3 @@ THIS DELETES ALL FILES REGARDING THIS PROBLEM, INCLUDING ALL JOBS AND RESULTS!
 Other remove: \code{\link{removeAlgorithm}},
   \code{\link{removeExperiments}}
 }
-

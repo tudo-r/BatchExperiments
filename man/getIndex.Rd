@@ -68,4 +68,3 @@ f = function(aggr, job, res) aggr + res
 by(ids, getIndex(reg, ids, by.algo.pars = k), reduceResults, reg = reg, fun = f)
 by(ids, getIndex(reg, ids, by.algo.pars = i), reduceResults, reg = reg, fun = f)
 }
-

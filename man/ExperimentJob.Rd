@@ -18,4 +18,3 @@ elements:
   \item{\code{prob.seed} [\code{integer(1)}]:}{Seed set right before generation of problem instance.}
 }
 }
-

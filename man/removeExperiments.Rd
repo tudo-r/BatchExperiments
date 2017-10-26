@@ -30,4 +30,3 @@ to \code{TRUE} to omit sanity checks on running jobs.
 Other remove: \code{\link{removeAlgorithm}},
   \code{\link{removeProblem}}
 }
-
