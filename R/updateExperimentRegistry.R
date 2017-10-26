@@ -3,7 +3,7 @@
 updateRegistry.ExperimentRegistry = function(reg) {
   # update the BatchJobs part first
   updated = NextMethod()
-  is.updated = !isFALSE(updated)
+  is.updated = !identical(updated, FALSE)
   if (is.updated) reg = updated
 
   version.reg = reg$packages$BatchExperiments$version
