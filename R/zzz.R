@@ -19,6 +19,9 @@
 #' @importFrom utils head capture.output packageVersion
 NULL
 
+.onLoad <- function(libname, pkgname) {
+  backports::import(pkgname)
+}
 
 addIntModulo = getFromNamespace("addIntModulo", "BatchJobs")
 buffer = getFromNamespace("buffer", "BatchJobs")
