@@ -207,14 +207,21 @@ addExperiments.ExperimentRegistry = function(reg, prob.designs, algo.designs, re
   # internal helper functions
   mq = function(lines, ..., con, bind.data = NULL) {
     q = sprintf(collapse(lines, sep = " "), ...)
-    if(is.null(bind.data))
-      return(dbGetQuery(con, q))
+    if(is.null(bind.data)) {
+      res = NULL
+      dbi.res = dbSendQuery(con, q)
+      if (startsWith(q, "SELECT") || !dbHasCompleted(dbi.res))
+        res = dbFetch(dbi.res)
+      dbClearResult(dbi.res)
+      return(res)
+    }
 
     res = dbSendQuery(con, q)
     for (i in seq_row(bind.data)) {
       row = unname(as.list(bind.data[i, ]))
-      dbBind(res, row)
-      ok = try(dbFetch(res))
+      ok = dbBind(res, row)
+      if (startsWith(q, "SELECT") || !dbHasCompleted(res))
+        ok = try(dbFetch(res))
       if(is.error(ok)) {
         dbClearResult(res)
         dbRollback(con)
