@@ -49,7 +49,7 @@ findExperiments = function(reg, ids, prob.pattern, prob.pars, algo.pattern, algo
   if (!missing(algo.pattern))
     assertString(algo.pattern)
   if (!missing(repls))
-    repls = asCount(repls, positive = TRUE)
+    repls = asInteger(repls, lower = 0, any.missing = FALSE)
   assertFlag(match.substring)
   assertFlag(regexp)
 
