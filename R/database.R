@@ -151,7 +151,7 @@ dbGetProblemIds = function(reg, ids) {
 }
 
 dbGetAlgorithmIds = function(reg, ids) {
-  query = sprintf("SELECT job_id, prob_id FROM %s_expanded_jobs", reg$id)
+  query = sprintf("SELECT job_id, algo_id FROM %s_expanded_jobs", reg$id)
   dbSelectWithIds(reg, query, ids)$algo_id
 }
 
