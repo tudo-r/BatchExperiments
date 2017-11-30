@@ -17,10 +17,10 @@ Imports:
     backports,
     utils,
     stats,
-    checkmate (>= 1.6.1),
-    BBmisc (>= 1.8),
+    checkmate (>= 1.8.5),
+    BBmisc (>= 1.11),
     DBI,
-    RSQLite (>= 1.0.9011),
+    RSQLite (>= 2.0),
     data.table (>= 1.9.6)
 Suggests:
     plyr,
