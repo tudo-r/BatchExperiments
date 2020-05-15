@@ -3,11 +3,7 @@
 \docType{package}
 \name{BatchExperiments}
 \alias{BatchExperiments}
-\alias{BatchExperiments-package}
 \title{The BatchExperiments package}
-\description{
-The BatchExperiments package
-}
 \section{Additional information}{
 
 

@@ -5,10 +5,18 @@
 \alias{ExperimentRegistry}
 \title{Construct a registry object for experiments.}
 \usage{
-makeExperimentRegistry(id = "BatchExperimentRegistry", file.dir,
-  sharding = TRUE, work.dir, multiple.result.files = FALSE, seed,
-  packages = character(0L), src.dirs = character(0L),
-  src.files = character(0L), skip = TRUE)
+makeExperimentRegistry(
+  id = "BatchExperimentRegistry",
+  file.dir,
+  sharding = TRUE,
+  work.dir,
+  multiple.result.files = FALSE,
+  seed,
+  packages = character(0L),
+  src.dirs = character(0L),
+  src.files = character(0L),
+  skip = TRUE
+)
 }
 \arguments{
 \item{id}{[\code{character(1)}]\cr

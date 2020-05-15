@@ -20,8 +20,11 @@ Id of a job.}
 Get all parts which define an \code{\link{Experiment}}.
 }
 \seealso{
-Other get: \code{\link{getAlgorithmIds}},
-  \code{\link{getAlgorithm}},
-  \code{\link{getJobs.ExperimentRegistry}},
-  \code{\link{getProblemIds}}, \code{\link{getProblem}}
+Other get: 
+\code{\link{getAlgorithmIds}()},
+\code{\link{getAlgorithm}()},
+\code{\link{getJobs.ExperimentRegistry}()},
+\code{\link{getProblemIds}()},
+\code{\link{getProblem}()}
 }
+\concept{get}

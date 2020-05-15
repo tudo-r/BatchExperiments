@@ -4,8 +4,16 @@
 \alias{getIndex}
 \title{Group experiments.}
 \usage{
-getIndex(reg, ids, by.prob = FALSE, by.algo = FALSE, by.repl = FALSE,
-  by.prob.pars, by.algo.pars, enclos = parent.frame())
+getIndex(
+  reg,
+  ids,
+  by.prob = FALSE,
+  by.algo = FALSE,
+  by.repl = FALSE,
+  by.prob.pars,
+  by.algo.pars,
+  enclos = parent.frame()
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr

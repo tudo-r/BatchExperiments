@@ -5,8 +5,13 @@
 \alias{Experiment}
 \title{Add experiemts to the registry.}
 \usage{
-addExperiments(reg, prob.designs, algo.designs, repls = 1L,
-  skip.defined = FALSE)
+addExperiments(
+  reg,
+  prob.designs,
+  algo.designs,
+  repls = 1L,
+  skip.defined = FALSE
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -160,6 +165,8 @@ reduceResultsExperiments(reg, fun = function(job, res) res[c("value", "convergen
 }
 }
 \seealso{
-Other add: \code{\link{addAlgorithm}},
-  \code{\link{addProblem}}
+Other add: 
+\code{\link{addAlgorithm}()},
+\code{\link{addProblem}()}
 }
+\concept{add}

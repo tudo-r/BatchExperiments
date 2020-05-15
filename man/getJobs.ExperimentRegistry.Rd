@@ -25,8 +25,11 @@ Default is \code{TRUE}.}
 Constructs an \code{\link{Experiment}} for each job id provided.
 }
 \seealso{
-Other get: \code{\link{getAlgorithmIds}},
-  \code{\link{getAlgorithm}},
-  \code{\link{getExperimentParts}},
-  \code{\link{getProblemIds}}, \code{\link{getProblem}}
+Other get: 
+\code{\link{getAlgorithmIds}()},
+\code{\link{getAlgorithm}()},
+\code{\link{getExperimentParts}()},
+\code{\link{getProblemIds}()},
+\code{\link{getProblem}()}
 }
+\concept{get}

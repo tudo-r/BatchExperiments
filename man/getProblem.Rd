@@ -20,9 +20,11 @@ Id of problem.}
 The requested object is loaded from disk.
 }
 \seealso{
-Other get: \code{\link{getAlgorithmIds}},
-  \code{\link{getAlgorithm}},
-  \code{\link{getExperimentParts}},
-  \code{\link{getJobs.ExperimentRegistry}},
-  \code{\link{getProblemIds}}
+Other get: 
+\code{\link{getAlgorithmIds}()},
+\code{\link{getAlgorithm}()},
+\code{\link{getExperimentParts}()},
+\code{\link{getJobs.ExperimentRegistry}()},
+\code{\link{getProblemIds}()}
 }
+\concept{get}
