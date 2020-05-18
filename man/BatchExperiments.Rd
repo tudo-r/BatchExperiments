@@ -4,6 +4,10 @@
 \name{BatchExperiments}
 \alias{BatchExperiments}
 \title{The BatchExperiments package}
+\description{
+Extends the BatchJobs package to run statistical experiments on
+batch computing clusters.
+}
 \section{Additional information}{
 
 
