@@ -73,7 +73,7 @@ test_that("addExperiments", {
     waitForJobs(reg)
     res = sapply(getJobIds(reg), loadResult, reg=reg)
     res = unique(res)
-    expect_true(length(res) == m && is.numeric(res) && res >= 0 && res <= 1)
+    expect_true(length(res) == m && is.numeric(res) && all(res >= 0) && all(res <= 1))
   }
 
   #prob seed. 1 stochastic prob without seed, 1 algo, 2 reps = 2 different probs
