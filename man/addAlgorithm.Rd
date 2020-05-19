@@ -37,6 +37,8 @@ Default is \code{FALSE}.}
 Add an algorithm to registry and stores it on disk.
 }
 \seealso{
-Other add: \code{\link{addExperiments}},
-  \code{\link{addProblem}}
+Other add: 
+\code{\link{addExperiments}()},
+\code{\link{addProblem}()}
 }
+\concept{add}

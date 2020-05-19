@@ -20,8 +20,11 @@ Job ids to restrict returned algorithm ids to.}
 Get algorithm ids for jobs.
 }
 \seealso{
-Other get: \code{\link{getAlgorithm}},
-  \code{\link{getExperimentParts}},
-  \code{\link{getJobs.ExperimentRegistry}},
-  \code{\link{getProblemIds}}, \code{\link{getProblem}}
+Other get: 
+\code{\link{getAlgorithm}()},
+\code{\link{getExperimentParts}()},
+\code{\link{getJobs.ExperimentRegistry}()},
+\code{\link{getProblemIds}()},
+\code{\link{getProblem}()}
 }
+\concept{get}

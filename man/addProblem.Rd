@@ -5,8 +5,14 @@
 \alias{Problem}
 \title{Add a problem to registry.}
 \usage{
-addProblem(reg, id, static = NULL, dynamic = NULL, seed = NULL,
-  overwrite = FALSE)
+addProblem(
+  reg,
+  id,
+  static = NULL,
+  dynamic = NULL,
+  seed = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -53,6 +59,8 @@ Default is \code{FALSE}.}
 Add a algorithm to problem and stores it on disk.
 }
 \seealso{
-Other add: \code{\link{addAlgorithm}},
-  \code{\link{addExperiments}}
+Other add: 
+\code{\link{addAlgorithm}()},
+\code{\link{addExperiments}()}
 }
+\concept{add}

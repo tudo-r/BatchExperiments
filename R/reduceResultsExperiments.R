@@ -28,7 +28,7 @@
 #'   Additional arguments to \code{fun}.
 #' @param strings.as.factors [\code{logical(1)}]
 #'   Should all character columns in result be converted to factors?
-#'   Default is \code{default.stringsAsFactors()}.
+#'   Default is \code{default.stringsAsFactors()} for R < 4.1.0 and \code{FALSE} otherwise.
 #' @param block.size [\code{integer(1)}]
 #'   Results will be fetched in blocks of this size.
 #'   Default is max(100, 5 percent of ids).
@@ -45,7 +45,7 @@
 #' @aliases ReducedResultsExperiments
 #' @export
 reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
-  strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
+  strings.as.factors = NULL, block.size, impute.val,
   apply.on.missing = FALSE, progressbar = TRUE) {
 
   checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
@@ -73,6 +73,12 @@ reduceResultsExperiments = function(reg, ids, part = NA_character_, fun, ...,
   else
     assertFunction(fun, c("job", "res"))
 
+  if (is.null(strings.as.factors)) {
+    if(getRversion() < "4.1.0")
+      strings.as.factors = default.stringsAsFactors()
+    else
+      strings.as.factors = FALSE
+  }
   assertFlag(strings.as.factors)
   if (missing(block.size)) {
     block.size = max(100L, as.integer(0.05 * length(ids)))

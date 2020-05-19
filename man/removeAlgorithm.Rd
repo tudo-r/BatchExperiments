@@ -24,6 +24,8 @@ Nothing.
 THIS DELETES ALL FILES REGARDING THIS ALGORITHM, INCLUDING ALL JOBS AND RESULTS!
 }
 \seealso{
-Other remove: \code{\link{removeExperiments}},
-  \code{\link{removeProblem}}
+Other remove: 
+\code{\link{removeExperiments}()},
+\code{\link{removeProblem}()}
 }
+\concept{remove}

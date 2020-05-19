@@ -3,10 +3,10 @@
 \docType{package}
 \name{BatchExperiments}
 \alias{BatchExperiments}
-\alias{BatchExperiments-package}
 \title{The BatchExperiments package}
 \description{
-The BatchExperiments package
+Extends the BatchJobs package to run statistical experiments on
+batch computing clusters.
 }
 \section{Additional information}{
 

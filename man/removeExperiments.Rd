@@ -27,6 +27,8 @@ If you really know what you are doing, you may set \code{force}
 to \code{TRUE} to omit sanity checks on running jobs.
 }
 \seealso{
-Other remove: \code{\link{removeAlgorithm}},
-  \code{\link{removeProblem}}
+Other remove: 
+\code{\link{removeAlgorithm}()},
+\code{\link{removeProblem}()}
 }
+\concept{remove}

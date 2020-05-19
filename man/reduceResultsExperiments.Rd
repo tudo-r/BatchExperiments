@@ -5,9 +5,18 @@
 \alias{ReducedResultsExperiments}
 \title{Reduce results into a data.frame with all relevant information.}
 \usage{
-reduceResultsExperiments(reg, ids, part = NA_character_, fun, ...,
-  strings.as.factors = default.stringsAsFactors(), block.size, impute.val,
-  apply.on.missing = FALSE, progressbar = TRUE)
+reduceResultsExperiments(
+  reg,
+  ids,
+  part = NA_character_,
+  fun,
+  ...,
+  strings.as.factors = NULL,
+  block.size,
+  impute.val,
+  apply.on.missing = FALSE,
+  progressbar = TRUE
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -32,7 +41,7 @@ Additional arguments to \code{fun}.}
 
 \item{strings.as.factors}{[\code{logical(1)}]
 Should all character columns in result be converted to factors?
-Default is \code{default.stringsAsFactors()}.}
+Default is \code{default.stringsAsFactors()} for R < 4.1.0 and \code{FALSE} otherwise.}
 
 \item{block.size}{[\code{integer(1)}]
 Results will be fetched in blocks of this size.

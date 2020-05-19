@@ -4,10 +4,19 @@
 \alias{reduceResultsExperimentsParallel}
 \title{Reduce very many results in parallel.}
 \usage{
-reduceResultsExperimentsParallel(reg, ids, part = NA_character_, fun, ...,
-  timeout = 604800L, njobs = 20L,
-  strings.as.factors = default.stringsAsFactors(), impute.val,
-  apply.on.missing = FALSE, progressbar = TRUE)
+reduceResultsExperimentsParallel(
+  reg,
+  ids,
+  part = NA_character_,
+  fun,
+  ...,
+  timeout = 604800L,
+  njobs = 20L,
+  strings.as.factors = default.stringsAsFactors(),
+  impute.val,
+  apply.on.missing = FALSE,
+  progressbar = TRUE
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
@@ -40,7 +49,7 @@ Default is 20.}
 
 \item{strings.as.factors}{[\code{logical(1)}]
 Should all character columns in result be converted to factors?
-Default is \code{default.stringsAsFactors()}.}
+Default is \code{default.stringsAsFactors()} for R < 4.1.0 and \code{FALSE} otherwise.}
 
 \item{impute.val}{[\code{named list}]\cr
 If not missing, the value of \code{impute.val} is used as a replacement for the

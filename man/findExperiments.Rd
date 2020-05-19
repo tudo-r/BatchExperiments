@@ -4,8 +4,17 @@
 \alias{findExperiments}
 \title{Find ids of experiments that match a query.}
 \usage{
-findExperiments(reg, ids, prob.pattern, prob.pars, algo.pattern, algo.pars,
-  repls, match.substring = TRUE, regexp = FALSE)
+findExperiments(
+  reg,
+  ids,
+  prob.pattern,
+  prob.pars,
+  algo.pattern,
+  algo.pars,
+  repls,
+  match.substring = TRUE,
+  regexp = FALSE
+)
 }
 \arguments{
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
