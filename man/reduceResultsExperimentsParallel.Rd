@@ -12,7 +12,7 @@ reduceResultsExperimentsParallel(
   ...,
   timeout = 604800L,
   njobs = 20L,
-  strings.as.factors = default.stringsAsFactors(),
+  strings.as.factors = FALSE,
   impute.val,
   apply.on.missing = FALSE,
   progressbar = TRUE
@@ -49,7 +49,7 @@ Default is 20.}
 
 \item{strings.as.factors}{[\code{logical(1)}]
 Should all character columns in result be converted to factors?
-Default is \code{default.stringsAsFactors()} for R < 4.1.0 and \code{FALSE} otherwise.}
+Default is \code{FALSE}.}
 
 \item{impute.val}{[\code{named list}]\cr
 If not missing, the value of \code{impute.val} is used as a replacement for the

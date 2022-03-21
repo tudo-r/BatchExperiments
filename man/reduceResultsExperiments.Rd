@@ -11,7 +11,7 @@ reduceResultsExperiments(
   part = NA_character_,
   fun,
   ...,
-  strings.as.factors = NULL,
+  strings.as.factors = FALSE,
   block.size,
   impute.val,
   apply.on.missing = FALSE,
@@ -41,7 +41,7 @@ Additional arguments to \code{fun}.}
 
 \item{strings.as.factors}{[\code{logical(1)}]
 Should all character columns in result be converted to factors?
-Default is \code{default.stringsAsFactors()} for R < 4.1.0 and \code{FALSE} otherwise.}
+Default is \code{FALSE}.}
 
 \item{block.size}{[\code{integer(1)}]
 Results will be fetched in blocks of this size.

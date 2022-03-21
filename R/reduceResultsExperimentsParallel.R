@@ -18,7 +18,7 @@
 #' @return [\code{data.frame}]. Aggregated results, containing problem and algorithm paramaters and collected values.
 #' @export
 reduceResultsExperimentsParallel = function(reg, ids, part = NA_character_, fun, ...,
-  timeout = 604800L, njobs = 20L, strings.as.factors = default.stringsAsFactors(), impute.val,
+  timeout = 604800L, njobs = 20L, strings.as.factors = FALSE, impute.val,
   apply.on.missing = FALSE, progressbar = TRUE) {
   checkExperimentRegistry(reg, strict = TRUE, writeable = FALSE)
   syncRegistry(reg)
