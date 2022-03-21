@@ -1,6 +1,6 @@
 # BatchExperiments
 
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/BatchExperiments)](http://cran.r-project.org/web/packages/BatchExperiments)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/BatchExperiments)](http://cran.r-project.org/web/packages/BatchExperiments)
 [![Build Status](https://travis-ci.org/tudo-r/BatchExperiments.png)](https://travis-ci.org/tudo-r/BatchExperiments)
 [![Build status](https://ci.appveyor.com/api/projects/status/f9052xe5y3njcudd/branch/master?svg=true)](https://ci.appveyor.com/project/mllg/batchexperiments/branch/master)
 [![Coverage Status](https://coveralls.io/repos/tudo-r/BatchExperiments/badge.svg)](https://coveralls.io/r/tudo-r/BatchExperiments)
@@ -14,7 +14,7 @@
 To cite BatchJobs or BatchExperiments in publications use:
 
   Bernd Bischl, Michel Lang, Olaf Mersmann, Joerg Rahnenfuehrer, Claus Weihs (2015). BatchJobs and BatchExperiments: Abstraction Mechanisms for Using R in Batch Environments. Journal
-  of Statistical Software, 64(11), 1-25. URL http://www.jstatsoft.org/v64/i11/.
+  of Statistical Software, 64(11), 1-25. URL https://www.jstatsoft.org/v64/i11/.
 
 A BibTeX entry for LaTeX users is
 
@@ -26,7 +26,7 @@ A BibTeX entry for LaTeX users is
     volume = {64},
     number = {11},
     pages = {1--25},
-    url = {http://www.jstatsoft.org/v64/i11/},
+    url = {https://www.jstatsoft.org/v64/i11/},
   }
   ```
 
@@ -47,16 +47,16 @@ To install the latest stable release from CRAN:
 ```splus
 install.packages("BatchExperiments")
 ```
-To install the development version use [devtools](http://cran.r-project.org/web/packages/devtools):
+To install the development version use [devtools](https://cran.r-project.org/web/packages/devtools):
 ```splus
 library(devtools);
 install_github("tudo-r/BatchJobs")
 install_github("tudo-r/BatchExperiments")
 ```
 Please see the documentation of [BatchJobs](https://github.com/tudo-r/BatchJobs) to set up your system for parallel execution.
-Currently the best introduction to the package is our [technical report](http://sfb876.tu-dortmund.de/PublicPublicationFiles/bischl_etal_2012a.pdf).
-For more detailed information on the functions please use the [R documentation](http://tudo-r.github.io/BatchExperiments/).
+Currently the best introduction to the package is our [technical report](https://sfb876.tu-dortmund.de/PublicPublicationFiles/bischl_etal_2012a.pdf).
+For more detailed information on the functions please use the [R documentation](https://tudo-r.github.io/BatchExperiments/).
 You can also peek into some examples provided in the [wiki](../../wiki).
 
-We also have a [mailing list](http://groups.google.com/group/batchjobs).
+We also have a [mailing list](https://groups.google.com/group/batchjobs).
 
