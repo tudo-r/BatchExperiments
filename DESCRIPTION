@@ -35,6 +35,6 @@ Suggests:
     randomForest,
     rpart,
     testthat
-Version: 1.4.3
+Version: 1.4.4
 RoxygenNote: 7.3.2
 Encoding: UTF-8
