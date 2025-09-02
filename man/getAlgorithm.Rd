@@ -24,7 +24,7 @@ Other get:
 \code{\link{getAlgorithmIds}()},
 \code{\link{getExperimentParts}()},
 \code{\link{getJobs.ExperimentRegistry}()},
-\code{\link{getProblemIds}()},
-\code{\link{getProblem}()}
+\code{\link{getProblem}()},
+\code{\link{getProblemIds}()}
 }
 \concept{get}

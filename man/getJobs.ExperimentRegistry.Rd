@@ -26,10 +26,10 @@ Constructs an \code{\link{Experiment}} for each job id provided.
 }
 \seealso{
 Other get: 
-\code{\link{getAlgorithmIds}()},
 \code{\link{getAlgorithm}()},
+\code{\link{getAlgorithmIds}()},
 \code{\link{getExperimentParts}()},
-\code{\link{getProblemIds}()},
-\code{\link{getProblem}()}
+\code{\link{getProblem}()},
+\code{\link{getProblemIds}()}
 }
 \concept{get}

@@ -1,3 +1,6 @@
+BatchExperiments_1.4.4
+- Maintenance release.
+
 BatchExperiments_1.4.3
 - Maintenance release. Removed calls to deprecated `default.stringAsFactors()`.
 

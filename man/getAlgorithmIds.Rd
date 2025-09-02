@@ -10,7 +10,7 @@ getAlgorithmIds(reg, ids)
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
 Registry.}
 
-\item{ids}{[code{integer}]\cr
+\item{ids}{[\code{integer}]\cr
 Job ids to restrict returned algorithm ids to.}
 }
 \value{
@@ -24,7 +24,7 @@ Other get:
 \code{\link{getAlgorithm}()},
 \code{\link{getExperimentParts}()},
 \code{\link{getJobs.ExperimentRegistry}()},
-\code{\link{getProblemIds}()},
-\code{\link{getProblem}()}
+\code{\link{getProblem}()},
+\code{\link{getProblemIds}()}
 }
 \concept{get}

@@ -14,17 +14,18 @@ Registry.}
 Id of a job.}
 }
 \value{
-[named list]. Returns the \link{Job}, \link{Problem}, \link{Instance} and \link{Algorithm}.
+[named list]. Returns the \link[BatchJobs]{Job}, \link[BatchExperiments]{Problem},
+\link[BatchExperiments]{Instance} and \link[BatchExperiments]{Algorithm}.
 }
 \description{
 Get all parts which define an \code{\link{Experiment}}.
 }
 \seealso{
 Other get: 
-\code{\link{getAlgorithmIds}()},
 \code{\link{getAlgorithm}()},
+\code{\link{getAlgorithmIds}()},
 \code{\link{getJobs.ExperimentRegistry}()},
-\code{\link{getProblemIds}()},
-\code{\link{getProblem}()}
+\code{\link{getProblem}()},
+\code{\link{getProblemIds}()}
 }
 \concept{get}

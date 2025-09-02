@@ -5,7 +5,7 @@
 #'
 #' @param reg [\code{\link{ExperimentRegistry}}]\cr
 #'   Registry.
-#' @param ids [code{integer}]\cr
+#' @param ids [\code{integer}]\cr
 #'   Job ids to restrict returned algorithm ids to.
 #' @return [\code{character}].
 #' @family get
