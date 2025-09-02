@@ -2,7 +2,7 @@
 #'
 #' @description
 #' Basically the same as \code{\link{reduceResultsExperiments}} but creates a few (hopefully short) jobs
-#' to reduce the results in parallel. The function internally calls \code{\link{batchMapQuick}},
+#' to reduce the results in parallel. The function internally calls \code{\link[BatchJobs]{batchMapQuick}},
 #' does \dQuote{busy-waiting} till
 #' all jobs are done and cleans all temporary files up.
 #'

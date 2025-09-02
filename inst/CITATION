@@ -1,6 +1,6 @@
 citHeader("To cite BatchJobs or BatchExperiments in publications use:")
 
-bibentry(entry = "Article",
+bibentry("Article",
   title        = "{BatchJobs} and {BatchExperiments}: Abstraction Mechanisms for Using {R} in Batch Environments",
   author       = c(as.person("Bernd Bischl"),
                    as.person("Michel Lang"),
