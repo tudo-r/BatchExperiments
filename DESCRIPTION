@@ -2,9 +2,18 @@ Package: BatchExperiments
 Title: Statistical Experiments on Batch Computing Clusters
 Description: Extends the BatchJobs package to run statistical experiments on
     batch computing clusters. For further details see the project web page.
-Author: Bernd Bischl <bernd_bischl@gmx.net>,
-    Michel Lang <michellang@gmail.com>,
-    Olaf Mersmann <olafm@p-value.net>
+Authors@R: c(person(given = "Bernd",
+                    family = "Bischl",
+                    role = "aut",
+                    email = "bernd_bischl@gmx.net"),
+              person(given = "Michel",
+                    family = "Lang",
+                    role = c("aut", "cre"),
+                    email = "michellang@gmail.com"),
+              person(given = "Olaf",
+                    family = "Mersmann",
+                    role = "aut",
+                    email = "olafm@p-value.net"))
 Maintainer: Michel Lang <michellang@gmail.com>
 URL: https://github.com/tudo-r/BatchExperiments
 BugReports: https://github.com/tudo-r/BatchExperiments/issues
@@ -26,5 +35,6 @@ Suggests:
     randomForest,
     rpart,
     testthat
-Version: 1.4.3
-RoxygenNote: 7.1.2
+Version: 1.4.4
+RoxygenNote: 7.3.2
+Encoding: UTF-8

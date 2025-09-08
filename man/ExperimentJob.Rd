@@ -11,7 +11,7 @@ elements:
   \item{\code{id} [\code{integer(1)}]:}{Job ID.}
   \item{\code{prob.id} [\code{character(1)}]:}{Problem ID.}
   \item{\code{prob.pars} [\code{list}]:}{Problem parameters as named list.}
-  \item{\code{algo.id} [\code{character(1)}]:}{algo.id}{Algorithm ID.}
+  \item{\code{algo.id} [\code{character(1)}]:}{Algorithm ID.}
   \item{\code{algo.pars} [\code{list}]:}{Algorithm parameters as named list.}
   \item{\code{repl} [\code{integer(1)}]:}{Replication number of this experiment.}
   \item{\code{seed} [\code{integer(1)}]:}{Seed set right before algorithm execution.}

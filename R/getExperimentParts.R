@@ -7,7 +7,8 @@
 #'   Registry.
 #' @param id [\code{integer(1)}]\cr
 #'   Id of a job.
-#' @return [named list]. Returns the \link{Job}, \link{Problem}, \link{Instance} and \link{Algorithm}.
+#' @return [named list]. Returns the \link[BatchJobs]{Job}, \link[BatchExperiments]{Problem},
+#' \link[BatchExperiments]{Instance} and \link[BatchExperiments]{Algorithm}.
 #' @family get
 #' @export
 getExperimentParts = function(reg, id) {

@@ -11,7 +11,7 @@
 #'   Default is \dQuote{BatchExperimentRegistry}.
 #' @param file.dir [\code{character(1)}]\cr
 #'   Path where files regarding the registry / jobs should be saved.
-#'   Default is dQuote{<name of registry>_files} in current working directory.
+#'   Default is \dQuote{<name of registry>_files} in current working directory.
 #' @param sharding [\code{logical(1)}]\cr
 #'   Enable sharding to distribute result files into different subdirectories?
 #'   Important if you have many experiments.

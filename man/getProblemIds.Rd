@@ -10,7 +10,7 @@ getProblemIds(reg, ids)
 \item{reg}{[\code{\link{ExperimentRegistry}}]\cr
 Registry.}
 
-\item{ids}{[code{integer}]\cr
+\item{ids}{[\code{integer}]\cr
 Job ids to restrict returned problem ids to.}
 }
 \value{
@@ -21,8 +21,8 @@ Get problem ids for jobs.
 }
 \seealso{
 Other get: 
-\code{\link{getAlgorithmIds}()},
 \code{\link{getAlgorithm}()},
+\code{\link{getAlgorithmIds}()},
 \code{\link{getExperimentParts}()},
 \code{\link{getJobs.ExperimentRegistry}()},
 \code{\link{getProblem}()}

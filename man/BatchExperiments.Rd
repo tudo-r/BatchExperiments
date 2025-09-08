@@ -2,6 +2,7 @@
 % Please edit documentation in R/zzz.R
 \docType{package}
 \name{BatchExperiments}
+\alias{BatchExperiments-package}
 \alias{BatchExperiments}
 \title{The BatchExperiments package}
 \description{
@@ -17,3 +18,21 @@ batch computing clusters.
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/tudo-r/BatchExperiments}
+  \item Report bugs at \url{https://github.com/tudo-r/BatchExperiments/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Michel Lang \email{michellang@gmail.com}
+
+Authors:
+\itemize{
+  \item Bernd Bischl \email{bernd_bischl@gmx.net}
+  \item Olaf Mersmann \email{olafm@p-value.net}
+}
+
+}
