@@ -14,7 +14,6 @@ Authors@R: c(person(given = "Bernd",
                     family = "Mersmann",
                     role = "aut",
                     email = "olafm@p-value.net"))
-Maintainer: Michel Lang <michellang@gmail.com>
 URL: https://github.com/tudo-r/BatchExperiments
 BugReports: https://github.com/tudo-r/BatchExperiments/issues
 License: BSD_3_clause + file LICENSE
